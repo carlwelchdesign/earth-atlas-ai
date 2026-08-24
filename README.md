@@ -2,7 +2,7 @@
 
 EchoAtlas is a planned civilian disaster and infrastructure-change SAR intelligence workbench. It will turn public Umbra imagery into deterministic change candidates, evidence, and human-reviewed assessments.
 
-**Current status:** the Bingham Canyon civilian demonstration pair is approved and pinned, and the backend can fetch those exact public Umbra objects into a bounded, checksum-verified local cache. It does not yet process SAR pixels, produce change candidates, or provide operational intelligence.
+**Current status:** the Bingham Canyon civilian demonstration pair is approved and pinned. The backend can fetch those exact public Umbra objects into a bounded, checksum-verified local cache and produce deterministic, AOI-cropped engineering previews on a declared common grid. It does not yet produce change candidates or provide operational intelligence.
 
 ## Architecture
 
@@ -64,6 +64,16 @@ uv run echoatlas-acquire \
 ```
 
 The pinned inputs total about 524 MB. Downloads are allowlisted, resumable, size-bounded, and verified against the manifest's full-object CRC64NVME checksums before atomic cache promotion. See [the acquisition cache documentation](docs/architecture/acquisition-cache.md).
+
+Produce the aligned working rasters, display previews, thumbnails, and quality/run reports:
+
+```sh
+uv run echoatlas-process-previews \
+  --manifest fixtures/demo/selection-manifest.v1.json \
+  --data-root data
+```
+
+The default run uses an EPSG:32612 one-meter grid, bilinear resampling, exact approved-AOI masking, no speckle filter, and independent 2–98% display stretches. These are engineering preview choices, not calibrated SAR normalization or change detection. See [the SAR preview processing documentation](docs/architecture/sar-preview-processing.md).
 
 ## Delivery
 

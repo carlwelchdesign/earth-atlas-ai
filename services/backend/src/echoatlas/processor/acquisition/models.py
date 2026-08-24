@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import base64
+import hashlib
 import json
 from datetime import datetime
 from pathlib import Path, PurePosixPath
@@ -77,6 +78,31 @@ class SourceLicense(BaseModel):
     provider: str = Field(min_length=1)
 
 
+class ProcessingAoi(BaseModel):
+    model_config = ConfigDict(frozen=True, extra="ignore")
+
+    id: str = Field(pattern=r"^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$")
+    bbox: tuple[float, float, float, float]
+    geometry: dict[str, object]
+    geometry_sha256: str = Field(pattern=r"^[a-f0-9]{64}$")
+    boundary: str = Field(min_length=1)
+
+    @model_validator(mode="after")
+    def validate_geometry_contract(self) -> ProcessingAoi:
+        west, south, east, north = self.bbox
+        if not (-180 <= west < east <= 180 and -90 <= south < north <= 90):
+            raise ValueError("processing AOI bbox must be an ordered WGS84 extent")
+        if self.geometry.get("type") != "Polygon":
+            raise ValueError("processing AOI geometry must be a Polygon")
+        coordinates = self.geometry.get("coordinates")
+        if not isinstance(coordinates, list) or not coordinates:
+            raise ValueError("processing AOI geometry requires coordinates")
+        canonical = json.dumps(self.geometry, separators=(",", ":"), sort_keys=True).encode()
+        if hashlib.sha256(canonical).hexdigest() != self.geometry_sha256:
+            raise ValueError("processing AOI geometry checksum does not match")
+        return self
+
+
 class SelectionManifest(BaseModel):
     model_config = ConfigDict(frozen=True, extra="ignore")
 
@@ -85,7 +111,10 @@ class SelectionManifest(BaseModel):
     status: Literal["approved"]
     accessed_at: datetime
     license: SourceLicense
+    processing_aoi: ProcessingAoi
     acquisitions: dict[str, PinnedAcquisition]
+    interpretation_limits: tuple[str, ...] = ()
+    sensitivity_controls: tuple[str, ...] = ()
 
     @field_validator("acquisitions")
     @classmethod
