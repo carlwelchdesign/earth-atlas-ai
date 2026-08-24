@@ -2,7 +2,7 @@
 
 EchoAtlas is a planned civilian disaster and infrastructure-change SAR intelligence workbench. It will turn public Umbra imagery into deterministic change candidates, evidence, and human-reviewed assessments.
 
-**Current status:** repository foundation only. The health endpoint and workbench shell prove the development environment; they do not process imagery or provide operational intelligence.
+**Current status:** repository foundation plus a bounded, metadata-only Umbra catalog indexer. It can normalize public acquisition metadata and resolve public S3 object listings; it does not download imagery, select a demonstration pair, process SAR pixels, or provide operational intelligence.
 
 ## Architecture
 
@@ -42,6 +42,18 @@ make dev-web
 ```
 
 The local health endpoint is `http://127.0.0.1:8000/health`. The Vite development server prints the workbench URL when it starts.
+
+Run a bounded live catalog smoke test:
+
+```sh
+uv run echoatlas-catalog \
+  --max-catalogs 120 \
+  --max-items 100 \
+  --report-output data/umbra-catalog-report.json \
+  --index-output data/umbra-acquisition-index.json
+```
+
+This command only reads small STAC JSON and S3 listing XML documents. Object URLs and declared sizes are indexed, but raster payloads are never requested. See [the catalog indexer documentation](docs/architecture/catalog-indexer.md).
 
 ## Delivery
 

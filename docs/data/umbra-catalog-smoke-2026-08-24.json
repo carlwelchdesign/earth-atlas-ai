@@ -1,0 +1,854 @@
+{
+  "accessed_at": "2026-08-24T17:28:02.266381Z",
+  "catalog_coverage": {
+    "root_url": "https://umbra-open-data-catalog.s3.us-west-2.amazonaws.com/stac/catalog.json",
+    "catalogs_visited": 120,
+    "item_links_seen": 1040,
+    "items_indexed": 100,
+    "items_skipped": 0,
+    "catalog_limit_reached": true,
+    "item_limit_reached": true
+  },
+  "acquisition_count": 100,
+  "resolved_object_count": 495,
+  "resolved_object_bytes_declared": 3453400818347,
+  "s3_listing_pages": 100,
+  "warning_counts": {
+    "empty_asset_href": 1097,
+    "s3_objects_not_found": 15
+  },
+  "warning_samples": [
+    {
+      "code": "empty_asset_href",
+      "source_url": "https://umbra-open-data-catalog.s3.us-west-2.amazonaws.com/stac/2025/2025-06/2025-06-22/01e9fe39-3a6e-4458-a5d1-cf92eb21b961/01e9fe39-3a6e-4458-a5d1-cf92eb21b961.json",
+      "message": "asset '2025-06-22-23-57-52_99e75722-4338-484c-a245-1409b6b1b7d1.parquet' has no usable href"
+    },
+    {
+      "code": "s3_objects_not_found",
+      "source_url": "https://umbra-open-data-catalog.s3.us-west-2.amazonaws.com/stac/2025/2025-06/2025-06-22/e29c75ae-2839-44c1-a28a-43c3370e642c/e29c75ae-2839-44c1-a28a-43c3370e642c.json",
+      "message": "no public objects found under task prefix sar-data/task-data/7c339230-d186-46ef-9f1b-51aa34b5409c/"
+    },
+    {
+      "code": "empty_asset_href",
+      "source_url": "https://umbra-open-data-catalog.s3.us-west-2.amazonaws.com/stac/2025/2025-06/2025-06-22/01e9fe39-3a6e-4458-a5d1-cf92eb21b961/01e9fe39-3a6e-4458-a5d1-cf92eb21b961.json",
+      "message": "asset '2025-06-22-23-57-52_UMBRA-10.stac.v2.json' has no usable href"
+    },
+    {
+      "code": "empty_asset_href",
+      "source_url": "https://umbra-open-data-catalog.s3.us-west-2.amazonaws.com/stac/2025/2025-06/2025-06-22/01e9fe39-3a6e-4458-a5d1-cf92eb21b961/01e9fe39-3a6e-4458-a5d1-cf92eb21b961.json",
+      "message": "asset '2025-06-22-23-57-52_UMBRA-10_ANALYSIS.zip' has no usable href"
+    },
+    {
+      "code": "empty_asset_href",
+      "source_url": "https://umbra-open-data-catalog.s3.us-west-2.amazonaws.com/stac/2025/2025-06/2025-06-22/01e9fe39-3a6e-4458-a5d1-cf92eb21b961/01e9fe39-3a6e-4458-a5d1-cf92eb21b961.json",
+      "message": "asset '2025-06-22-23-57-52_UMBRA-10_CSI_MM.tif' has no usable href"
+    },
+    {
+      "code": "empty_asset_href",
+      "source_url": "https://umbra-open-data-catalog.s3.us-west-2.amazonaws.com/stac/2025/2025-06/2025-06-22/01e9fe39-3a6e-4458-a5d1-cf92eb21b961/01e9fe39-3a6e-4458-a5d1-cf92eb21b961.json",
+      "message": "asset '2025-06-22-23-57-52_UMBRA-10_CSI_SIDD_MM.nitf' has no usable href"
+    },
+    {
+      "code": "empty_asset_href",
+      "source_url": "https://umbra-open-data-catalog.s3.us-west-2.amazonaws.com/stac/2025/2025-06/2025-06-22/01e9fe39-3a6e-4458-a5d1-cf92eb21b961/01e9fe39-3a6e-4458-a5d1-cf92eb21b961.json",
+      "message": "asset '2025-06-22-23-57-52_UMBRA-10_MM.cphd' has no usable href"
+    },
+    {
+      "code": "empty_asset_href",
+      "source_url": "https://umbra-open-data-catalog.s3.us-west-2.amazonaws.com/stac/2025/2025-06/2025-06-22/01e9fe39-3a6e-4458-a5d1-cf92eb21b961/01e9fe39-3a6e-4458-a5d1-cf92eb21b961.json",
+      "message": "asset '2025-06-22-23-57-52_UMBRA-10_MM.json' has no usable href"
+    },
+    {
+      "code": "empty_asset_href",
+      "source_url": "https://umbra-open-data-catalog.s3.us-west-2.amazonaws.com/stac/2025/2025-06/2025-06-22/01e9fe39-3a6e-4458-a5d1-cf92eb21b961/01e9fe39-3a6e-4458-a5d1-cf92eb21b961.json",
+      "message": "asset '2025-06-22-23-57-52_UMBRA-10_MM.tif' has no usable href"
+    },
+    {
+      "code": "empty_asset_href",
+      "source_url": "https://umbra-open-data-catalog.s3.us-west-2.amazonaws.com/stac/2025/2025-06/2025-06-22/01e9fe39-3a6e-4458-a5d1-cf92eb21b961/01e9fe39-3a6e-4458-a5d1-cf92eb21b961.json",
+      "message": "asset '2025-06-22-23-57-52_UMBRA-10_SICD_MM.nitf' has no usable href"
+    },
+    {
+      "code": "empty_asset_href",
+      "source_url": "https://umbra-open-data-catalog.s3.us-west-2.amazonaws.com/stac/2025/2025-06/2025-06-22/01e9fe39-3a6e-4458-a5d1-cf92eb21b961/01e9fe39-3a6e-4458-a5d1-cf92eb21b961.json",
+      "message": "asset '2025-06-22-23-57-52_UMBRA-10_SICD_MM.xml' has no usable href"
+    },
+    {
+      "code": "empty_asset_href",
+      "source_url": "https://umbra-open-data-catalog.s3.us-west-2.amazonaws.com/stac/2025/2025-06/2025-06-22/01e9fe39-3a6e-4458-a5d1-cf92eb21b961/01e9fe39-3a6e-4458-a5d1-cf92eb21b961.json",
+      "message": "asset '2025-06-22-23-57-52_UMBRA-10_SIDD_MM.nitf' has no usable href"
+    },
+    {
+      "code": "empty_asset_href",
+      "source_url": "https://umbra-open-data-catalog.s3.us-west-2.amazonaws.com/stac/2025/2025-06/2025-06-22/e29c75ae-2839-44c1-a28a-43c3370e642c/e29c75ae-2839-44c1-a28a-43c3370e642c.json",
+      "message": "asset '2025-06-22-09-37-48_3041bf73-61c9-4c6e-9a0a-1cfa2b3076a5.parquet' has no usable href"
+    },
+    {
+      "code": "empty_asset_href",
+      "source_url": "https://umbra-open-data-catalog.s3.us-west-2.amazonaws.com/stac/2025/2025-06/2025-06-22/e29c75ae-2839-44c1-a28a-43c3370e642c/e29c75ae-2839-44c1-a28a-43c3370e642c.json",
+      "message": "asset '2025-06-22-09-37-48_UMBRA-08.stac.v2.json' has no usable href"
+    },
+    {
+      "code": "empty_asset_href",
+      "source_url": "https://umbra-open-data-catalog.s3.us-west-2.amazonaws.com/stac/2025/2025-06/2025-06-22/e29c75ae-2839-44c1-a28a-43c3370e642c/e29c75ae-2839-44c1-a28a-43c3370e642c.json",
+      "message": "asset '2025-06-22-09-37-48_UMBRA-08_ANALYSIS.zip' has no usable href"
+    },
+    {
+      "code": "empty_asset_href",
+      "source_url": "https://umbra-open-data-catalog.s3.us-west-2.amazonaws.com/stac/2025/2025-06/2025-06-22/e29c75ae-2839-44c1-a28a-43c3370e642c/e29c75ae-2839-44c1-a28a-43c3370e642c.json",
+      "message": "asset '2025-06-22-09-37-48_UMBRA-08_CSI_MM.tif' has no usable href"
+    },
+    {
+      "code": "empty_asset_href",
+      "source_url": "https://umbra-open-data-catalog.s3.us-west-2.amazonaws.com/stac/2025/2025-06/2025-06-22/e29c75ae-2839-44c1-a28a-43c3370e642c/e29c75ae-2839-44c1-a28a-43c3370e642c.json",
+      "message": "asset '2025-06-22-09-37-48_UMBRA-08_CSI_SIDD_MM.nitf' has no usable href"
+    },
+    {
+      "code": "empty_asset_href",
+      "source_url": "https://umbra-open-data-catalog.s3.us-west-2.amazonaws.com/stac/2025/2025-06/2025-06-22/e29c75ae-2839-44c1-a28a-43c3370e642c/e29c75ae-2839-44c1-a28a-43c3370e642c.json",
+      "message": "asset '2025-06-22-09-37-48_UMBRA-08_MM.cphd' has no usable href"
+    },
+    {
+      "code": "empty_asset_href",
+      "source_url": "https://umbra-open-data-catalog.s3.us-west-2.amazonaws.com/stac/2025/2025-06/2025-06-22/e29c75ae-2839-44c1-a28a-43c3370e642c/e29c75ae-2839-44c1-a28a-43c3370e642c.json",
+      "message": "asset '2025-06-22-09-37-48_UMBRA-08_MM.json' has no usable href"
+    },
+    {
+      "code": "empty_asset_href",
+      "source_url": "https://umbra-open-data-catalog.s3.us-west-2.amazonaws.com/stac/2025/2025-06/2025-06-22/e29c75ae-2839-44c1-a28a-43c3370e642c/e29c75ae-2839-44c1-a28a-43c3370e642c.json",
+      "message": "asset '2025-06-22-09-37-48_UMBRA-08_MM.tif' has no usable href"
+    },
+    {
+      "code": "empty_asset_href",
+      "source_url": "https://umbra-open-data-catalog.s3.us-west-2.amazonaws.com/stac/2025/2025-06/2025-06-22/e29c75ae-2839-44c1-a28a-43c3370e642c/e29c75ae-2839-44c1-a28a-43c3370e642c.json",
+      "message": "asset '2025-06-22-09-37-48_UMBRA-08_SICD_MM.nitf' has no usable href"
+    },
+    {
+      "code": "empty_asset_href",
+      "source_url": "https://umbra-open-data-catalog.s3.us-west-2.amazonaws.com/stac/2025/2025-06/2025-06-22/e29c75ae-2839-44c1-a28a-43c3370e642c/e29c75ae-2839-44c1-a28a-43c3370e642c.json",
+      "message": "asset '2025-06-22-09-37-48_UMBRA-08_SICD_MM.xml' has no usable href"
+    },
+    {
+      "code": "empty_asset_href",
+      "source_url": "https://umbra-open-data-catalog.s3.us-west-2.amazonaws.com/stac/2025/2025-06/2025-06-22/e29c75ae-2839-44c1-a28a-43c3370e642c/e29c75ae-2839-44c1-a28a-43c3370e642c.json",
+      "message": "asset '2025-06-22-09-37-48_UMBRA-08_SIDD_MM.nitf' has no usable href"
+    },
+    {
+      "code": "empty_asset_href",
+      "source_url": "https://umbra-open-data-catalog.s3.us-west-2.amazonaws.com/stac/2025/2025-06/2025-06-22/37d566fe-5ca9-4608-a6da-4a6393e1fa9d/37d566fe-5ca9-4608-a6da-4a6393e1fa9d.json",
+      "message": "asset '2025-06-22-04-38-11_729f8d64-e1c4-4210-ba50-0d6b774ee17e.parquet' has no usable href"
+    },
+    {
+      "code": "empty_asset_href",
+      "source_url": "https://umbra-open-data-catalog.s3.us-west-2.amazonaws.com/stac/2025/2025-06/2025-06-22/37d566fe-5ca9-4608-a6da-4a6393e1fa9d/37d566fe-5ca9-4608-a6da-4a6393e1fa9d.json",
+      "message": "asset '2025-06-22-04-38-11_UMBRA-05.stac.v2.json' has no usable href"
+    },
+    {
+      "code": "empty_asset_href",
+      "source_url": "https://umbra-open-data-catalog.s3.us-west-2.amazonaws.com/stac/2025/2025-06/2025-06-22/37d566fe-5ca9-4608-a6da-4a6393e1fa9d/37d566fe-5ca9-4608-a6da-4a6393e1fa9d.json",
+      "message": "asset '2025-06-22-04-38-11_UMBRA-05_ANALYSIS.zip' has no usable href"
+    },
+    {
+      "code": "empty_asset_href",
+      "source_url": "https://umbra-open-data-catalog.s3.us-west-2.amazonaws.com/stac/2025/2025-06/2025-06-22/37d566fe-5ca9-4608-a6da-4a6393e1fa9d/37d566fe-5ca9-4608-a6da-4a6393e1fa9d.json",
+      "message": "asset '2025-06-22-04-38-11_UMBRA-05_CSI_MM.tif' has no usable href"
+    },
+    {
+      "code": "empty_asset_href",
+      "source_url": "https://umbra-open-data-catalog.s3.us-west-2.amazonaws.com/stac/2025/2025-06/2025-06-22/37d566fe-5ca9-4608-a6da-4a6393e1fa9d/37d566fe-5ca9-4608-a6da-4a6393e1fa9d.json",
+      "message": "asset '2025-06-22-04-38-11_UMBRA-05_CSI_SIDD_MM.nitf' has no usable href"
+    },
+    {
+      "code": "empty_asset_href",
+      "source_url": "https://umbra-open-data-catalog.s3.us-west-2.amazonaws.com/stac/2025/2025-06/2025-06-22/37d566fe-5ca9-4608-a6da-4a6393e1fa9d/37d566fe-5ca9-4608-a6da-4a6393e1fa9d.json",
+      "message": "asset '2025-06-22-04-38-11_UMBRA-05_MM.cphd' has no usable href"
+    },
+    {
+      "code": "empty_asset_href",
+      "source_url": "https://umbra-open-data-catalog.s3.us-west-2.amazonaws.com/stac/2025/2025-06/2025-06-22/37d566fe-5ca9-4608-a6da-4a6393e1fa9d/37d566fe-5ca9-4608-a6da-4a6393e1fa9d.json",
+      "message": "asset '2025-06-22-04-38-11_UMBRA-05_MM.json' has no usable href"
+    },
+    {
+      "code": "empty_asset_href",
+      "source_url": "https://umbra-open-data-catalog.s3.us-west-2.amazonaws.com/stac/2025/2025-06/2025-06-22/37d566fe-5ca9-4608-a6da-4a6393e1fa9d/37d566fe-5ca9-4608-a6da-4a6393e1fa9d.json",
+      "message": "asset '2025-06-22-04-38-11_UMBRA-05_MM.tif' has no usable href"
+    },
+    {
+      "code": "empty_asset_href",
+      "source_url": "https://umbra-open-data-catalog.s3.us-west-2.amazonaws.com/stac/2025/2025-06/2025-06-22/37d566fe-5ca9-4608-a6da-4a6393e1fa9d/37d566fe-5ca9-4608-a6da-4a6393e1fa9d.json",
+      "message": "asset '2025-06-22-04-38-11_UMBRA-05_SICD_MM.nitf' has no usable href"
+    },
+    {
+      "code": "empty_asset_href",
+      "source_url": "https://umbra-open-data-catalog.s3.us-west-2.amazonaws.com/stac/2025/2025-06/2025-06-22/37d566fe-5ca9-4608-a6da-4a6393e1fa9d/37d566fe-5ca9-4608-a6da-4a6393e1fa9d.json",
+      "message": "asset '2025-06-22-04-38-11_UMBRA-05_SICD_MM.xml' has no usable href"
+    },
+    {
+      "code": "empty_asset_href",
+      "source_url": "https://umbra-open-data-catalog.s3.us-west-2.amazonaws.com/stac/2025/2025-06/2025-06-22/37d566fe-5ca9-4608-a6da-4a6393e1fa9d/37d566fe-5ca9-4608-a6da-4a6393e1fa9d.json",
+      "message": "asset '2025-06-22-04-38-11_UMBRA-05_SIDD_MM.nitf' has no usable href"
+    },
+    {
+      "code": "empty_asset_href",
+      "source_url": "https://umbra-open-data-catalog.s3.us-west-2.amazonaws.com/stac/2025/2025-06/2025-06-22/4581a963-39c7-4d8e-8a60-bd8d5360741a/4581a963-39c7-4d8e-8a60-bd8d5360741a.json",
+      "message": "asset '2025-06-22-10-49-49_9ce16a8e-af2f-4f90-ab94-d7871cbe470c.parquet' has no usable href"
+    },
+    {
+      "code": "empty_asset_href",
+      "source_url": "https://umbra-open-data-catalog.s3.us-west-2.amazonaws.com/stac/2025/2025-06/2025-06-22/4581a963-39c7-4d8e-8a60-bd8d5360741a/4581a963-39c7-4d8e-8a60-bd8d5360741a.json",
+      "message": "asset '2025-06-22-10-49-49_UMBRA-09.stac.v2.json' has no usable href"
+    },
+    {
+      "code": "empty_asset_href",
+      "source_url": "https://umbra-open-data-catalog.s3.us-west-2.amazonaws.com/stac/2025/2025-06/2025-06-22/4581a963-39c7-4d8e-8a60-bd8d5360741a/4581a963-39c7-4d8e-8a60-bd8d5360741a.json",
+      "message": "asset '2025-06-22-10-49-49_UMBRA-09_ANALYSIS.zip' has no usable href"
+    },
+    {
+      "code": "empty_asset_href",
+      "source_url": "https://umbra-open-data-catalog.s3.us-west-2.amazonaws.com/stac/2025/2025-06/2025-06-22/4581a963-39c7-4d8e-8a60-bd8d5360741a/4581a963-39c7-4d8e-8a60-bd8d5360741a.json",
+      "message": "asset '2025-06-22-10-49-49_UMBRA-09_CSI_MM.tif' has no usable href"
+    },
+    {
+      "code": "empty_asset_href",
+      "source_url": "https://umbra-open-data-catalog.s3.us-west-2.amazonaws.com/stac/2025/2025-06/2025-06-22/4581a963-39c7-4d8e-8a60-bd8d5360741a/4581a963-39c7-4d8e-8a60-bd8d5360741a.json",
+      "message": "asset '2025-06-22-10-49-49_UMBRA-09_CSI_SIDD_MM.nitf' has no usable href"
+    },
+    {
+      "code": "empty_asset_href",
+      "source_url": "https://umbra-open-data-catalog.s3.us-west-2.amazonaws.com/stac/2025/2025-06/2025-06-22/4581a963-39c7-4d8e-8a60-bd8d5360741a/4581a963-39c7-4d8e-8a60-bd8d5360741a.json",
+      "message": "asset '2025-06-22-10-49-49_UMBRA-09_MM.cphd' has no usable href"
+    },
+    {
+      "code": "empty_asset_href",
+      "source_url": "https://umbra-open-data-catalog.s3.us-west-2.amazonaws.com/stac/2025/2025-06/2025-06-22/4581a963-39c7-4d8e-8a60-bd8d5360741a/4581a963-39c7-4d8e-8a60-bd8d5360741a.json",
+      "message": "asset '2025-06-22-10-49-49_UMBRA-09_MM.json' has no usable href"
+    },
+    {
+      "code": "empty_asset_href",
+      "source_url": "https://umbra-open-data-catalog.s3.us-west-2.amazonaws.com/stac/2025/2025-06/2025-06-22/4581a963-39c7-4d8e-8a60-bd8d5360741a/4581a963-39c7-4d8e-8a60-bd8d5360741a.json",
+      "message": "asset '2025-06-22-10-49-49_UMBRA-09_MM.tif' has no usable href"
+    },
+    {
+      "code": "empty_asset_href",
+      "source_url": "https://umbra-open-data-catalog.s3.us-west-2.amazonaws.com/stac/2025/2025-06/2025-06-22/4581a963-39c7-4d8e-8a60-bd8d5360741a/4581a963-39c7-4d8e-8a60-bd8d5360741a.json",
+      "message": "asset '2025-06-22-10-49-49_UMBRA-09_SICD_MM.nitf' has no usable href"
+    },
+    {
+      "code": "empty_asset_href",
+      "source_url": "https://umbra-open-data-catalog.s3.us-west-2.amazonaws.com/stac/2025/2025-06/2025-06-22/4581a963-39c7-4d8e-8a60-bd8d5360741a/4581a963-39c7-4d8e-8a60-bd8d5360741a.json",
+      "message": "asset '2025-06-22-10-49-49_UMBRA-09_SICD_MM.xml' has no usable href"
+    },
+    {
+      "code": "empty_asset_href",
+      "source_url": "https://umbra-open-data-catalog.s3.us-west-2.amazonaws.com/stac/2025/2025-06/2025-06-22/4581a963-39c7-4d8e-8a60-bd8d5360741a/4581a963-39c7-4d8e-8a60-bd8d5360741a.json",
+      "message": "asset '2025-06-22-10-49-49_UMBRA-09_SIDD_MM.nitf' has no usable href"
+    },
+    {
+      "code": "empty_asset_href",
+      "source_url": "https://umbra-open-data-catalog.s3.us-west-2.amazonaws.com/stac/2025/2025-06/2025-06-22/f6f338fb-3aa3-4935-bb9d-c9a75e13506a/f6f338fb-3aa3-4935-bb9d-c9a75e13506a.json",
+      "message": "asset '2025-06-22-03-22-37_05e9fde1-aca3-4c5f-913a-127e1231f041.parquet' has no usable href"
+    },
+    {
+      "code": "empty_asset_href",
+      "source_url": "https://umbra-open-data-catalog.s3.us-west-2.amazonaws.com/stac/2025/2025-06/2025-06-22/f6f338fb-3aa3-4935-bb9d-c9a75e13506a/f6f338fb-3aa3-4935-bb9d-c9a75e13506a.json",
+      "message": "asset '2025-06-22-03-22-37_UMBRA-08.stac.v2.json' has no usable href"
+    },
+    {
+      "code": "empty_asset_href",
+      "source_url": "https://umbra-open-data-catalog.s3.us-west-2.amazonaws.com/stac/2025/2025-06/2025-06-22/f6f338fb-3aa3-4935-bb9d-c9a75e13506a/f6f338fb-3aa3-4935-bb9d-c9a75e13506a.json",
+      "message": "asset '2025-06-22-03-22-37_UMBRA-08_ANALYSIS.zip' has no usable href"
+    },
+    {
+      "code": "empty_asset_href",
+      "source_url": "https://umbra-open-data-catalog.s3.us-west-2.amazonaws.com/stac/2025/2025-06/2025-06-22/f6f338fb-3aa3-4935-bb9d-c9a75e13506a/f6f338fb-3aa3-4935-bb9d-c9a75e13506a.json",
+      "message": "asset '2025-06-22-03-22-37_UMBRA-08_CSI_MM.tif' has no usable href"
+    },
+    {
+      "code": "empty_asset_href",
+      "source_url": "https://umbra-open-data-catalog.s3.us-west-2.amazonaws.com/stac/2025/2025-06/2025-06-22/f6f338fb-3aa3-4935-bb9d-c9a75e13506a/f6f338fb-3aa3-4935-bb9d-c9a75e13506a.json",
+      "message": "asset '2025-06-22-03-22-37_UMBRA-08_CSI_SIDD_MM.nitf' has no usable href"
+    }
+  ],
+  "candidate_time_series_aois": [
+    {
+      "grid_key": "40.50,-112.25",
+      "bbox": [
+        -112.18770338498469,
+        40.490619777238955,
+        -112.10445008974163,
+        40.55415133756563
+      ],
+      "acquisition_count": 5,
+      "first_acquired_at": "2025-06-05T05:15:12.300000Z",
+      "last_acquired_at": "2025-06-27T18:30:21.500000Z",
+      "item_ids": [
+        "50d2b9b7-74d6-44d4-8da4-b6d1231da7b5",
+        "89284e7a-04bc-4917-9467-502f2ff3bece",
+        "f20c78a1-6baa-4d09-8ab9-c2954d49e4d9",
+        "fd4c3274-0cea-4c9f-91ff-0638bf07b33c",
+        "124149f5-502d-488d-8e8c-e88794f1d200"
+      ],
+      "products": [
+        "GEC"
+      ],
+      "polarizations": [
+        "HH",
+        "VV"
+      ]
+    },
+    {
+      "grid_key": "3.75,-66.75",
+      "bbox": [
+        -66.8350549266421,
+        3.6807150246010334,
+        -66.7718955984722,
+        3.744164798368715
+      ],
+      "acquisition_count": 4,
+      "first_acquired_at": "2025-06-05T15:21:14.700000Z",
+      "last_acquired_at": "2025-06-21T03:07:51.500000Z",
+      "item_ids": [
+        "612c198d-4a88-4008-a6a2-1e569d48ca48",
+        "7f0c0e19-6abd-4520-bae7-c84bbe636baa",
+        "daabe9b8-2e94-4092-bf9a-06e5941bbe56",
+        "5b470f4e-7c88-4f36-8114-3001bbb14bbd"
+      ],
+      "products": [
+        "GEC"
+      ],
+      "polarizations": [
+        "HH",
+        "VV"
+      ]
+    },
+    {
+      "grid_key": "38.00,-119.75",
+      "bbox": [
+        -119.7612775609356,
+        37.91516213746577,
+        -119.68212944716814,
+        37.977838709955975
+      ],
+      "acquisition_count": 4,
+      "first_acquired_at": "2025-06-10T05:49:59.300000Z",
+      "last_acquired_at": "2025-06-27T04:42:57.299998Z",
+      "item_ids": [
+        "244e93c3-ea52-42af-b7a5-b295765f6cb9",
+        "876e9b9c-c662-4f97-93dc-53c1d93342be",
+        "f54e2198-4268-424f-a7ab-38833a2f2a4e",
+        "dd43ae6b-6941-4f5c-9757-a053b9b1eb06"
+      ],
+      "products": [
+        "GEC"
+      ],
+      "polarizations": [
+        "VV"
+      ]
+    },
+    {
+      "grid_key": "38.50,-121.75",
+      "bbox": [
+        -121.82478191963249,
+        38.500887301174316,
+        -121.74480343781325,
+        38.563709058470316
+      ],
+      "acquisition_count": 4,
+      "first_acquired_at": "2025-06-05T06:45:47.500000Z",
+      "last_acquired_at": "2025-06-21T05:15:21.900000Z",
+      "item_ids": [
+        "5ffe2886-8f4c-4854-ab7f-bb200e2b5b5c",
+        "f9bd19a4-6692-4228-bc73-38b4c572a749",
+        "41afaf33-0941-4d91-a453-669076764b11",
+        "2a54b520-ebce-4155-94f0-3956bb4fb94f"
+      ],
+      "products": [
+        "GEC"
+      ],
+      "polarizations": [
+        "VV"
+      ]
+    },
+    {
+      "grid_key": "53.50,10.00",
+      "bbox": [
+        9.886088948508867,
+        53.477255442658496,
+        9.991425178152406,
+        53.54004836832306
+      ],
+      "acquisition_count": 4,
+      "first_acquired_at": "2025-06-05T08:58:12.900000Z",
+      "last_acquired_at": "2025-06-16T21:35:55Z",
+      "item_ids": [
+        "4c894058-93d4-4a87-9952-6a412fb27907",
+        "4c357ae2-8c69-4d8b-a2e7-ee7781970d7b",
+        "c7e6fd52-b59f-4caa-a5ce-3ac97f016d14",
+        "76bea6f5-4c83-4b9e-a04d-5196e321c941"
+      ],
+      "products": [
+        "GEC"
+      ],
+      "polarizations": [
+        "HH",
+        "VV"
+      ]
+    },
+    {
+      "grid_key": "-12.50,-69.25",
+      "bbox": [
+        -69.38183059768926,
+        -12.488477978245164,
+        -69.31935291284452,
+        -12.427079310704663
+      ],
+      "acquisition_count": 3,
+      "first_acquired_at": "2025-06-10T02:16:35Z",
+      "last_acquired_at": "2025-06-21T03:04:08.600000Z",
+      "item_ids": [
+        "fedf4e37-9ce0-492d-88bd-df676344d1e2",
+        "ce0d4970-d14e-44d6-b65b-f19d55098530",
+        "f174b46f-40e2-4aa2-b206-62a38cdefe40"
+      ],
+      "products": [
+        "GEC"
+      ],
+      "polarizations": [
+        "VV"
+      ]
+    },
+    {
+      "grid_key": "-30.75,121.50",
+      "bbox": [
+        121.4947854407212,
+        -30.810514209025374,
+        121.566579509513,
+        -30.748526023484917
+      ],
+      "acquisition_count": 3,
+      "first_acquired_at": "2025-06-10T14:55:15.200000Z",
+      "last_acquired_at": "2025-06-27T00:47:07.199999Z",
+      "item_ids": [
+        "ee96417c-b235-4488-a34d-945ea42447db",
+        "dcd8f15f-6a21-4372-b82a-cf47d86cd51e",
+        "ffb8bcdb-7d3a-44b5-8544-8189f19022e8"
+      ],
+      "products": [
+        "GEC"
+      ],
+      "polarizations": [
+        "VV"
+      ]
+    },
+    {
+      "grid_key": "-34.00,150.75",
+      "bbox": [
+        150.68343846465814,
+        -33.91576468361945,
+        150.75319553519495,
+        -33.857587467843395
+      ],
+      "acquisition_count": 3,
+      "first_acquired_at": "2025-06-05T12:49:55.400000Z",
+      "last_acquired_at": "2025-06-16T00:22:52.100000Z",
+      "item_ids": [
+        "3562120e-47bb-4d88-ab8f-68bcc4a3e5ab",
+        "ff750ebf-29b6-45ec-86cd-eaaf4094379a",
+        "63ea7fb2-d3db-466c-8771-eecf94426813"
+      ],
+      "products": [
+        "GEC"
+      ],
+      "polarizations": [
+        "VV"
+      ]
+    },
+    {
+      "grid_key": "-34.50,-58.50",
+      "bbox": [
+        -58.412420682943655,
+        -34.62856659329693,
+        -58.35218457457996,
+        -34.57875987550489
+      ],
+      "acquisition_count": 3,
+      "first_acquired_at": "2025-06-05T13:50:09.800000Z",
+      "last_acquired_at": "2025-06-16T02:26:06.100000Z",
+      "item_ids": [
+        "d39ddabd-49e0-4513-846e-ed347a5c1840",
+        "5acacec3-5bd0-406f-b88a-0d4ceee70ddf",
+        "615fd657-9e15-4c29-89b1-3509f8ce3abc"
+      ],
+      "products": [
+        "GEC"
+      ],
+      "polarizations": [
+        "VV"
+      ]
+    },
+    {
+      "grid_key": "30.50,-96.50",
+      "bbox": [
+        -96.4645860869171,
+        30.509122383320754,
+        -96.40090494559568,
+        30.564245426920575
+      ],
+      "acquisition_count": 3,
+      "first_acquired_at": "2025-06-10T16:23:46.200000Z",
+      "last_acquired_at": "2025-06-21T17:22:40Z",
+      "item_ids": [
+        "806b096e-1723-4509-ab86-d9a7dbff53c7",
+        "da70ccc7-15ed-46b1-aae3-534a7e741caf",
+        "2b085ac7-897f-49a3-8630-8169aed85ee6"
+      ],
+      "products": [
+        "GEC"
+      ],
+      "polarizations": [
+        "VV"
+      ]
+    },
+    {
+      "grid_key": "33.75,-118.25",
+      "bbox": [
+        -118.27335653683802,
+        33.714308637714964,
+        -118.19818770587428,
+        33.77710362196448
+      ],
+      "acquisition_count": 3,
+      "first_acquired_at": "2025-06-10T05:48:48Z",
+      "last_acquired_at": "2025-06-22T04:38:15.500000Z",
+      "item_ids": [
+        "d50dd5c8-c8f9-4458-b905-dbc8ed34808b",
+        "eae96ece-829c-493e-83f1-3faa18269982",
+        "37d566fe-5ca9-4608-a6da-4a6393e1fa9d"
+      ],
+      "products": [
+        "GEC"
+      ],
+      "polarizations": [
+        "VV"
+      ]
+    },
+    {
+      "grid_key": "39.00,-111.75",
+      "bbox": [
+        -111.86047679262161,
+        39.04845141626661,
+        -111.77952980113128,
+        39.11154298711
+      ],
+      "acquisition_count": 3,
+      "first_acquired_at": "2025-06-05T05:14:29.700000Z",
+      "last_acquired_at": "2025-06-16T04:44:40.800000Z",
+      "item_ids": [
+        "9c16f905-d397-4b09-a07d-22743ad30426",
+        "1ef75ec2-f6c0-4bef-a6ed-736854f97546",
+        "a3fb57d9-ce0e-42b4-8183-1bb16d0e333c"
+      ],
+      "products": [
+        "GEC"
+      ],
+      "polarizations": [
+        "VV"
+      ]
+    },
+    {
+      "grid_key": "39.50,-119.50",
+      "bbox": [
+        -119.48243475882784,
+        39.51794932215085,
+        -119.40761552869888,
+        39.57587383685235
+      ],
+      "acquisition_count": 3,
+      "first_acquired_at": "2025-06-10T17:57:24.900000Z",
+      "last_acquired_at": "2025-06-21T18:55:52.900000Z",
+      "item_ids": [
+        "e164d260-63b5-432a-9532-27ec51416b2a",
+        "3984b412-9d52-4545-85da-27e3b1038275",
+        "95f1f34c-0547-4729-8264-9a20ce45b8b3"
+      ],
+      "products": [
+        "GEC"
+      ],
+      "polarizations": [
+        "VV"
+      ]
+    },
+    {
+      "grid_key": "40.75,-74.25",
+      "bbox": [
+        -74.17670852362455,
+        40.648169343587,
+        -74.09846509849228,
+        40.707738008333735
+      ],
+      "acquisition_count": 3,
+      "first_acquired_at": "2025-06-05T03:34:57.600000Z",
+      "last_acquired_at": "2025-06-16T02:45:32.500000Z",
+      "item_ids": [
+        "ad37c524-eb0d-4f56-87ce-6838888443a1",
+        "152c4d7a-11a0-49c5-bbcf-fc5f38ad1100",
+        "26cf8a9c-6c30-40f0-9ea3-1b137c1d60b2"
+      ],
+      "products": [
+        "GEC"
+      ],
+      "polarizations": [
+        "VV"
+      ]
+    },
+    {
+      "grid_key": "41.75,-118.00",
+      "bbox": [
+        -118.09682591444387,
+        41.67687898003723,
+        -118.01269108324816,
+        41.73992491710996
+      ],
+      "acquisition_count": 3,
+      "first_acquired_at": "2025-06-10T06:27:49.500000Z",
+      "last_acquired_at": "2025-06-21T18:54:56.400000Z",
+      "item_ids": [
+        "2e9594ee-34d5-4cbe-b4f2-cfbdaaca8924",
+        "4b364a47-f8f0-4736-bf1d-fff383deff3b",
+        "3e160121-47a6-402d-b6ea-5d1651465aca"
+      ],
+      "products": [
+        "GEC"
+      ],
+      "polarizations": [
+        "HH",
+        "VV"
+      ]
+    },
+    {
+      "grid_key": "5.25,-52.75",
+      "bbox": [
+        -52.79798485477091,
+        5.1988932284795455,
+        -52.73464851107877,
+        5.26238737233541
+      ],
+      "acquisition_count": 3,
+      "first_acquired_at": "2025-06-05T00:37:56.799998Z",
+      "last_acquired_at": "2025-06-16T14:17:31.300000Z",
+      "item_ids": [
+        "1a815a43-7dc3-457f-a72a-e317c3ef9585",
+        "ddc12f2a-fa27-481b-98d8-692c37825d3c",
+        "8acec1c8-eefb-44e5-98e0-0bfeb5515016"
+      ],
+      "products": [
+        "GEC"
+      ],
+      "polarizations": [
+        "VV"
+      ]
+    },
+    {
+      "grid_key": "-1.25,29.25",
+      "bbox": [
+        29.329906280845304,
+        -1.3724422501321774,
+        29.390957698589794,
+        -1.3109965559070402
+      ],
+      "acquisition_count": 2,
+      "first_acquired_at": "2025-06-05T08:59:31.500000Z",
+      "last_acquired_at": "2025-06-10T08:40:26.300000Z",
+      "item_ids": [
+        "7f285176-fca0-416a-aa0b-e458fa1e367f",
+        "8e710d7b-ac79-4878-a837-ebd31dd8eb2f"
+      ],
+      "products": [
+        "GEC"
+      ],
+      "polarizations": [
+        "VV"
+      ]
+    },
+    {
+      "grid_key": "-19.50,169.50",
+      "bbox": [
+        169.42169968343944,
+        -19.55062612842698,
+        169.4869361325303,
+        -19.488770917648058
+      ],
+      "acquisition_count": 2,
+      "first_acquired_at": "2025-06-05T23:09:51.600000Z",
+      "last_acquired_at": "2025-06-16T10:52:29.700000Z",
+      "item_ids": [
+        "df5ae943-9300-40e0-8c92-9bd7fb98136a",
+        "1bb8fa16-3f5f-42e5-bef2-c9a14b64b886"
+      ],
+      "products": [
+        "GEC"
+      ],
+      "polarizations": [
+        "VV"
+      ]
+    },
+    {
+      "grid_key": "-33.50,-70.75",
+      "bbox": [
+        -70.82894764951403,
+        -33.41965343011591,
+        -70.75705031378263,
+        -33.35934081601166
+      ],
+      "acquisition_count": 2,
+      "first_acquired_at": "2025-06-05T03:21:30.600000Z",
+      "last_acquired_at": "2025-06-21T15:00:09.600000Z",
+      "item_ids": [
+        "4c1d93b5-772c-4993-bf96-67e9104d940a",
+        "04855ae3-e696-4471-8034-2e1e27be19a9"
+      ],
+      "products": [
+        "GEC"
+      ],
+      "polarizations": [
+        "HH",
+        "VV"
+      ]
+    },
+    {
+      "grid_key": "-33.75,116.00",
+      "bbox": [
+        116.03151421759485,
+        -33.89805242179202,
+        116.10626394441812,
+        -33.83569674627639
+      ],
+      "acquisition_count": 2,
+      "first_acquired_at": "2025-06-05T01:31:50.400000Z",
+      "last_acquired_at": "2025-06-10T15:41:31.700000Z",
+      "item_ids": [
+        "95b26791-1b13-42fc-93e8-f9f00d5698f3",
+        "59a99c73-9875-47bb-b3e5-df4bd8904b51"
+      ],
+      "products": [
+        "GEC"
+      ],
+      "polarizations": [
+        "VV"
+      ]
+    },
+    {
+      "grid_key": "-4.00,137.00",
+      "bbox": [
+        137.08309213057075,
+        -4.085690253802266,
+        137.14298549017337,
+        -4.0255464809588215
+      ],
+      "acquisition_count": 2,
+      "first_acquired_at": "2025-06-10T13:28:35.100000Z",
+      "last_acquired_at": "2025-06-16T13:50:18.300000Z",
+      "item_ids": [
+        "277b1a58-57dd-496b-b6b0-a0c71facb938",
+        "b75935f8-6bb7-437e-94f0-8eafb2c5fd07"
+      ],
+      "products": [
+        "GEC"
+      ],
+      "polarizations": [
+        "HH",
+        "VV"
+      ]
+    },
+    {
+      "grid_key": "1.25,103.75",
+      "bbox": [
+        103.81176252787085,
+        1.237536041187951,
+        103.86441369669909,
+        1.2905289778776825
+      ],
+      "acquisition_count": 2,
+      "first_acquired_at": "2025-06-16T03:21:35.200000Z",
+      "last_acquired_at": "2025-06-22T03:22:41.900000Z",
+      "item_ids": [
+        "7ebd8554-837b-45d2-bf5e-ee552cdda663",
+        "f6f338fb-3aa3-4935-bb9d-c9a75e13506a"
+      ],
+      "products": [
+        "GEC"
+      ],
+      "polarizations": [
+        "VV"
+      ]
+    },
+    {
+      "grid_key": "1.75,-78.25",
+      "bbox": [
+        -78.22761515706325,
+        1.7543354447379143,
+        -78.17736012061266,
+        1.8049044386287618
+      ],
+      "acquisition_count": 2,
+      "first_acquired_at": "2025-06-10T02:20:38.600000Z",
+      "last_acquired_at": "2025-06-21T15:54:35.700000Z",
+      "item_ids": [
+        "4b4bf5ff-f1a1-44ec-9051-ad82cd3948db",
+        "5e60e54d-6a86-4146-9950-8105cd93ba9d"
+      ],
+      "products": [
+        "GEC"
+      ],
+      "polarizations": [
+        "VV"
+      ]
+    },
+    {
+      "grid_key": "2.50,10.00",
+      "bbox": [
+        9.910738180637685,
+        2.565805399680181,
+        9.966674890489278,
+        2.6220606143242815
+      ],
+      "acquisition_count": 2,
+      "first_acquired_at": "2025-06-16T08:52:48.800001Z",
+      "last_acquired_at": "2025-06-27T10:08:06.600000Z",
+      "item_ids": [
+        "1e2d4f1b-20b9-4dc5-9f55-91b112176982",
+        "e273fcf4-9c07-4f93-8305-8fa29c1c3da8"
+      ],
+      "products": [
+        "GEC"
+      ],
+      "polarizations": [
+        "VV"
+      ]
+    },
+    {
+      "grid_key": "2.75,10.00",
+      "bbox": [
+        9.938271386117668,
+        2.595781564838321,
+        10.000445441693481,
+        2.658307974477528
+      ],
+      "acquisition_count": 2,
+      "first_acquired_at": "2025-06-16T08:52:24.900000Z",
+      "last_acquired_at": "2025-06-22T09:37:54.700000Z",
+      "item_ids": [
+        "77fd5b97-38a9-4cd2-afaa-4fc35a576b76",
+        "e29c75ae-2839-44c1-a28a-43c3370e642c"
+      ],
+      "products": [
+        "GEC"
+      ],
+      "polarizations": [
+        "VV"
+      ]
+    }
+  ],
+  "metadata_only": true,
+  "large_imagery_downloaded": false
+}
