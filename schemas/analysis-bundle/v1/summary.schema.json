@@ -1,0 +1,105 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.echoatlas.local/analysis-bundle/v1/summary.schema.json",
+  "title": "EchoAtlas optional non-authoritative draft summary v1",
+  "type": "object",
+  "required": [
+    "contract_version",
+    "bundle_id",
+    "summary_id",
+    "status",
+    "authoritative",
+    "generator",
+    "text",
+    "candidate_ids",
+    "evidence_artifact_ids",
+    "warnings"
+  ],
+  "properties": {
+    "contract_version": {
+      "$ref": "https://schemas.echoatlas.local/analysis-bundle/v1/common.schema.json#/$defs/bundleVersion"
+    },
+    "bundle_id": {
+      "$ref": "https://schemas.echoatlas.local/analysis-bundle/v1/common.schema.json#/$defs/identifier"
+    },
+    "summary_id": {
+      "$ref": "https://schemas.echoatlas.local/analysis-bundle/v1/common.schema.json#/$defs/identifier"
+    },
+    "status": {
+      "enum": [
+        "draft",
+        "accepted",
+        "rejected",
+        "superseded"
+      ]
+    },
+    "authoritative": {
+      "const": false
+    },
+    "generator": {
+      "type": "object",
+      "required": [
+        "kind",
+        "provider",
+        "model",
+        "version",
+        "generated_at"
+      ],
+      "properties": {
+        "kind": {
+          "enum": [
+            "ai",
+            "fixture"
+          ]
+        },
+        "provider": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 200
+        },
+        "model": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 200
+        },
+        "version": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 100
+        },
+        "generated_at": {
+          "$ref": "https://schemas.echoatlas.local/analysis-bundle/v1/common.schema.json#/$defs/timestamp"
+        }
+      },
+      "additionalProperties": false
+    },
+    "text": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 10000
+    },
+    "candidate_ids": {
+      "type": "array",
+      "items": {
+        "$ref": "https://schemas.echoatlas.local/analysis-bundle/v1/common.schema.json#/$defs/identifier"
+      },
+      "uniqueItems": true
+    },
+    "evidence_artifact_ids": {
+      "type": "array",
+      "items": {
+        "$ref": "https://schemas.echoatlas.local/analysis-bundle/v1/common.schema.json#/$defs/artifactId"
+      },
+      "uniqueItems": true
+    },
+    "warnings": {
+      "type": "array",
+      "items": {
+        "$ref": "https://schemas.echoatlas.local/analysis-bundle/v1/common.schema.json#/$defs/warning"
+      },
+      "minItems": 1,
+      "maxItems": 100
+    }
+  },
+  "additionalProperties": false
+}

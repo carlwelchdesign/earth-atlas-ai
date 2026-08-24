@@ -1,0 +1,187 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.echoatlas.local/analysis-bundle/v1/candidates.schema.json",
+  "title": "EchoAtlas analysis bundle candidates v1",
+  "type": "object",
+  "required": [
+    "type",
+    "contract_version",
+    "bundle_id",
+    "change_run_id",
+    "source_processing_run_id",
+    "display_label",
+    "warnings",
+    "features"
+  ],
+  "properties": {
+    "type": {
+      "const": "FeatureCollection"
+    },
+    "contract_version": {
+      "$ref": "https://schemas.echoatlas.local/analysis-bundle/v1/common.schema.json#/$defs/bundleVersion"
+    },
+    "bundle_id": {
+      "$ref": "https://schemas.echoatlas.local/analysis-bundle/v1/common.schema.json#/$defs/identifier"
+    },
+    "change_run_id": {
+      "$ref": "https://schemas.echoatlas.local/analysis-bundle/v1/common.schema.json#/$defs/identifier"
+    },
+    "source_processing_run_id": {
+      "$ref": "https://schemas.echoatlas.local/analysis-bundle/v1/common.schema.json#/$defs/identifier"
+    },
+    "display_label": {
+      "const": "Change candidates"
+    },
+    "warnings": {
+      "type": "array",
+      "items": {
+        "$ref": "https://schemas.echoatlas.local/analysis-bundle/v1/common.schema.json#/$defs/warning"
+      },
+      "maxItems": 1000
+    },
+    "features": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/candidateFeature"
+      },
+      "maxItems": 10000
+    }
+  },
+  "$defs": {
+    "candidateFeature": {
+      "type": "object",
+      "required": [
+        "type",
+        "id",
+        "geometry",
+        "properties"
+      ],
+      "properties": {
+        "type": {
+          "const": "Feature"
+        },
+        "id": {
+          "$ref": "https://schemas.echoatlas.local/analysis-bundle/v1/common.schema.json#/$defs/identifier"
+        },
+        "geometry": {
+          "$ref": "https://schemas.echoatlas.local/analysis-bundle/v1/common.schema.json#/$defs/geometry"
+        },
+        "properties": {
+          "type": "object",
+          "required": [
+            "candidate_id",
+            "display_label",
+            "status",
+            "change_run_id",
+            "source_processing_run_id",
+            "measurements",
+            "score_components",
+            "evidence_artifact_ids",
+            "warnings"
+          ],
+          "properties": {
+            "candidate_id": {
+              "$ref": "https://schemas.echoatlas.local/analysis-bundle/v1/common.schema.json#/$defs/identifier"
+            },
+            "display_label": {
+              "const": "Change candidate"
+            },
+            "status": {
+              "const": "pending"
+            },
+            "change_run_id": {
+              "$ref": "https://schemas.echoatlas.local/analysis-bundle/v1/common.schema.json#/$defs/identifier"
+            },
+            "source_processing_run_id": {
+              "$ref": "https://schemas.echoatlas.local/analysis-bundle/v1/common.schema.json#/$defs/identifier"
+            },
+            "measurements": {
+              "type": "object",
+              "required": [
+                "pixel_count",
+                "area_square_meters",
+                "projected_bbox",
+                "wgs84_bbox"
+              ],
+              "properties": {
+                "pixel_count": {
+                  "type": "integer",
+                  "minimum": 1
+                },
+                "area_square_meters": {
+                  "type": "number",
+                  "exclusiveMinimum": 0
+                },
+                "projected_bbox": {
+                  "$ref": "https://schemas.echoatlas.local/analysis-bundle/v1/common.schema.json#/$defs/bbox"
+                },
+                "wgs84_bbox": {
+                  "$ref": "https://schemas.echoatlas.local/analysis-bundle/v1/common.schema.json#/$defs/bbox"
+                }
+              },
+              "additionalProperties": false
+            },
+            "score_components": {
+              "type": "object",
+              "required": [
+                "mean_change_score",
+                "p95_change_score",
+                "max_change_score",
+                "mean_signed_normalized_delta",
+                "brightening_pixel_fraction",
+                "darkening_pixel_fraction"
+              ],
+              "properties": {
+                "mean_change_score": {
+                  "$ref": "#/$defs/unitInterval"
+                },
+                "p95_change_score": {
+                  "$ref": "#/$defs/unitInterval"
+                },
+                "max_change_score": {
+                  "$ref": "#/$defs/unitInterval"
+                },
+                "mean_signed_normalized_delta": {
+                  "type": "number",
+                  "minimum": -1,
+                  "maximum": 1
+                },
+                "brightening_pixel_fraction": {
+                  "$ref": "#/$defs/unitInterval"
+                },
+                "darkening_pixel_fraction": {
+                  "$ref": "#/$defs/unitInterval"
+                }
+              },
+              "additionalProperties": false
+            },
+            "evidence_artifact_ids": {
+              "type": "array",
+              "items": {
+                "$ref": "https://schemas.echoatlas.local/analysis-bundle/v1/common.schema.json#/$defs/artifactId"
+              },
+              "minItems": 1,
+              "uniqueItems": true
+            },
+            "warnings": {
+              "type": "array",
+              "items": {
+                "$ref": "https://schemas.echoatlas.local/analysis-bundle/v1/common.schema.json#/$defs/warning"
+              },
+              "minItems": 1,
+              "maxItems": 100
+            }
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    },
+    "unitInterval": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1
+    }
+  },
+  "additionalProperties": false
+}
