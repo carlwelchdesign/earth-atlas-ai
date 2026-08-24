@@ -201,6 +201,9 @@ Outcome: the project is ready for owner review as a truthful portfolio demonstra
 Acceptance:
 
 - [ ] Fresh-machine setup/rebuild and prepared-demo runbooks pass.
+- [ ] Production-oriented backend and workbench container images build reproducibly with pinned runtime inputs, non-root execution, health checks, and no embedded secrets.
+- [ ] A local Compose configuration starts the standalone stack with documented ports, health dependencies, and explicit persistent data mounts; Palantir is not required.
+- [ ] Native development remains supported, and container verification covers clean build, startup, health, shutdown, and persisted local assessments on a fresh machine.
 - [ ] Architecture, dataset card, processing limits, AI boundary, attribution, and operator guide are current.
 - [ ] Desktop/tablet/mobile evidence and a scripted analyst story are captured.
 - [ ] Security, dependency, license, sensitive-site, and secret reviews are recorded.

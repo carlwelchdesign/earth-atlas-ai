@@ -63,3 +63,11 @@
 - Decision: use Python 3.12+ with `uv` and FastAPI for one modular backend distribution; keep API and processor as separate modules. Use Node 20.19+, npm workspaces, React 19, TypeScript 5, and Vite 7 for the workbench. Use GitHub Actions for CI and MIT for source code while preserving separate data licenses.
 - Why: the processing ecosystem is Python-native, a modular monolith avoids premature service operations, and the provider-neutral bundle preserves a future split. The selected frontend stack supports a custom standalone and later OSDK-compatible React experience.
 - Revisit when: measured dependency isolation, scaling, deployment, or platform-adapter constraints justify a service split or runtime upgrade.
+
+## D-009 — Use containers for reproducible standalone packaging
+
+- Date: 2026-08-24
+- Status: accepted
+- Decision: keep native `uv` and npm workflows for day-to-day development, then package the standalone backend and production workbench as non-root container images with health checks and a local Compose configuration in `EAT-015`. The Compose path uses explicit local persistence and has no Palantir or AI-provider requirement.
+- Why: containers provide a consistent fresh-machine demo and a portable deployment artifact without slowing the current data-processing proof or coupling the product to a platform provider.
+- Revisit when: an approved deployment target imposes runtime, ingress, orchestration, storage, or observability requirements beyond the local standalone package.
