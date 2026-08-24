@@ -2,7 +2,7 @@
 
 EchoAtlas is a planned civilian disaster and infrastructure-change SAR intelligence workbench. It will turn public Umbra imagery into deterministic change candidates, evidence, and human-reviewed assessments.
 
-**Current status:** repository foundation plus a bounded, metadata-only Umbra catalog indexer. It can normalize public acquisition metadata and resolve public S3 object listings; it does not download imagery, select a demonstration pair, process SAR pixels, or provide operational intelligence.
+**Current status:** the Bingham Canyon civilian demonstration pair is approved and pinned, and the backend can fetch those exact public Umbra objects into a bounded, checksum-verified local cache. It does not yet process SAR pixels, produce change candidates, or provide operational intelligence.
 
 ## Architecture
 
@@ -54,6 +54,16 @@ uv run echoatlas-catalog \
 ```
 
 This command only reads small STAC JSON and S3 listing XML documents. Object URLs and declared sizes are indexed, but raster payloads are never requested. See [the catalog indexer documentation](docs/architecture/catalog-indexer.md).
+
+Download the approved pair into the Git-ignored local cache:
+
+```sh
+uv run echoatlas-acquire \
+  --manifest fixtures/demo/selection-manifest.v1.json \
+  --data-root data
+```
+
+The pinned inputs total about 524 MB. Downloads are allowlisted, resumable, size-bounded, and verified against the manifest's full-object CRC64NVME checksums before atomic cache promotion. See [the acquisition cache documentation](docs/architecture/acquisition-cache.md).
 
 ## Delivery
 

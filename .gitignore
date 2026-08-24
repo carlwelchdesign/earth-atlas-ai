@@ -27,4 +27,7 @@ coverage/
 # Local imagery and processing artifacts
 data/*
 !data/.gitkeep
+/raw/
+/cache/
+/working/
 fixtures/generated/

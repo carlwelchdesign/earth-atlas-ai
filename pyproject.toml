@@ -11,12 +11,14 @@ requires-python = ">=3.12,<3.14"
 license = "MIT"
 authors = [{ name = "Carl Welch" }]
 dependencies = [
+  "awscrt>=0.29,<1",
   "fastapi>=0.141.1,<0.142",
   "pydantic>=2.13.0,<3",
   "uvicorn[standard]>=0.52.0,<0.53",
 ]
 
 [project.scripts]
+echoatlas-acquire = "echoatlas.processor.acquisition.cli:main"
 echoatlas-catalog = "echoatlas.processor.catalog.cli:main"
 
 [dependency-groups]
