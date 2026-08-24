@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import hashlib
 import json
 from collections.abc import Mapping
 from pathlib import Path
@@ -141,12 +142,26 @@ def manifest_document(before: bytes, after: bytes) -> dict[str, object]:
             },
         }
 
+    geometry: dict[str, object] = {
+        "type": "Polygon",
+        "coordinates": [[[0.0, 0.0], [1.0, 0.0], [1.0, 1.0], [0.0, 1.0], [0.0, 0.0]]],
+    }
+    geometry_hash = hashlib.sha256(
+        json.dumps(geometry, separators=(",", ":"), sort_keys=True).encode()
+    ).hexdigest()
     return {
         "manifest_version": "1.0.0",
         "selection_id": "test-selection-v1",
         "status": "approved",
         "accessed_at": "2026-08-24T00:00:00Z",
         "license": {"spdx": "CC-BY-4.0", "provider": "Test Provider"},
+        "processing_aoi": {
+            "id": "test-aoi",
+            "bbox": [0.0, 0.0, 1.0, 1.0],
+            "geometry": geometry,
+            "geometry_sha256": geometry_hash,
+            "boundary": "Test AOI only.",
+        },
         "acquisitions": {
             "before": acquisition("before-item", before, "before"),
             "after": acquisition("after-item", after, "after"),

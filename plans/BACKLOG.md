@@ -60,11 +60,11 @@ Outcome: the selected pair is validated, cropped, aligned to a declared grid, an
 
 Acceptance:
 
-- [ ] CRS, transform, resolution, extent, nodata, dimensions, and band assumptions are validated.
-- [ ] Common AOI grid and resampling policy are deterministic and documented.
-- [ ] Normalization/filter parameters are explicit and stored in the run manifest.
-- [ ] Before/after previews, thumbnails, and quality report are produced.
-- [ ] Golden tests cover normal, incompatible, and corrupt fixtures with declared tolerances.
+- [x] CRS, transform, resolution, extent, nodata, dimensions, and band assumptions are validated.
+- [x] Common AOI grid and resampling policy are deterministic and documented.
+- [x] Normalization/filter parameters are explicit and stored in the run manifest.
+- [x] Before/after previews, thumbnails, and quality report are produced.
+- [x] Golden tests cover normal, incompatible, and corrupt fixtures with declared tolerances.
 
 ### EAT-006 — Implement deterministic baseline change candidates
 
