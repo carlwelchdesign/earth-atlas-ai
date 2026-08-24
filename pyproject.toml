@@ -17,12 +17,14 @@ dependencies = [
   "pillow>=12.3,<13",
   "pydantic>=2.13.0,<3",
   "rasterio>=1.4.4,<2",
+  "scipy>=1.16,<2",
   "uvicorn[standard]>=0.52.0,<0.53",
 ]
 
 [project.scripts]
 echoatlas-acquire = "echoatlas.processor.acquisition.cli:main"
 echoatlas-catalog = "echoatlas.processor.catalog.cli:main"
+echoatlas-change-candidates = "echoatlas.processor.changes.cli:main"
 echoatlas-process-previews = "echoatlas.processor.previews.cli:main"
 
 [dependency-groups]
