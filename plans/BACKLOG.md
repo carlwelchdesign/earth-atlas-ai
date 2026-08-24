@@ -49,10 +49,10 @@ Outcome: exact pinned inputs are fetched reproducibly without committing raw dat
 
 Acceptance:
 
-- [ ] Allowlisted HTTPS/S3 sources, resumable fetch, content-length guard, checksum verification, and atomic cache promotion exist.
-- [ ] Raw/cache/working directories are ignored and documented.
-- [ ] Interrupted, wrong-type, oversized, checksum-mismatch, and missing-object tests pass.
-- [ ] Source manifest and attribution remain available offline.
+- [x] Allowlisted HTTPS/S3 sources, resumable fetch, content-length guard, checksum verification, and atomic cache promotion exist.
+- [x] Raw/cache/working directories are ignored and documented.
+- [x] Interrupted, wrong-type, oversized, checksum-mismatch, and missing-object tests pass.
+- [x] Source manifest and attribution remain available offline.
 
 ### EAT-005 — Produce aligned, normalized SAR previews
 

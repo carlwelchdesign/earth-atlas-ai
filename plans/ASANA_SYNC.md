@@ -31,7 +31,7 @@ The workspace's free tier does not support native milestone or dependency object
 | EAT-001 | [1217791333511235](https://app.asana.com/1/9789386902387/project/1217790716964797/task/1217791333511235) | M1 | complete — [PR #1](https://github.com/carlwelchdesign/earth-atlas-ai/pull/1) |
 | EAT-002 | [1217791261406192](https://app.asana.com/1/9789386902387/project/1217790716964797/task/1217791261406192) | M1 | complete — [PR #3](https://github.com/carlwelchdesign/earth-atlas-ai/pull/3) |
 | EAT-003 | [1217791333529419](https://app.asana.com/1/9789386902387/project/1217790716964797/task/1217791333529419) | M1 | complete — [PR #4](https://github.com/carlwelchdesign/earth-atlas-ai/pull/4) |
-| EAT-004 | [1217791261751270](https://app.asana.com/1/9789386902387/project/1217790716964797/task/1217791261751270) | M1 | not started |
+| EAT-004 | [1217791261751270](https://app.asana.com/1/9789386902387/project/1217790716964797/task/1217791261751270) | M1 | in progress — `feature/eat-004-safe-acquisition-cache` |
 | EAT-005 | [1217791310302013](https://app.asana.com/1/9789386902387/project/1217790716964797/task/1217791310302013) | M1 | not started |
 | EAT-006 | [1217791310389024](https://app.asana.com/1/9789386902387/project/1217790716964797/task/1217791310389024) | M1 | not started |
 | EAT-007 | [1217791333530784](https://app.asana.com/1/9789386902387/project/1217790716964797/task/1217791333530784) | M1 | not started |

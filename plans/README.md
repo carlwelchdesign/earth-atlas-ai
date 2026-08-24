@@ -1,10 +1,10 @@
 # EchoAtlas planning package
 
-Status: EAT-001 repository foundation delivered through GitHub PR #1; EAT-002 is next.
+Status: EAT-001 through EAT-003 are complete; EAT-004 safe acquisition and integrity caching is in progress.
 
 EchoAtlas is a civilian disaster and infrastructure-change SAR intelligence workbench. The first release will prove one end-to-end analyst workflow with public Umbra data: select a comparable image pair, produce deterministic change candidates, inspect the evidence, and record a human assessment.
 
-Canonical GitHub repository: [carlwelchdesign/earth-atlas-ai](https://github.com/carlwelchdesign/earth-atlas-ai). The remote was verified public and empty on 2026-08-24; `EAT-001` owns local Git initialization, the first branch/commit, and baseline quality gates.
+Canonical GitHub repository: [carlwelchdesign/earth-atlas-ai](https://github.com/carlwelchdesign/earth-atlas-ai).
 
 ## Canonical plan
 
@@ -31,7 +31,7 @@ Canonical GitHub repository: [carlwelchdesign/earth-atlas-ai](https://github.com
 
 - The [AWS Open Data Registry](https://registry.opendata.aws/umbra-open-data/) describes Umbra's public SAR bucket, frequent updates, multiple time-series locations, GEC/SICD/SIDD/CPHD products, and CC BY 4.0 licensing.
 - The live [Umbra STAC root](https://umbra-open-data-catalog.s3.us-west-2.amazonaws.com/stac/catalog.json) reports STAC 1.1.0 and currently links 2024 and 2025 catalogs.
-- A live catalog sample showed usable acquisition metadata and geometry but empty asset `href` values. `EAT-002` must prove reliable object resolution from catalog metadata and/or public S3 listing before the demonstration pair is pinned.
+- EAT-002 proved public object resolution despite empty STAC asset `href` values, and EAT-003 pinned the approved Bingham Canyon GEC pair with exact object identities, access evidence, and checksums.
 - Palantir currently documents a free/trial AIP Developer Tier and OSDK application path, but access, limits, scopes, and product availability remain an explicit feasibility gate rather than an MVP dependency.
 
 ## Definition of MVP complete
