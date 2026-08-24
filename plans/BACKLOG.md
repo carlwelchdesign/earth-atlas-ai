@@ -10,11 +10,11 @@ Outcome: a documented, reproducible repository skeleton supports Python processi
 
 Acceptance:
 
-- [ ] Git repository, ignore rules, license decision, contributor commands, and environment setup exist.
-- [ ] Python and TypeScript package/runtime choices are recorded in the decision log.
-- [ ] Formatting, lint, typecheck, unit-test, secret-scan, and build commands run locally.
-- [ ] CI or an explicit deferred-CI decision exists.
-- [ ] No sample code claims live-data or operational capability.
+- [x] Git repository, ignore rules, license decision, contributor commands, and environment setup exist.
+- [x] Python and TypeScript package/runtime choices are recorded in the decision log.
+- [x] Formatting, lint, typecheck, unit-test, secret-scan, and build commands run locally.
+- [x] GitHub Actions CI validates backend and workbench gates.
+- [x] No sample code claims live-data or operational capability.
 
 Non-goals: processing logic, map UI, cloud deployment.
 
