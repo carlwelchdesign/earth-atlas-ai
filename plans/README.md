@@ -1,6 +1,6 @@
 # EchoAtlas planning package
 
-Status: EAT-001 through EAT-005 are complete; EAT-006 deterministic baseline change candidates is in review in [PR #7](https://github.com/carlwelchdesign/earth-atlas-ai/pull/7).
+Status: EAT-001 through EAT-006 are complete; EAT-007 versioned analysis-bundle contract is next.
 
 EchoAtlas is a civilian disaster and infrastructure-change SAR intelligence workbench. The first release will prove one end-to-end analyst workflow with public Umbra data: select a comparable image pair, produce deterministic change candidates, inspect the evidence, and record a human assessment.
 
