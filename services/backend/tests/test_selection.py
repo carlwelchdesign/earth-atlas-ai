@@ -99,14 +99,15 @@ def test_compare_pair_rejects_reversed_time_and_non_overlap() -> None:
         compare_pair(second, first)
 
 
-def test_proposed_manifest_pins_access_and_sensitivity_evidence() -> None:
+def test_approved_manifest_pins_access_and_sensitivity_evidence() -> None:
     manifest = json.loads(MANIFEST_PATH.read_text())
     geometry = manifest["processing_aoi"]["geometry"]
     canonical_geometry = json.dumps(geometry, separators=(",", ":"), sort_keys=True).encode()
 
     assert manifest["manifest_version"] == "1.0.0"
-    assert manifest["status"] == "awaiting_owner_approval"
-    assert manifest["approval"]["approved_by"] is None
+    assert manifest["status"] == "approved"
+    assert manifest["approval"]["approved_by"] == "Carl Welch"
+    assert manifest["approval"]["approved_at"] == "2026-08-24T19:00:58.778Z"
     assert (
         manifest["processing_aoi"]["geometry_sha256"]
         == hashlib.sha256(canonical_geometry).hexdigest()

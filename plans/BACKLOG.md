@@ -40,7 +40,7 @@ Acceptance:
 - [x] Selected pair has verified public object access and a documented common footprint.
 - [x] Comparability report records geometry, product, polarization, resolution, time separation, and known interpretation limits.
 - [x] External event context is cited but not treated as pixel ground truth.
-- [ ] Carl approves the public story and sensitivity boundary in Asana.
+- [x] Carl approves the public story and sensitivity boundary in Asana.
 - [x] A versioned selection manifest pins exact objects, URLs/keys, checksums when available, and access date.
 
 ### EAT-004 — Implement safe acquisition download, cache, and integrity checks

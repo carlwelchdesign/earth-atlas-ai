@@ -1,12 +1,12 @@
 {
   "manifest_version": "1.0.0",
   "selection_id": "echoatlas-bingham-canyon-2025-v1",
-  "status": "awaiting_owner_approval",
+  "status": "approved",
   "accessed_at": "2026-08-24T17:42:00Z",
   "approval": {
     "asana_task": "https://app.asana.com/1/9789386902387/project/1217790716964797/task/1217791333529419",
-    "approved_by": null,
-    "approved_at": null
+    "approved_by": "Carl Welch",
+    "approved_at": "2026-08-24T19:00:58.778Z"
   },
   "story": {
     "title": "Bingham Canyon mine surface-change review",
