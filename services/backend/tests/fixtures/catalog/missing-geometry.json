@@ -1,0 +1,7 @@
+{
+  "id": "item-without-geometry",
+  "type": "Feature",
+  "bbox": [-112.18, 40.49, -112.11, 40.55],
+  "properties": {"datetime": "2025-07-16T05:36:24Z", "license": "CC-BY-4.0"},
+  "assets": {}
+}

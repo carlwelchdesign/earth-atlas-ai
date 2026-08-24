@@ -1,0 +1,31 @@
+{
+  "id": "item-1",
+  "type": "Feature",
+  "bbox": [-112.18, 40.49, -112.11, 40.55],
+  "geometry": {
+    "type": "Polygon",
+    "coordinates": [[[-112.18, 40.49], [-112.11, 40.49], [-112.11, 40.55], [-112.18, 40.55], [-112.18, 40.49]]]
+  },
+  "properties": {
+    "datetime": "2025-07-15T05:36:24.500000Z",
+    "license": "CC-BY-4.0",
+    "platform": "Umbra-10",
+    "umbra:task_id": "task-1",
+    "umbra:grazing_angle_degrees": 58.33,
+    "view:incidence_angle": 31.67,
+    "sar:product_type": "GEC",
+    "sar:polarizations": ["VV"],
+    "sar:resolution_range": 0.5,
+    "sar:resolution_azimuth": 0.5,
+    "sar:observation_direction": "left",
+    "sat:orbit_state": "ascending"
+  },
+  "assets": {
+    "preview.tif": {
+      "href": "",
+      "type": "image/tiff; application=geotiff",
+      "title": "TIFF",
+      "roles": ["data", "overview"]
+    }
+  }
+}

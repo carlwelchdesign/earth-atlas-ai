@@ -24,11 +24,11 @@ Outcome: the project can enumerate normalized acquisition metadata from the publ
 
 Acceptance:
 
-- [ ] Catalog traversal and public-object resolution are separate adapters with fixtures.
-- [ ] Runtime validation covers malformed links, empty asset hrefs, missing geometry, pagination/list truncation, and network failures.
-- [ ] Normalized index includes item ID, acquisition time, bbox/geometry, product, polarization, resolution, platform, geometry fields, assets, license, and source URL.
-- [ ] Live smoke test records access date, catalog coverage, object counts, warnings, and candidate time-series AOIs.
-- [ ] No large imagery is downloaded.
+- [x] Catalog traversal and public-object resolution are separate adapters with fixtures.
+- [x] Runtime validation covers malformed links, empty asset hrefs, missing geometry, pagination/list truncation, and network failures.
+- [x] Normalized index includes item ID, acquisition time, bbox/geometry, product, polarization, resolution, platform, geometry fields, assets, license, and source URL.
+- [x] Live smoke test records access date, catalog coverage, object counts, warnings, and candidate time-series AOIs.
+- [x] No large imagery is downloaded.
 
 ### EAT-003 — Select and pin the civilian demonstration AOI and image pair
 

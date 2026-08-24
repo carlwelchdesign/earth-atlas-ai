@@ -1,0 +1,9 @@
+{
+  "id": "day",
+  "type": "Catalog",
+  "links": [
+    {"rel": "item", "href": "./valid.json"},
+    {"rel": "item", "href": "./missing-geometry.json"},
+    {"rel": "item", "href": "./network-failure.json"}
+  ]
+}

@@ -1,0 +1,9 @@
+{
+  "id": "root",
+  "type": "Catalog",
+  "links": [
+    {"rel": "child", "href": "./day/catalog.json"},
+    {"rel": "child", "href": ""},
+    {"rel": "child", "href": "javascript:alert(1)"}
+  ]
+}

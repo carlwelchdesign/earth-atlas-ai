@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListBucketResult xmlns="http://s3.amazonaws.com/doc/2006-03-01/">
+  <Name>umbra-open-data-catalog</Name>
+  <Prefix>sar-data/task-data/task-1/</Prefix>
+  <KeyCount>1</KeyCount>
+  <MaxKeys>1</MaxKeys>
+  <IsTruncated>false</IsTruncated>
+  <Contents>
+    <Key>sar-data/task-data/task-1/collect/collect.stac.v2.json</Key>
+    <ETag>&quot;etag-2&quot;</ETag>
+    <Size>512</Size>
+  </Contents>
+</ListBucketResult>
