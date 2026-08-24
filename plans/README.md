@@ -1,6 +1,6 @@
 # EchoAtlas planning package
 
-Status: EAT-001 through EAT-003 are complete; EAT-004 safe acquisition and integrity caching is in progress.
+Status: EAT-001 through EAT-004 are complete; EAT-005 aligned and normalized SAR previews is next.
 
 EchoAtlas is a civilian disaster and infrastructure-change SAR intelligence workbench. The first release will prove one end-to-end analyst workflow with public Umbra data: select a comparable image pair, produce deterministic change candidates, inspect the evidence, and record a human assessment.
 
