@@ -1,0 +1,18 @@
+# Risk register
+
+Scores use impact and likelihood from 1 (low) to 5 (high). Owner dates are review deadlines, not promised delivery dates.
+
+| ID | Risk | I | L | Trigger | Mitigation / contingency | Owner | Review by | Linked tickets |
+| --- | --- | ---: | ---: | --- | --- | --- | --- | --- |
+| R-001 | Umbra STAC metadata does not directly resolve downloadable assets | 5 | 4 | empty/malformed asset href or incomplete traversal | separate STAC and S3 adapters; fixture the irregularity; stop before large downloads if exact objects cannot be pinned | Engineering | EAT-002 completion | EAT-002, EAT-003 |
+| R-002 | No acquisition pair is sufficiently comparable for the chosen story | 5 | 3 | low overlap or incompatible geometry/product/polarization | score three candidates; document no-go; change event only through decision log and owner approval | Product + SAR reviewer | EAT-003 completion | EAT-003 |
+| R-003 | Baseline flags radar/geometry artifacts as meaningful change | 5 | 4 | candidates cluster on shadows, layover, water, or registration edges | explicit quality report; candidate language; benchmark failure classes; analyst review required | SAR reviewer | EAT-006 and EAT-012 | EAT-005, EAT-006, EAT-012 |
+| R-004 | Large imagery makes the demo slow, expensive, or irreproducible | 4 | 4 | source pair exceeds local/time/storage budget | range-capable COG reads where valid; bounded AOI crop; cache/checksums; prepared derived fixture | Engineering | EAT-004 completion | EAT-003, EAT-004, EAT-015 |
+| R-005 | Public presentation exposes sensitive locations or overstates intelligence | 5 | 2 | high-resolution sensitive-site data or causal/damage claims | civilian rubric, sensitivity review, evidence language, owner release approval | Carl + privacy reviewer | before public release | EAT-003, EAT-010, EAT-015 |
+| R-006 | License or attribution is incomplete | 4 | 2 | artifact lacks source/license/access date | provenance contract, attribution UI/export, release license review | Engineering | EAT-007 and EAT-015 | EAT-004, EAT-007, EAT-010, EAT-015 |
+| R-007 | AI creates unsupported or authoritative-sounding conclusions | 5 | 3 | uncited claim, damage/identity inference, or hidden uncertainty | delayed feature, structured evidence, insufficiency path, permission and overclaiming evals | AI owner | EAT-013 completion | EAT-013 |
+| R-008 | Palantir access, limits, or APIs differ from assumptions | 3 | 4 | missing tier feature, resource cap, authentication, or scope | time-boxed adapter spike; current-doc/live-enrollment evidence; standalone product remains canonical | Platform owner | EAT-014 completion | EAT-014 |
+| R-009 | Map-first UX excludes keyboard, screen-reader, or small-screen users | 4 | 3 | core action only available by map/drag gesture | design equivalent list/time-toggle paths before implementation; verify focus, zoom, and read-only mobile layout | UX owner | EAT-011 completion | EAT-DES-001, EAT-008, EAT-009, EAT-011 |
+| R-010 | Portfolio polish masks weak scientific validation | 5 | 3 | UI work starts before pair/process proof | M2 design and implementation gates require a validated bundle; publish baseline limitations and domain-review status | TPM | M1 exit | EAT-002 through EAT-DES-001 and EAT-008 |
+| R-011 | Ticket and repository status drift | 3 | 3 | work begins without start comment or completion lacks evidence | one-ticket delivery loop; Asana sync ledger; decision/risk updates in same ticket | TPM | every ticket | all |
+| R-012 | Local prototype is mistaken for production readiness | 4 | 3 | demo is described as deployed/operational | explicit gates for auth, storage, ops, security, deployment, Palantir, and release | Product | every milestone | EAT-015 |
