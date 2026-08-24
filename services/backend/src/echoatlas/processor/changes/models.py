@@ -15,7 +15,7 @@ class ChangeParameters(BaseModel):
         "symmetric_neighborhood_normalized_absolute_difference"
     )
     score_threshold: float = Field(default=0.5, gt=0, le=1)
-    registration_tolerance_pixels: int = Field(default=1, ge=0, le=3)
+    registration_tolerance_pixels: int = Field(default=2, ge=0, le=3)
     morphology_kernel_size: Literal[3] = 3
     opening_iterations: int = Field(default=1, ge=0, le=3)
     closing_iterations: int = Field(default=1, ge=0, le=3)

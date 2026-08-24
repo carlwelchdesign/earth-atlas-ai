@@ -25,11 +25,11 @@ n(x) = clip((x - percentile_low) / (percentile_high - percentile_low), 0, 1)
 
 The percentile limits are reused exactly from the EAT-005 quality report. Because each role has its own limits, the result is not calibrated backscatter and score magnitude cannot be interpreted as calibrated confidence.
 
-To reduce a simple one-pixel registration response, the score compares each normalized pixel with the best-matching value in the other image's declared neighborhood in both directions:
+To reduce simple registration responses, the score compares each normalized pixel with the best-matching value in the other image's declared two-pixel neighborhood in both directions:
 
 ```text
-forward = min |after[p] - before[q]| for q within one pixel of p
-reverse = min |before[p] - after[q]| for q within one pixel of p
+forward = min |after[p] - before[q]| for q within two pixels of p
+reverse = min |before[p] - after[q]| for q within two pixels of p
 score[p] = max(forward, reverse)
 ```
 

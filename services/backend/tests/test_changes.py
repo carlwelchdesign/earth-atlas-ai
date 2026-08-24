@@ -193,6 +193,10 @@ def _parameters(**overrides: object) -> ChangeParameters:
     return ChangeParameters.model_validate(defaults)
 
 
+def test_default_policy_declares_conservative_registration_tolerance() -> None:
+    assert ChangeParameters().registration_tolerance_pixels == 2
+
+
 def test_change_pipeline_emits_pending_candidate_geojson_and_reproducible_artifacts(
     tmp_path: Path,
 ) -> None:

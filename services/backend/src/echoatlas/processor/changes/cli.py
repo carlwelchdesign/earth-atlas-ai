@@ -22,7 +22,7 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--data-root", default=Path("data"), type=Path)
     parser.add_argument("--software-commit")
     parser.add_argument("--score-threshold", default=0.5, type=float)
-    parser.add_argument("--registration-tolerance-pixels", default=1, type=int)
+    parser.add_argument("--registration-tolerance-pixels", default=2, type=int)
     parser.add_argument("--opening-iterations", default=1, type=int)
     parser.add_argument("--closing-iterations", default=1, type=int)
     parser.add_argument("--minimum-component-pixels", default=512, type=int)
