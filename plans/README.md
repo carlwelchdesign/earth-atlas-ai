@@ -1,6 +1,6 @@
 # EchoAtlas planning package
 
-Status: planning baseline created; development has not started.
+Status: EAT-001 repository foundation delivered through GitHub PR #1; EAT-002 is next.
 
 EchoAtlas is a civilian disaster and infrastructure-change SAR intelligence workbench. The first release will prove one end-to-end analyst workflow with public Umbra data: select a comparable image pair, produce deterministic change candidates, inspect the evidence, and record a human assessment.
 
@@ -16,6 +16,7 @@ Canonical GitHub repository: [carlwelchdesign/earth-atlas-ai](https://github.com
 - [Risk register](./RISK_REGISTER.md)
 - [Decision log](./DECISION_LOG.md)
 - [Asana synchronization](./ASANA_SYNC.md)
+- [Git and ticket workflow](./GIT_WORKFLOW.md)
 
 ## Planning rules
 
