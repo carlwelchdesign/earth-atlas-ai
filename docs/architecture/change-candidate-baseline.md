@@ -91,3 +91,7 @@ The CLI records the current Git commit automatically. `--software-commit` is ava
 Golden tests cover one known candidate, deterministic artifact hashes, isolated speckle removal, nodata-edge handling, one-pixel shift tolerance, four/eight-way geometry connectivity, modified source hashes, grid mismatch, manifest mismatch, immutable reruns, and the maximum-candidate fail-closed gate.
 
 The real demonstration run must also be inspected for candidate count, retained pixel fraction, geometry validity, score distribution, and visual overlay quality. This verifies software behavior and queue usability only; it is not a precision/recall or scientific validation result.
+
+The approved local verification run `change-9c8a27b2a55081fc6b07`, produced from preview run `preview-48b949a1b72ac7f8f54d` at code commit `38b860f`, emitted 26 pending candidates. They cover 38,008 of 10,506,334 guarded valid pixels, approximately 0.36%. All geometries, statuses, labels, bounds, raster grids, and artifact records validated. A separate temporary rebuild reproduced the same run ID and all five artifact hashes.
+
+Visual review confirmed a readable, correctly aligned score and candidate overlay. The two-pixel tolerance reduced the initial one-pixel diagnostic from 38 to 26 candidates and from 65,449 to 38,008 retained pixels. Several remaining responses still follow western high-contrast terrain and bench geometry; they must be treated as review items subject to the recorded geometry and registration warnings, not as validated physical changes.
