@@ -1,0 +1,144 @@
+{
+  "manifest_version": "1.0.0",
+  "selection_id": "echoatlas-bingham-canyon-2025-v1",
+  "status": "awaiting_owner_approval",
+  "accessed_at": "2026-08-24T17:42:00Z",
+  "approval": {
+    "asana_task": "https://app.asana.com/1/9789386902387/project/1217790716964797/task/1217791333529419",
+    "approved_by": null,
+    "approved_at": null
+  },
+  "story": {
+    "title": "Bingham Canyon mine surface-change review",
+    "framing": "Compare two public SAR acquisitions over the central open-pit mine during an officially documented period of ongoing civilian mine development.",
+    "external_context": [
+      {
+        "publisher": "Rio Tinto",
+        "title": "Kennecott",
+        "url": "https://www.riotinto.com/en/operations/us/kennecott",
+        "use_limit": "Establishes the civilian mine and documented development context only; it is not pixel-level ground truth."
+      }
+    ]
+  },
+  "license": {
+    "spdx": "CC-BY-4.0",
+    "provider": "Umbra Lab Inc",
+    "software_license_separate": true
+  },
+  "processing_aoi": {
+    "id": "bingham-canyon-central-pit-v1",
+    "bbox": [-112.16, 40.505, -112.128, 40.54],
+    "geometry": {
+      "type": "Polygon",
+      "coordinates": [[
+        [-112.16, 40.505],
+        [-112.128, 40.505],
+        [-112.128, 40.54],
+        [-112.16, 40.54],
+        [-112.16, 40.505]
+      ]]
+    },
+    "geometry_sha256": "e67a16d80d57fa661aa788388af66fb1da930c2f092e2c0f7e9267c98a40185e",
+    "boundary": "Central open-pit area only; excludes smelter, refinery, tailings facilities, nearby communities, and access roads."
+  },
+  "acquisitions": {
+    "before": {
+      "item_id": "89284e7a-04bc-4917-9467-502f2ff3bece",
+      "acquired_at": "2025-06-10T04:04:46.299998Z",
+      "item_url": "https://umbra-open-data-catalog.s3.us-west-2.amazonaws.com/stac/2025/2025-06/2025-06-10/89284e7a-04bc-4917-9467-502f2ff3bece/89284e7a-04bc-4917-9467-502f2ff3bece.json",
+      "task_id": "7f6105bb-6d80-4c08-9f93-0ac5fd3b46e5",
+      "platform": "Umbra-05",
+      "product_type": "GEC",
+      "polarizations": ["VV"],
+      "resolution_range_m": 0.5000000001660068,
+      "resolution_azimuth_m": 0.49999999982488236,
+      "observation_direction": "left",
+      "orbit_state": "ascending",
+      "incidence_angle_deg": 42.061401830391524,
+      "grazing_angle_deg": 47.938598169608476,
+      "object": {
+        "key": "sar-data/task-data/7f6105bb-6d80-4c08-9f93-0ac5fd3b46e5/2025-06-10-04-04-46_UMBRA-05/2025-06-10-04-04-46_UMBRA-05_GEC.tif",
+        "url": "https://umbra-open-data-catalog.s3.us-west-2.amazonaws.com/sar-data/task-data/7f6105bb-6d80-4c08-9f93-0ac5fd3b46e5/2025-06-10-04-04-46_UMBRA-05/2025-06-10-04-04-46_UMBRA-05_GEC.tif",
+        "size_bytes": 264668632,
+        "etag": "b76c526cb385cce10d4eadf749a686fa-6",
+        "checksum": {
+          "algorithm": "CRC64NVME",
+          "encoding": "base64",
+          "value": "/ExQvs+SKLE=",
+          "type": "FULL_OBJECT"
+        },
+        "access_verification": "HTTP 206 for bytes 0-0; Accept-Ranges bytes; Content-Range bytes 0-0/264668632"
+      }
+    },
+    "after": {
+      "item_id": "f784904e-b115-4a2c-b5d5-9a94ed075e94",
+      "acquired_at": "2025-07-05T05:18:39.200000Z",
+      "item_url": "https://umbra-open-data-catalog.s3.us-west-2.amazonaws.com/stac/2025/2025-07/2025-07-05/f784904e-b115-4a2c-b5d5-9a94ed075e94/f784904e-b115-4a2c-b5d5-9a94ed075e94.json",
+      "task_id": "3b3ff0ff-829b-4cba-aa50-2c4ab7ee4980",
+      "platform": "Umbra-08",
+      "product_type": "GEC",
+      "polarizations": ["VV"],
+      "resolution_range_m": 0.5000000001878505,
+      "resolution_azimuth_m": 0.49999999980304954,
+      "observation_direction": "left",
+      "orbit_state": "ascending",
+      "incidence_angle_deg": 39.9226491987447,
+      "grazing_angle_deg": 50.0773508012553,
+      "object": {
+        "key": "sar-data/task-data/3b3ff0ff-829b-4cba-aa50-2c4ab7ee4980/2025-07-05-05-18-39_UMBRA-08/2025-07-05-05-18-39_UMBRA-08_GEC.tif",
+        "url": "https://umbra-open-data-catalog.s3.us-west-2.amazonaws.com/sar-data/task-data/3b3ff0ff-829b-4cba-aa50-2c4ab7ee4980/2025-07-05-05-18-39_UMBRA-08/2025-07-05-05-18-39_UMBRA-08_GEC.tif",
+        "size_bytes": 259621257,
+        "etag": "f361830d034d38a613b87b0527bff033-5",
+        "checksum": {
+          "algorithm": "CRC64NVME",
+          "encoding": "base64",
+          "value": "G4YmVhNOTFA=",
+          "type": "FULL_OBJECT"
+        },
+        "access_verification": "HTTP 206 for bytes 0-0; Accept-Ranges bytes; Content-Range bytes 0-0/259621257"
+      }
+    }
+  },
+  "comparability": {
+    "temporal_separation": "P25DT1H13M52.900002S",
+    "common_footprint": {
+      "type": "Polygon",
+      "coordinates": [[
+        [-112.11817730355328, 40.52967359094266],
+        [-112.12775451991966, 40.5509435783749],
+        [-112.15564420955877, 40.54367293386761],
+        [-112.18351703311552, 40.536357452863754],
+        [-112.17398199316956, 40.515076934463785],
+        [-112.16439344684613, 40.493820864779565],
+        [-112.13651638590208, 40.50108773394933],
+        [-112.10866204000675, 40.508397872323904],
+        [-112.11817730355328, 40.52967359094266]
+      ]]
+    },
+    "common_bbox": [-112.18351703311552, 40.493820864779565, -112.10866204000675, 40.5509435783749],
+    "before_overlap_percent": 99.896659,
+    "after_overlap_percent": 99.896659,
+    "same_product": true,
+    "shared_polarizations": ["VV"],
+    "range_resolution_delta_percent": 0.0,
+    "azimuth_resolution_delta_percent": 0.0,
+    "same_observation_direction": true,
+    "same_orbit_state": true,
+    "incidence_angle_delta_deg": 2.138753,
+    "grazing_angle_delta_deg": 2.138753,
+    "warnings": []
+  },
+  "interpretation_limits": [
+    "Engineering comparability is not SAR-domain validation or calibrated confidence.",
+    "Speckle, moisture, slope, layover, shadow, acquisition geometry, and registration can create apparent differences.",
+    "The workflow may produce candidates but cannot infer excavation, production, equipment movement, damage, intent, safety, or environmental compliance.",
+    "External project context is not pixel-level ground truth.",
+    "A qualified SAR reviewer is required before calibrated or scientific performance claims."
+  ],
+  "sensitivity_controls": [
+    "No person, worker, vehicle, or equipment identification or tracking.",
+    "No full-resolution public derivatives before sensitive-site and owner release review.",
+    "No claim of real-time monitoring, operational status, intent, or confirmed change.",
+    "Derived demo artifacts must be cropped to processing_aoi and retain Umbra attribution."
+  ]
+}
