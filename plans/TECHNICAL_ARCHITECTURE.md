@@ -90,6 +90,14 @@ All untrusted JSON is validated at runtime against versioned schemas.
 
 Deferred until the standalone bundle is stable. It maps bundles into datasets/media and a minimal Ontology without moving processing policy into Foundry. Any OSDK application must use restricted application resources and operation scopes.
 
+### Packaging and containers
+
+- Native `uv` and npm workflows remain the fastest supported development path.
+- `EAT-015` packages the standalone backend and built workbench as reproducible, production-oriented container images plus a local Compose configuration.
+- Containers run as non-root users, include health checks, receive configuration and secrets only at runtime, and mount local bundle/assessment storage explicitly.
+- The standalone Compose stack cannot require Palantir, an AI provider, or other optional platform integrations.
+- Container readiness proves packaging and local orchestration only; authentication, durable multi-user storage, operations, public deployment, and release remain separate approval gates.
+
 ## MVP object model
 
 | Object | Required identity | Lifecycle | Important links |
