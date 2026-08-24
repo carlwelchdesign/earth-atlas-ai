@@ -23,7 +23,9 @@ from echoatlas.processor.acquisition.models import (
 )
 
 _CONTENT_RANGE = re.compile(r"^bytes (\d+)-(\d+)/(\d+)$")
-_ALLOWED_MEDIA_TYPES = frozenset({"image/tiff", "image/geotiff", "application/octet-stream"})
+_ALLOWED_MEDIA_TYPES = frozenset(
+    {"image/tiff", "image/geotiff", "application/octet-stream", "binary/octet-stream"}
+)
 _TIFF_MAGIC = frozenset({b"II*\x00", b"MM\x00*", b"II+\x00", b"MM\x00+"})
 
 

@@ -29,7 +29,7 @@ The entire `data` workspace is Git-ignored. Root-level `raw`, `cache`, and `work
 ## Safety and integrity contract
 
 - The manifest must be version `1.0.0`, have status `approved`, contain exactly `before` and `after` GEC acquisitions, and pin a relative object key, HTTPS URL, byte size, ETag, and full-object CRC64NVME checksum.
-- Only `.tif` or `.tiff` objects on the allowlisted Umbra host are accepted. Credentials, redirects, query strings, fragments, encoded traversal, unsafe path segments, and unexpected response media types are rejected.
+- Only `.tif` or `.tiff` objects on the allowlisted Umbra host are accepted. Standard TIFF types plus the `binary/octet-stream` type returned by the pinned Umbra objects are allowed, and the downloaded TIFF header is still verified. Credentials, redirects, query strings, fragments, encoded traversal, unsafe path segments, and other response media types are rejected.
 - Declared object size is checked before a request. `Content-Length`, `Content-Range`, and streamed bytes are checked during transfer, and the final file must exactly match the pinned size and a recognized classic-TIFF or BigTIFF header.
 - Interrupted transfers remain in `data/working` and resume only from a matching HTTP `206` range response. Invalid range metadata cannot be appended.
 - The complete file's CRC64NVME value is computed locally with the AWS Common Runtime and compared with the manifest. An ETag is checked when the server returns one, but it is not treated as a whole-file checksum because these source objects use multipart ETags.

@@ -265,6 +265,26 @@ def test_wrong_media_type_is_rejected(tmp_path: Path) -> None:
         cache(tmp_path, opener).fetch("before", "item-1", pinned_object(payload))
 
 
+def test_umbra_binary_octet_stream_is_accepted_with_valid_tiff(tmp_path: Path) -> None:
+    payload = tiff(b"ab")
+    opener = FakeOpener(
+        [
+            FakeResponse(
+                status=200,
+                headers={
+                    "Content-Type": "binary/octet-stream",
+                    "Content-Length": str(len(payload)),
+                },
+                reads=[payload],
+            )
+        ]
+    )
+
+    result = cache(tmp_path, opener).fetch("before", "item-1", pinned_object(payload))
+
+    assert result.cache_path.read_bytes() == payload
+
+
 def test_declared_and_response_sizes_are_bounded(tmp_path: Path) -> None:
     payload = tiff(b"ab")
     source = pinned_object(payload)
