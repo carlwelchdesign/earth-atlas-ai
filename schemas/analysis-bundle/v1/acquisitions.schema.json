@@ -1,0 +1,162 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.echoatlas.local/analysis-bundle/v1/acquisitions.schema.json",
+  "title": "EchoAtlas analysis bundle acquisitions v1",
+  "type": "object",
+  "required": [
+    "contract_version",
+    "bundle_id",
+    "acquisitions"
+  ],
+  "properties": {
+    "contract_version": {
+      "$ref": "https://schemas.echoatlas.local/analysis-bundle/v1/common.schema.json#/$defs/bundleVersion"
+    },
+    "bundle_id": {
+      "$ref": "https://schemas.echoatlas.local/analysis-bundle/v1/common.schema.json#/$defs/identifier"
+    },
+    "acquisitions": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/acquisition"
+      },
+      "minItems": 2,
+      "maxItems": 2
+    }
+  },
+  "$defs": {
+    "acquisition": {
+      "type": "object",
+      "required": [
+        "acquisition_id",
+        "role",
+        "acquired_at",
+        "provider",
+        "source_item_id",
+        "product_type",
+        "polarizations",
+        "source",
+        "quality_warnings"
+      ],
+      "properties": {
+        "acquisition_id": {
+          "$ref": "https://schemas.echoatlas.local/analysis-bundle/v1/common.schema.json#/$defs/identifier"
+        },
+        "role": {
+          "enum": [
+            "before",
+            "after"
+          ]
+        },
+        "acquired_at": {
+          "$ref": "https://schemas.echoatlas.local/analysis-bundle/v1/common.schema.json#/$defs/timestamp"
+        },
+        "provider": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 200
+        },
+        "source_item_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "platform": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 200
+        },
+        "product_type": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 100
+        },
+        "polarizations": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 20
+          },
+          "minItems": 1,
+          "uniqueItems": true
+        },
+        "source": {
+          "type": "object",
+          "required": [
+            "uri",
+            "size_bytes",
+            "checksum",
+            "license_spdx"
+          ],
+          "properties": {
+            "uri": {
+              "type": "string",
+              "format": "uri",
+              "maxLength": 2048
+            },
+            "size_bytes": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "checksum": {
+              "type": "object",
+              "required": [
+                "algorithm",
+                "value"
+              ],
+              "properties": {
+                "algorithm": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 50
+                },
+                "value": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 256
+                }
+              },
+              "additionalProperties": false
+            },
+            "license_spdx": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 100
+            }
+          },
+          "additionalProperties": false
+        },
+        "quality": {
+          "type": "object",
+          "properties": {
+            "resolution_meters": {
+              "type": "number",
+              "exclusiveMinimum": 0
+            },
+            "incidence_angle_degrees": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 90
+            },
+            "valid_aoi_fraction": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            }
+          },
+          "additionalProperties": false
+        },
+        "quality_warnings": {
+          "type": "array",
+          "items": {
+            "$ref": "https://schemas.echoatlas.local/analysis-bundle/v1/common.schema.json#/$defs/warning"
+          },
+          "maxItems": 100
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

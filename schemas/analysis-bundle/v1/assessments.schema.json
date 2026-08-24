@@ -1,0 +1,80 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.echoatlas.local/analysis-bundle/v1/assessments.schema.json",
+  "title": "EchoAtlas analysis bundle assessments v1",
+  "type": "object",
+  "required": [
+    "contract_version",
+    "bundle_id",
+    "append_only",
+    "events"
+  ],
+  "properties": {
+    "contract_version": {
+      "$ref": "https://schemas.echoatlas.local/analysis-bundle/v1/common.schema.json#/$defs/bundleVersion"
+    },
+    "bundle_id": {
+      "$ref": "https://schemas.echoatlas.local/analysis-bundle/v1/common.schema.json#/$defs/identifier"
+    },
+    "append_only": {
+      "const": true
+    },
+    "events": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/assessmentEvent"
+      },
+      "maxItems": 100000
+    }
+  },
+  "$defs": {
+    "assessmentEvent": {
+      "type": "object",
+      "required": [
+        "assessment_id",
+        "candidate_id",
+        "decision",
+        "recorded_at",
+        "analyst_id",
+        "evidence_artifact_ids"
+      ],
+      "properties": {
+        "assessment_id": {
+          "$ref": "https://schemas.echoatlas.local/analysis-bundle/v1/common.schema.json#/$defs/identifier"
+        },
+        "candidate_id": {
+          "$ref": "https://schemas.echoatlas.local/analysis-bundle/v1/common.schema.json#/$defs/identifier"
+        },
+        "decision": {
+          "enum": [
+            "candidate_supported",
+            "candidate_rejected",
+            "needs_context"
+          ]
+        },
+        "recorded_at": {
+          "$ref": "https://schemas.echoatlas.local/analysis-bundle/v1/common.schema.json#/$defs/timestamp"
+        },
+        "analyst_id": {
+          "$ref": "https://schemas.echoatlas.local/analysis-bundle/v1/common.schema.json#/$defs/identifier"
+        },
+        "notes": {
+          "type": "string",
+          "maxLength": 5000
+        },
+        "evidence_artifact_ids": {
+          "type": "array",
+          "items": {
+            "$ref": "https://schemas.echoatlas.local/analysis-bundle/v1/common.schema.json#/$defs/artifactId"
+          },
+          "uniqueItems": true
+        },
+        "supersedes_assessment_id": {
+          "$ref": "https://schemas.echoatlas.local/analysis-bundle/v1/common.schema.json#/$defs/identifier"
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

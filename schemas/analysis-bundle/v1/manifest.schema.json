@@ -1,0 +1,243 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.echoatlas.local/analysis-bundle/v1/manifest.schema.json",
+  "title": "EchoAtlas analysis bundle manifest v1",
+  "type": "object",
+  "required": [
+    "bundle_version",
+    "bundle_id",
+    "status",
+    "created_at",
+    "source_processing_run_id",
+    "change_run_id",
+    "software",
+    "license",
+    "parameters",
+    "components",
+    "artifacts",
+    "warnings"
+  ],
+  "properties": {
+    "bundle_version": {
+      "$ref": "https://schemas.echoatlas.local/analysis-bundle/v1/common.schema.json#/$defs/bundleVersion"
+    },
+    "bundle_id": {
+      "$ref": "https://schemas.echoatlas.local/analysis-bundle/v1/common.schema.json#/$defs/identifier"
+    },
+    "status": {
+      "enum": [
+        "succeeded",
+        "partial"
+      ]
+    },
+    "created_at": {
+      "$ref": "https://schemas.echoatlas.local/analysis-bundle/v1/common.schema.json#/$defs/timestamp"
+    },
+    "source_processing_run_id": {
+      "$ref": "https://schemas.echoatlas.local/analysis-bundle/v1/common.schema.json#/$defs/identifier"
+    },
+    "change_run_id": {
+      "$ref": "https://schemas.echoatlas.local/analysis-bundle/v1/common.schema.json#/$defs/identifier"
+    },
+    "software": {
+      "type": "object",
+      "required": [
+        "commit",
+        "echoatlas"
+      ],
+      "properties": {
+        "commit": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{7,64}$"
+        },
+        "echoatlas": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "additionalProperties": {
+        "type": "string"
+      }
+    },
+    "license": {
+      "type": "object",
+      "required": [
+        "source_data_spdx",
+        "source_provider",
+        "bundle_content_spdx",
+        "synthetic_fixture"
+      ],
+      "properties": {
+        "source_data_spdx": {
+          "type": "string",
+          "minLength": 1
+        },
+        "source_provider": {
+          "type": "string",
+          "minLength": 1
+        },
+        "bundle_content_spdx": {
+          "type": "string",
+          "minLength": 1
+        },
+        "synthetic_fixture": {
+          "type": "boolean"
+        }
+      },
+      "additionalProperties": false
+    },
+    "parameters": {
+      "type": "object",
+      "required": [
+        "processing",
+        "change"
+      ],
+      "properties": {
+        "processing": {
+          "type": "object"
+        },
+        "change": {
+          "type": "object"
+        }
+      },
+      "additionalProperties": false
+    },
+    "components": {
+      "type": "object",
+      "required": [
+        "aoi",
+        "acquisitions",
+        "candidates",
+        "assessments"
+      ],
+      "properties": {
+        "aoi": {
+          "$ref": "#/$defs/componentRecord"
+        },
+        "acquisitions": {
+          "$ref": "#/$defs/componentRecord"
+        },
+        "candidates": {
+          "$ref": "#/$defs/componentRecord"
+        },
+        "assessments": {
+          "$ref": "#/$defs/componentRecord"
+        },
+        "summary": {
+          "$ref": "#/$defs/componentRecord"
+        }
+      },
+      "additionalProperties": false
+    },
+    "artifacts": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/artifactRecord"
+      },
+      "minItems": 1,
+      "maxItems": 10000
+    },
+    "warnings": {
+      "type": "array",
+      "items": {
+        "$ref": "https://schemas.echoatlas.local/analysis-bundle/v1/common.schema.json#/$defs/warning"
+      },
+      "maxItems": 1000
+    }
+  },
+  "$defs": {
+    "componentRecord": {
+      "type": "object",
+      "required": [
+        "path",
+        "sha256",
+        "size_bytes"
+      ],
+      "properties": {
+        "path": {
+          "$ref": "https://schemas.echoatlas.local/analysis-bundle/v1/common.schema.json#/$defs/safeRelativePath"
+        },
+        "sha256": {
+          "$ref": "https://schemas.echoatlas.local/analysis-bundle/v1/common.schema.json#/$defs/sha256"
+        },
+        "size_bytes": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 5242880
+        }
+      },
+      "additionalProperties": false
+    },
+    "artifactRecord": {
+      "type": "object",
+      "required": [
+        "artifact_id",
+        "kind",
+        "path",
+        "media_type",
+        "sha256",
+        "size_bytes",
+        "required",
+        "status"
+      ],
+      "properties": {
+        "artifact_id": {
+          "$ref": "https://schemas.echoatlas.local/analysis-bundle/v1/common.schema.json#/$defs/artifactId"
+        },
+        "kind": {
+          "enum": [
+            "before-preview",
+            "after-preview",
+            "change-score-preview",
+            "candidate-overlay",
+            "supporting-document"
+          ]
+        },
+        "path": {
+          "$ref": "https://schemas.echoatlas.local/analysis-bundle/v1/common.schema.json#/$defs/safeRelativePath"
+        },
+        "media_type": {
+          "type": "string",
+          "pattern": "^[a-z0-9.+-]+/[a-z0-9.+-]+$"
+        },
+        "sha256": {
+          "$ref": "https://schemas.echoatlas.local/analysis-bundle/v1/common.schema.json#/$defs/sha256"
+        },
+        "size_bytes": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 268435456
+        },
+        "required": {
+          "type": "boolean"
+        },
+        "status": {
+          "enum": [
+            "available",
+            "missing"
+          ]
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "required": {
+                "const": true
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "status": {
+                "const": "available"
+              }
+            }
+          }
+        }
+      ],
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

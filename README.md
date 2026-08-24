@@ -2,14 +2,14 @@
 
 EchoAtlas is a planned civilian disaster and infrastructure-change SAR intelligence workbench. It will turn public Umbra imagery into deterministic change candidates, evidence, and human-reviewed assessments.
 
-**Current status:** the Bingham Canyon civilian demonstration pair is approved and pinned. The backend can fetch those exact public Umbra objects into a bounded, checksum-verified local cache, produce deterministic AOI-cropped engineering previews on a declared common grid, and generate a transparent baseline queue of pending change candidates. It does not confirm physical change or provide operational intelligence.
+**Current status:** the Bingham Canyon civilian demonstration pair is approved and pinned. The backend can fetch those exact public Umbra objects into a bounded, checksum-verified local cache, produce deterministic AOI-cropped engineering previews on a declared common grid, generate a transparent baseline queue of pending change candidates, and validate a provider-neutral analysis bundle. It does not confirm physical change or provide operational intelligence.
 
 ## Architecture
 
 - `services/backend`: Python modular backend with a thin FastAPI boundary and an independent processing domain.
 - `apps/workbench`: React and TypeScript analyst application.
-- `schemas`: future versioned analysis-bundle contracts.
-- `fixtures/demo`: future small, licensed demonstration artifacts.
+- `schemas`: versioned analysis-bundle contracts.
+- `fixtures`: pinned source selections and bounded synthetic fixture documentation.
 - `plans`: canonical product, architecture, governance, and execution plans.
 
 The portable analysis bundle is the boundary between processing, UI, tests, and future platform adapters. Palantir remains an optional later adapter rather than a required runtime.
@@ -84,6 +84,18 @@ uv run echoatlas-change-candidates \
 ```
 
 The score threshold, two-pixel registration tolerance, morphology, connectivity, minimum component size, and candidate-count guard are explicit parameters stored with the output. The default policy is an engineering heuristic for human review, not calibrated confidence. See [the baseline change-candidate documentation](docs/architecture/change-candidate-baseline.md).
+
+Generate and validate the tiny deterministic contract demonstration:
+
+```sh
+uv run echoatlas-generate-demo-bundle \
+  --output data/fixtures/eat007-valid \
+  --case valid
+uv run echoatlas-validate-bundle \
+  --bundle data/fixtures/eat007-valid
+```
+
+The generated pixels and metadata are synthetic, CC0-licensed, and contain no Umbra imagery. The validator checks the exact contract version, bounded JSON, safe paths, hashes, sizes, media signatures, partial state, and cross-document references. See [the analysis-bundle v1 documentation](docs/architecture/analysis-bundle-v1.md).
 
 ## Delivery
 
