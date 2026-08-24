@@ -1,0 +1,54 @@
+[build-system]
+requires = ["setuptools>=80"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "echoatlas-backend"
+version = "0.1.0"
+description = "Portable backend foundation for the EchoAtlas SAR intelligence workbench"
+readme = "README.md"
+requires-python = ">=3.12,<3.14"
+license = "MIT"
+authors = [{ name = "Carl Welch" }]
+dependencies = [
+  "fastapi>=0.141.1,<0.142",
+  "uvicorn[standard]>=0.52.0,<0.53",
+]
+
+[dependency-groups]
+dev = [
+  "detect-secrets>=1.5.0,<2",
+  "httpx2>=2.12.0,<3",
+  "mypy>=1.19.1,<2",
+  "pytest>=9.0.2,<10",
+  "pytest-cov>=7.0.0,<8",
+  "ruff>=0.16.4,<0.17",
+]
+
+[tool.setuptools]
+package-dir = { "" = "services/backend/src" }
+
+[tool.setuptools.packages.find]
+where = ["services/backend/src"]
+
+[tool.ruff]
+line-length = 100
+src = ["services/backend/src"]
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "SIM"]
+
+[tool.ruff.lint.isort]
+known-first-party = ["echoatlas"]
+
+[tool.mypy]
+python_version = "3.12"
+strict = true
+packages = ["echoatlas"]
+mypy_path = "services/backend/src"
+
+[tool.pytest.ini_options]
+addopts = "--strict-config --strict-markers --cov=echoatlas --cov-report=term-missing"
+testpaths = ["services/backend/tests"]
+pythonpath = ["services/backend/src"]

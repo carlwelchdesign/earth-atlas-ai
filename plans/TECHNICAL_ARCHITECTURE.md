@@ -10,8 +10,10 @@ Keep geospatial processing portable, deterministic, and independent of any opera
 apps/
   workbench/              React + TypeScript analyst UI
 services/
-  api/                    Thin local HTTP boundary for bundles and assessments
-  processor/              Python discovery, download, preprocessing, and detection
+  backend/
+    src/echoatlas/
+      api/                 Thin local HTTP boundary for bundles and assessments
+      processor/           Python discovery, download, preprocessing, and detection
 schemas/                  Versioned JSON Schema and GeoJSON conventions
 fixtures/
   demo/                   Small, licensed, reproducible derived demo artifacts
@@ -20,7 +22,7 @@ plans/                    Product and delivery source of truth
 data/                     Git-ignored raw/cache/derived workspace
 ```
 
-Exact framework choices are made in `EAT-001` and recorded in the decision log. The boundary is more important than the framework: Python owns raster science; TypeScript owns the analyst experience; JSON/GeoJSON schemas connect them.
+EAT-001 selected a Python 3.12+ FastAPI modular monolith managed with `uv`, plus a React 19 and TypeScript workbench managed as an npm workspace and built with Vite. API and processing remain separate Python modules in one environment until measured deployment or scaling needs justify separate services. Python owns raster science; TypeScript owns the analyst experience; JSON/GeoJSON schemas connect them.
 
 ## Processing flow
 
@@ -133,4 +135,3 @@ Initial thresholds are configuration and must be labeled as engineering heuristi
 - API contract tests for success and failure states;
 - UI behavior and accessibility tests for load, compare, review, recover, and export;
 - one documented end-to-end rebuild of the pinned demo from source manifest to bundle.
-

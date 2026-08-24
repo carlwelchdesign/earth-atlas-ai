@@ -28,7 +28,7 @@ The workspace's free tier does not support native milestone or dependency object
 
 | Local ID | Asana task | Milestone | State |
 | --- | --- | --- | --- |
-| EAT-001 | [1217791333511235](https://app.asana.com/1/9789386902387/project/1217790716964797/task/1217791333511235) | M1 | not started |
+| EAT-001 | [1217791333511235](https://app.asana.com/1/9789386902387/project/1217790716964797/task/1217791333511235) | M1 | in progress |
 | EAT-002 | [1217791261406192](https://app.asana.com/1/9789386902387/project/1217790716964797/task/1217791261406192) | M1 | not started |
 | EAT-003 | [1217791333529419](https://app.asana.com/1/9789386902387/project/1217790716964797/task/1217791333529419) | M1 | not started |
 | EAT-004 | [1217791261751270](https://app.asana.com/1/9789386902387/project/1217790716964797/task/1217791261751270) | M1 | not started |

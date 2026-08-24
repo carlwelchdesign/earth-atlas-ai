@@ -55,3 +55,11 @@
 - Decision: `EAT-DES-001` produces and validates an implementation-ready workbench design before `EAT-008` begins.
 - Why: the analyst workflow combines maps, imagery comparison, evidence, warnings, and consequential review states; designing it ad hoc in code would increase usability, accessibility, and rework risk.
 - Revisit when: only after an approved design handoff records why implementation should proceed with unresolved findings.
+
+## D-008 — Establish a Python modular backend and React workspace
+
+- Date: 2026-08-24
+- Status: accepted
+- Decision: use Python 3.12+ with `uv` and FastAPI for one modular backend distribution; keep API and processor as separate modules. Use Node 20.19+, npm workspaces, React 19, TypeScript 5, and Vite 7 for the workbench. Use GitHub Actions for CI and MIT for source code while preserving separate data licenses.
+- Why: the processing ecosystem is Python-native, a modular monolith avoids premature service operations, and the provider-neutral bundle preserves a future split. The selected frontend stack supports a custom standalone and later OSDK-compatible React experience.
+- Revisit when: measured dependency isolation, scaling, deployment, or platform-adapter constraints justify a service split or runtime upgrade.

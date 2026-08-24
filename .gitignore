@@ -1,0 +1,30 @@
+.DS_Store
+.env
+.env.*
+!.env.example
+
+# Python
+.mypy_cache/
+.pytest_cache/
+.ruff_cache/
+.venv/
+__pycache__/
+*.egg-info/
+*.py[cod]
+.coverage
+htmlcov/
+
+# JavaScript
+node_modules/
+dist/
+coverage/
+*.tsbuildinfo
+
+# Editors
+.idea/
+.vscode/
+
+# Local imagery and processing artifacts
+data/*
+!data/.gitkeep
+fixtures/generated/
