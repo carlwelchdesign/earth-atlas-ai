@@ -14,3 +14,5 @@ The only HTTP behavior remains `/health`. Catalog discovery, safe acquisition, a
 See [Catalog indexer](catalog-indexer.md) for the normalized record, trust boundary, and live-smoke evidence.
 
 See [Acquisition cache](acquisition-cache.md) for the pinned-object download boundary and [SAR preview processing](sar-preview-processing.md) for the deterministic common-grid and display-normalization contract.
+
+See [Baseline change candidates](change-candidate-baseline.md) for the explicit engineering score, registration tolerance, cleanup, vectorization, candidate contract, and interpretation boundary.

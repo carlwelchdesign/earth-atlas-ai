@@ -72,11 +72,11 @@ Outcome: a transparent baseline produces review candidates without claiming sema
 
 Acceptance:
 
-- [ ] Difference/change score, thresholding, cleanup, and vectorization policies are documented and parameterized.
-- [ ] Candidate GeoJSON includes run linkage, geometry, measurements, score components, warnings, and pending status.
-- [ ] Speckle/geometry/nodata edge cases have focused tests.
-- [ ] The UI-facing label is “candidate,” never “confirmed change” or “damage.”
-- [ ] Output can be reproduced from the same manifest and commit.
+- [x] Difference/change score, thresholding, cleanup, and vectorization policies are documented and parameterized.
+- [x] Candidate GeoJSON includes run linkage, geometry, measurements, score components, warnings, and pending status.
+- [x] Speckle/geometry/nodata edge cases have focused tests.
+- [x] The UI-facing label is “candidate,” never “confirmed change” or “damage.”
+- [x] Output can be reproduced from the same manifest and commit.
 
 ### EAT-007 — Version and validate the analysis-bundle contract
 

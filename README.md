@@ -2,7 +2,7 @@
 
 EchoAtlas is a planned civilian disaster and infrastructure-change SAR intelligence workbench. It will turn public Umbra imagery into deterministic change candidates, evidence, and human-reviewed assessments.
 
-**Current status:** the Bingham Canyon civilian demonstration pair is approved and pinned. The backend can fetch those exact public Umbra objects into a bounded, checksum-verified local cache and produce deterministic, AOI-cropped engineering previews on a declared common grid. It does not yet produce change candidates or provide operational intelligence.
+**Current status:** the Bingham Canyon civilian demonstration pair is approved and pinned. The backend can fetch those exact public Umbra objects into a bounded, checksum-verified local cache, produce deterministic AOI-cropped engineering previews on a declared common grid, and generate a transparent baseline queue of pending change candidates. It does not confirm physical change or provide operational intelligence.
 
 ## Architecture
 
@@ -74,6 +74,16 @@ uv run echoatlas-process-previews \
 ```
 
 The default run uses an EPSG:32612 one-meter grid, bilinear resampling, exact approved-AOI masking, no speckle filter, and independent 2–98% display stretches. These are engineering preview choices, not calibrated SAR normalization or change detection. See [the SAR preview processing documentation](docs/architecture/sar-preview-processing.md).
+
+Generate the deterministic baseline score, mask, overlay, and pending candidate GeoJSON from the verified preview run:
+
+```sh
+uv run echoatlas-change-candidates \
+  --preview-run data/derived/echoatlas-bingham-canyon-2025-v1/preview-48b949a1b72ac7f8f54d \
+  --data-root data
+```
+
+The score threshold, two-pixel registration tolerance, morphology, connectivity, minimum component size, and candidate-count guard are explicit parameters stored with the output. The default policy is an engineering heuristic for human review, not calibrated confidence. See [the baseline change-candidate documentation](docs/architecture/change-candidate-baseline.md).
 
 ## Delivery
 
