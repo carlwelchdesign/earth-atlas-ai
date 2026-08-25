@@ -234,6 +234,11 @@ export const loadWorkbenchBundle: BundleLoader = async () => {
       `Prepared demo request failed with status ${response.status}.`,
     );
   }
+  // Static hosts commonly serve the application shell for unknown routes.
+  // Treat that HTML fallback as "no prepared bundle" while continuing to
+  // reject malformed responses that claim to be JSON.
+  const contentType = response.headers.get("content-type")?.toLowerCase() ?? "";
+  if (contentType.includes("text/html")) return demoBundleForScenario(null);
   return response.json();
 };
 

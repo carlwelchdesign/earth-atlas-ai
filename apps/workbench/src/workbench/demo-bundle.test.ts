@@ -43,6 +43,23 @@ describe("loadWorkbenchBundle", () => {
     });
   });
 
+  it("uses the synthetic fallback when a static host returns the app shell", async () => {
+    vi.stubGlobal(
+      "fetch",
+      vi.fn().mockResolvedValue(
+        new Response("<!doctype html><title>EchoAtlas</title>", {
+          status: 200,
+          headers: { "Content-Type": "text/html; charset=utf-8" },
+        }),
+      ),
+    );
+
+    await expect(loadWorkbenchBundle()).resolves.toMatchObject({
+      bundleId: demoBundle.bundleId,
+      evidence: { lineage: "synthetic-fixture" },
+    });
+  });
+
   it("does not hide malformed prepared JSON behind the synthetic fallback", async () => {
     vi.stubGlobal(
       "fetch",
