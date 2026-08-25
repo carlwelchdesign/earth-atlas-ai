@@ -8,6 +8,7 @@ import subprocess
 from pathlib import Path
 
 from echoatlas.evaluation.harness import EvaluationInputError, evaluate_set
+from echoatlas.evaluation.review import prepare_review_packet
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -41,6 +42,28 @@ def _current_commit() -> str:
         raise EvaluationInputError(
             "software commit could not be resolved; pass --software-commit explicitly"
         ) from error
+
+
+def review_main() -> int:
+    parser = argparse.ArgumentParser(
+        description="Prepare a local-only candidate review packet from validated outputs."
+    )
+    parser.add_argument("--change-run", required=True, type=Path)
+    parser.add_argument("--preview-run", required=True, type=Path)
+    parser.add_argument("--output", required=True, type=Path)
+    args = parser.parse_args()
+    packet = prepare_review_packet(args.change_run, args.preview_run, args.output)
+    print(
+        json.dumps(
+            {
+                "packet_id": packet.packet_id,
+                "candidate_count": len(packet.candidates),
+                "index": str(args.output / "index.html"),
+            },
+            indent=2,
+        )
+    )
+    return 0
 
 
 if __name__ == "__main__":

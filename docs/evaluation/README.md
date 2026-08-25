@@ -28,3 +28,26 @@ Metric grain and limits:
 ## Real benchmark completion gate
 
 Before this becomes a pipeline benchmark, the Bingham Canyon evaluation cases need immutable source/run provenance, labels made under the guidance, independent qualified SAR review and adjudication, and confirmation that none of the evaluation pairs influenced pipeline parameters. Until then, EAT-012 baseline evidence is limited to evaluator correctness.
+
+## Local candidate-review packet
+
+The review-packet generator validates the selected change run, candidate collection, lineage, artifact sizes, checksums, and image dimensions before producing a local, self-contained review interface. It references the existing local preview and overlay files rather than copying or publishing imagery.
+
+For the approved local run:
+
+```sh
+uv run echoatlas-prepare-review \
+  --change-run data/derived/echoatlas-bingham-canyon-2025-v1/changes/change-9c8a27b2a55081fc6b07 \
+  --preview-run data/derived/echoatlas-bingham-canyon-2025-v1/preview-48b949a1b72ac7f8f54d \
+  --output data/review/eat012-bingham-v1
+```
+
+Open `data/review/eat012-bingham-v1/index.html` locally. The packet provides synchronized before, after, and candidate-overlay crops for all 26 candidates. Decisions and notes stay in browser storage until explicitly exported as JSON.
+
+Review choices have deliberately narrow meanings:
+
+- `Evidence supports follow-up; independent region required` records that a candidate merits separate reference labeling. It does not turn the candidate geometry into truth.
+- `False positive / artifact` requires one declared failure class.
+- `Unresolved` preserves uncertainty without forcing a label.
+
+The export is audit evidence for the labeling process. It is not accepted directly by `echoatlas-evaluate`, because evaluating a candidate against its own reviewed geometry would be circular.
