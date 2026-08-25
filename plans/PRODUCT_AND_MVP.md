@@ -62,7 +62,7 @@ Metrics are local and privacy-preserving in MVP. No third-party behavioral analy
 - autonomous alerts or external actions;
 - an LLM interpreting raw SAR pixels;
 - learned object detection before a labeled evaluation set and baseline exist;
-- real-time ingestion, global search, multi-tenancy, enterprise RBAC, or production operations;
+- real-time ingestion, global imagery discovery within the MVP, multi-tenancy, enterprise RBAC, or production operations;
 - Palantir as a required runtime or source of truth;
 - a marketplace, billing, subscriptions, or customer onboarding;
 - claiming disaster impact, causal damage, or operational truth from a change mask alone.
@@ -73,4 +73,16 @@ Metrics are local and privacy-preserving in MVP. No third-party behavioral analy
 - **M2 proves the analyst review experience.** Prepared fixtures are allowed, but all displayed evidence must come from the same bundle contract as live processing.
 - **M3 adds AI only as a cited draft explanation over structured evidence.** It remains feature-gated.
 - **M4 tests Palantir as an adapter and hardens a public demo.** Palantir work does not block the standalone MVP.
+- **M5 adds global imagery exploration after the single-story workflow is proven.** A MapLibre globe and accessible results list expose provider-reported coverage from Umbra and Sentinel-1 adapters, then hand an explicitly selected pair to the existing analysis pipeline. Navigating anywhere does not imply that suitable imagery exists there.
 
+## Post-MVP Explore workflow
+
+1. Search for a place or navigate the globe.
+2. Draw or edit a bounded civilian area of interest.
+3. Query provider-neutral catalog adapters for an explicit time range.
+4. Inspect acquisition footprints, timestamps, provider, product, resolution, polarization, license, provenance, and quality warnings on both the map and an equivalent results list.
+5. Compare candidate before/after pairs without treating availability as scientific suitability.
+6. Create an immutable selection manifest and start the existing deterministic processing flow.
+7. Open the resulting provider-neutral bundle in **Analyze**, with a clear return path to **Explore**.
+
+The first Explore release does not purchase or automate commercial tasking, promise continuous global coverage, download the world, create operational alerts, or relax the civilian-use and sensitivity boundaries.

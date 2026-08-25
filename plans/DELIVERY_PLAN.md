@@ -46,6 +46,14 @@ Tickets: `EAT-014`, `EAT-016`, and `EAT-015`.
 
 Gate: Developer Tier access and limits are feasibility results, not assumed capabilities. Public deployment and release require separate owner approval.
 
+### M5 — Global imagery exploration
+
+Outcome: a user can navigate or search a global map, define a bounded civilian AOI, inspect truthful Umbra and Sentinel-1 availability, select a candidate pair, and hand it into the existing Analyze workflow.
+
+Tickets: `EAT-DES-002` and `EAT-017` through `EAT-019`.
+
+Gate: Carl approves the Explore design before MapLibre implementation. Provider coverage, provenance, license, comparability, empty/error states, and a non-map accessible path must be visible. Global navigation must not imply global Umbra coverage, automatic pair validity, paid tasking, or operational monitoring.
+
 ## Dependency chain
 
 ```text
@@ -58,6 +66,10 @@ EAT-007 -> EAT-014
 EAT-011 -> EAT-016
 EAT-011 + EAT-012 + EAT-013 + EAT-016 -> EAT-015
 EAT-014 informs EAT-015 but does not block the standalone demo if platform access is unavailable.
+EAT-DES-002 -> EAT-018
+EAT-017 -> EAT-018 -> EAT-019
+EAT-007 -----------------> EAT-019
+M5 is post-MVP and does not delay the M4 release-evidence gate.
 ```
 
 ## Delivery cadence
@@ -84,6 +96,7 @@ Before a remote exists, commit evidence may be local. After a remote and protect
 | Candidate interpretation | Accountable as analyst | Supplies tooling, not conclusions | Consulted | Informed |
 | Palantir/provider account actions | Approves explicitly | Responsible only after approval | Informed | Consulted |
 | Public deployment/release | Approves explicitly | Prepares evidence | Consulted | Review required |
+| Global Explore design and provider expansion | Approves design and scope | Responsible | Consulted on pair-comparability language | Consulted on sensitivity, location, and provider controls |
 
 ## Validation plan
 
@@ -93,6 +106,7 @@ Before a remote exists, commit evidence may be local. After a remote and protect
 - UX: automated behavior/accessibility checks plus desktop/tablet/mobile screenshots;
 - AI: evidence-citation, unsupported-question, permission, and overclaiming evaluation set;
 - demo: a fresh-machine runbook test and attribution/security review.
+- exploration: contract fixtures plus bounded live catalog smoke tests, map/list parity, no-coverage and partial-provider states, accessibility checks, and desktop/mobile visual evidence.
 
 ## Specialist review synthesis
 
