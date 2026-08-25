@@ -41,6 +41,23 @@ Umbra STAC/S3 discovery
   -> analyst review UI and append-only assessments
 ```
 
+## Post-MVP discovery flow
+
+```text
+MapLibre globe or accessible search/list
+  -> bounded AOI + time range + provider filters
+  -> provider-neutral catalog query API
+  -> Umbra public-catalog adapter + Sentinel-1 catalog adapter
+  -> normalized acquisition footprints, provenance, licenses, and warnings
+  -> explicit candidate-pair selection and comparability review
+  -> immutable selection manifest
+  -> existing deterministic processing flow
+  -> provider-neutral analysis bundle
+  -> Analyze workbench
+```
+
+MapLibre owns navigation and rendering only. It may display basemap/vector tiles, acquisition-footprint GeoJSON, and explicitly configured raster tile sources, but it does not decide provider availability, pair suitability, processing policy, candidate meaning, or permissions. Palantir may consume the same normalized objects as an optional adapter; it is not the discovery source of truth.
+
 ## Boundaries and responsibilities
 
 ### Catalog adapter
@@ -49,6 +66,9 @@ Umbra STAC/S3 discovery
 - Maps provider metadata into internal `Acquisition` records.
 - Preserves the raw source document and records parse warnings.
 - Never leaks provider-specific property names into UI components.
+- Implements the same bounded spatial/time query contract for every provider and reports partial provider failures independently.
+- Returns only acquisitions and footprints actually reported by a provider; global map extent must never be rendered as global imagery coverage.
+- Applies AOI, result-count, pagination, timeout, cache, host-allowlist, and response-size limits before any later download or processing step.
 
 ### Processing domain
 
@@ -85,6 +105,9 @@ All untrusted JSON is validated at runtime against versioned schemas.
 - Loads only the provider-neutral bundle contract.
 - Treats candidates as machine-generated review items, not findings.
 - Makes stale, degraded, missing, and incompatible data visible.
+- Separates post-MVP `Explore` navigation/catalog state from `Analyze` bundle/review state.
+- Provides an equivalent searchable acquisition list for every map-only discovery action, including AOI results, selection, and no-coverage explanations.
+- Keeps MapLibre, geocoding, basemap, and raster-tile providers behind UI adapters so they can be replaced without changing catalog or analysis contracts.
 
 ### Palantir adapter
 

@@ -228,3 +228,69 @@ Acceptance:
 - [ ] Security, dependency, license, sensitive-site, and secret reviews are recorded.
 - [ ] README distinguishes shipped standalone capabilities, optional prototype integrations, and unimplemented roadmap.
 - [ ] Public deployment and publication remain separately approval-gated.
+
+## M5 — Global imagery exploration
+
+### EAT-DES-002 — Design and validate global Explore mode
+
+Outcome: an implementation-ready design defines how users move from global navigation to a truthful, accessible imagery-selection decision.
+
+Acceptance:
+
+- [ ] Separate Explore and Analyze modes, navigation between them, and retained selection state are specified.
+- [ ] Globe navigation, place/coordinate search, AOI draw/edit, acquisition footprints, provider/date/resolution/polarization filters, pair comparison, and mobile behavior are covered.
+- [ ] Loading, no-coverage, partial-provider, stale, rate-limit, invalid-AOI, offline, and permission states use truthful language.
+- [ ] An equivalent keyboard- and screen-reader-usable results list supports every core map discovery action.
+- [ ] Civilian-use, sensitivity, provenance, license, and machine-candidate boundaries remain visible.
+- [ ] Desktop/mobile walkthrough evidence and Carl's design approval are recorded before EAT-018 starts.
+
+Non-goals: production code, paid provider tasking, operational alerts, or changes to SAR processing policy.
+
+### EAT-017 — Build provider-neutral global catalog search
+
+Outcome: the backend can query imagery availability for a bounded AOI and time range without leaking provider payloads into the UI.
+
+Acceptance:
+
+- [ ] A versioned request/result contract covers AOI, time range, provider, product, resolution, polarization, footprint, license, source identity, pagination, and warnings.
+- [ ] The Umbra public-catalog adapter supports bounded spatial search and a Sentinel-1 metadata adapter supplies the broad-coverage foundation.
+- [ ] Results include only provider-reported acquisitions and never imply coverage outside returned footprints.
+- [ ] AOI, response, result-count, pagination, timeout, cache, host-allowlist, and schema-validation limits fail safely.
+- [ ] Partial provider failures remain attributable and do not erase successful provider results.
+- [ ] Deterministic fixtures, contract tests, and a documented bounded live smoke test pass.
+
+Non-goals: paid Umbra tasking, global bulk downloads, image processing, or Palantir-only discovery.
+
+### EAT-018 — Implement accessible MapLibre Explore mode
+
+Outcome: users can navigate a MapLibre globe, select an AOI, and inspect truthful acquisition availability through synchronized map and list interfaces.
+
+Prerequisites: `EAT-DES-002`, `EAT-017`.
+
+Acceptance:
+
+- [ ] MapLibre GL JS is isolated behind an Explore route/mode and does not replace the Analyze workbench.
+- [ ] Place/coordinate search, AOI draw/edit/reset, acquisition footprints, filters, selected-acquisition details, legend, attribution, and coverage disclaimers work.
+- [ ] Basemap, footprint GeoJSON, geocoding, and raster sources use explicit replaceable adapters; the renderer owns no provider or processing policy.
+- [ ] A synchronized results list, keyboard controls, focus management, reduced-motion behavior, and responsive layouts pass accessibility review.
+- [ ] Loading, no-coverage, partial-provider, rate-limit, offline, invalid-AOI, and stale-result behavior is verified.
+- [ ] Behavior tests, an agreed performance budget, and desktop/mobile visual evidence pass.
+
+Non-goals: a real-time global mosaic, automatic pair approval, assessment changes, or proprietary map lock-in.
+
+### EAT-019 — Connect Explore selection to the Analyze pipeline
+
+Outcome: a user can choose a suitable before/after pair in Explore, run the existing deterministic preparation workflow, and open the resulting bundle in Analyze.
+
+Prerequisites: `EAT-007`, `EAT-017`, `EAT-018`.
+
+Acceptance:
+
+- [ ] Pair comparability evidence and warnings appear before processing; the product never auto-labels a pair as scientifically valid.
+- [ ] Selection produces an immutable manifest with AOI geometry hash, source identities, timestamps, license/provenance, and processing inputs.
+- [ ] A bounded asynchronous job exposes queued, running, succeeded, failed, and cancelled states with safe retry/cancel behavior.
+- [ ] Success loads the existing versioned bundle in Analyze and preserves a clear return path to Explore.
+- [ ] Deterministic processing remains independent of MapLibre, Palantir, and AI providers.
+- [ ] One Umbra and one Sentinel-1 path are verified where legal test data permits, including no-comparable-pair and processing-failure cases.
+
+Non-goals: calibrated change truth, autonomous alerts, paid acquisition ordering, or public operational deployment.

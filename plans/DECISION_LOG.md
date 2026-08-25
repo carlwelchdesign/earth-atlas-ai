@@ -71,3 +71,11 @@
 - Decision: keep native `uv` and npm workflows for day-to-day development, then package the standalone backend and production workbench as non-root container images with health checks and a local Compose configuration in `EAT-015`. The Compose path uses explicit local persistence and has no Palantir or AI-provider requirement.
 - Why: containers provide a consistent fresh-machine demo and a portable deployment artifact without slowing the current data-processing proof or coupling the product to a platform provider.
 - Revisit when: an approved deployment target imposes runtime, ingress, orchestration, storage, or observability requirements beyond the local standalone package.
+
+## D-010 — Add a portable Explore mode after the single-story MVP
+
+- Date: 2026-08-25
+- Status: accepted
+- Decision: add a post-MVP Explore mode built on MapLibre GL JS plus an equivalent accessible results list. Provider-neutral Umbra and Sentinel-1 catalog adapters report actual acquisition footprints and metadata; an explicit pair selection then enters the existing deterministic Analyze workflow.
+- Why: users need a spatial way to discover where data exists, but the rendering engine must not be confused with imagery coverage, provider policy, pair suitability, or analysis science. Sentinel-1 supplies a broad free foundation while Umbra remains the higher-resolution layer where its open catalog has coverage.
+- Revisit when: measured performance, accessibility, provider terms, geocoder privacy, or deployment constraints require a different renderer or catalog provider; the provider-neutral contracts and truthful coverage boundary remain.

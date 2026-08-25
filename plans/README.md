@@ -4,6 +4,8 @@ Status: EAT-001 through EAT-011, EAT-DES-001, and EAT-016 are complete. EAT-012 
 
 EchoAtlas is a civilian disaster and infrastructure-change SAR intelligence workbench. The first release will prove one end-to-end analyst workflow with public Umbra data: select a comparable image pair, produce deterministic change candidates, inspect the evidence, and record a human assessment.
 
+Post-MVP milestone M5 expands that proven workflow with a global **Explore** mode: a MapLibre globe and equivalent accessible results list let users define a civilian AOI, inspect truthful Umbra and Sentinel-1 catalog availability, select a candidate pair, and hand it to the existing **Analyze** workflow. Global navigation is not a promise of global Umbra coverage, paid tasking, or automatic scientific suitability.
+
 Canonical GitHub repository: [carlwelchdesign/earth-atlas-ai](https://github.com/carlwelchdesign/earth-atlas-ai).
 
 ## Canonical plan
