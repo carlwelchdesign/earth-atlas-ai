@@ -1,6 +1,6 @@
 # Palantir feasibility spike
 
-Status: **provisional adjust with a live synthetic-Ontology checkpoint** as of 2026-08-25. EchoAtlas can project a validated analysis bundle into a minimal Palantir-shaped import plan. Carl explicitly approved and completed AIP Developer Tier enrollment, the live plan and application catalog were inspected, and an `EchoAtlas` Foundry project was created. The exact tiny synthetic fixture has been uploaded as raw structured files and PNG evidence media; five object types and six non-empty link types now back that fixture in the live Ontology. No real Umbra imagery, credentials, API keys, OAuth clients, actions, or applications have been created.
+Status: **provisional adjust with a live synthetic-Ontology checkpoint** as of 2026-08-25. EchoAtlas can project a validated analysis bundle into a minimal Palantir-shaped import plan. Carl explicitly approved and completed AIP Developer Tier enrollment, the live plan and application catalog were inspected, and an `EchoAtlas` Foundry project was created. The exact tiny synthetic fixture has been uploaded as raw structured files and PNG evidence media; five object types and six non-empty link types now back that fixture in the live Ontology. A live Pipeline Builder bridge also converts the acquisition and analysis-run epoch-millisecond companions into native `Timestamp` columns. No real Umbra imagery, credentials, API keys, OAuth clients, actions, or applications have been created.
 
 ## Decision
 
@@ -34,7 +34,7 @@ The approved synthetic checkpoint created two additional remote resources:
 
 Foundry reported “Unable to infer a schema for this dataset” for the heterogeneous raw JSON/GeoJSON bundle. This proves the bundle can be retained as a raw file collection, not that it is immediately tabular or Ontology-ready. EchoAtlas now provides a deterministic normalization package with one CSV per object family, a compatibility aggregate link CSV, one two-column join CSV per declared link type, one media-reference CSV, and a hashed manifest. Scalar properties become columns and nested properties use canonical JSON text. The raw source files remain the portable source of truth.
 
-The live checkpoint resolves enrollment, plan-name, high-level capacity, application-catalog, raw-file import, PNG media-set creation, schema inference for non-empty normalized CSV tables, and the minimum object/link mapping. It does not yet resolve raster-native geospatial behavior, a production transform path, OSDK/static-hosting configuration, restricted application scopes, usage impact, or cleanup behavior.
+The live checkpoint resolves enrollment, plan-name, high-level capacity, application-catalog, raw-file import, PNG media-set creation, schema inference for non-empty normalized CSV tables, the minimum object/link mapping, and the bounded timestamp transform path. It does not yet resolve raster-native geospatial behavior, OSDK/static-hosting configuration, restricted application scopes, usage impact, or cleanup behavior.
 
 ### Live normalized datasets
 
@@ -62,12 +62,21 @@ The approved Ontology checkpoint created five object types from the non-empty sy
 | Object type | Live rows / mapped properties | Ontology RID |
 | --- | --- | --- |
 | EchoAtlas Area of Interest | 1 row / 7 properties | `ri.ontology.main.object-type.7d82106a-dcfe-4693-93b3-ec0d33bbd230` |
-| Echo Atlas Normalized Acquisition | 2 rows / 12 properties | `ri.ontology.main.object-type.e9e52fa7-7ad0-4b0a-9a9a-fb1a4ad4cff0` |
-| EchoAtlas Analysis Run | 1 row / 9 properties | `ri.ontology.main.object-type.470eed9a-55e5-40ac-968c-b581d94e90f4` |
+| Echo Atlas Normalized Acquisition | 2 rows / 13 properties, including native `Acquired At` Timestamp | `ri.ontology.main.object-type.e9e52fa7-7ad0-4b0a-9a9a-fb1a4ad4cff0` |
+| EchoAtlas Analysis Run | 1 row / 10 properties, including native `Created At` Timestamp | `ri.ontology.main.object-type.470eed9a-55e5-40ac-968c-b581d94e90f4` |
 | EchoAtlas Evidence Artifact | 4 rows / 10 properties | `ri.ontology.main.object-type.d85965ef-f0f2-4853-a27f-82069830027e` |
 | EchoAtlas Change Candidate | 1 row / 12 properties | `ri.ontology.main.object-type.435f50f8-8eee-4f9e-b8d1-07f50240ad0b` |
 
-Direct mapping exposed a timestamp boundary that remains part of the transform gate. Ontology Manager proposed `Struct<Timestamp,Offset>` for `acquired_at` and `created_at`, while the backing datasets reported `offsetdatetimeudt` to the indexer. Those two properties were excluded from the live object types so indexing could complete; their source columns remain unchanged in the datasets and package. Package version 1.3.0 now also emits `acquired_at_epoch_millis`, `created_at_epoch_millis`, and, when assessments exist, `recorded_at_epoch_millis`. Offsets are normalized to the same UTC instant, and sub-millisecond values are rejected instead of truncated. Palantir documents an [Epoch milliseconds to timestamp](https://www.palantir.com/docs/foundry/pipeline-builder/functions-index#epoch-milliseconds-to-timestamp) Pipeline Builder expression whose output type is `Timestamp`, which is a [supported Ontology property type](https://www.palantir.com/docs/foundry/object-link-types/properties-overview#supported-property-types). This establishes a deterministic transform contract, but the live Pipeline Builder build and remapping still have to be exercised before the transform gate is marked complete.
+Direct mapping exposed a timestamp boundary: Ontology Manager proposed `Struct<Timestamp,Offset>` for `acquired_at` and `created_at`, while the backing datasets reported `offsetdatetimeudt` to the indexer. Package version 1.3.0 therefore preserves those source strings and emits `acquired_at_epoch_millis`, `created_at_epoch_millis`, and, when assessments exist, `recorded_at_epoch_millis`. Offsets are normalized to the same UTC instant, and sub-millisecond values are rejected instead of truncated. Palantir documents an [Epoch milliseconds to timestamp](https://www.palantir.com/docs/foundry/pipeline-builder/functions-index#epoch-milliseconds-to-timestamp) Pipeline Builder expression whose output type is `Timestamp`, which is a [supported Ontology property type](https://www.palantir.com/docs/foundry/object-link-types/properties-overview#supported-property-types).
+
+The approved live timestamp checkpoint exercised that contract in the batch pipeline `EchoAtlas Timestamp Bridge` (`ri.eddie.main.pipeline.bed724ca-d984-449b-9b94-1694e2ff6ee4`). Build `ri.foundry.main.build.40085d69-687c-4902-b252-f27434e9c6dc` finished both outputs:
+
+| Timestamp path | Source dataset | Output dataset | Verified native values |
+| --- | --- | --- | --- |
+| Acquisition | `ri.foundry.main.dataset.65ed10ed-9f72-4952-84f4-f5533f8f7839` | `ri.foundry.main.dataset.f13bcb55-2c6e-4823-b601-03e28c4217eb` | `2025-02-10T12:00:00.000Z`, `2025-01-10T12:00:00.000Z` |
+| Analysis run | `ri.foundry.main.dataset.15f488a9-b8d5-40d7-8fb2-b44b5be86603` | `ri.foundry.main.dataset.4b8d66b7-02df-4b50-b2f4-9c18a79d3432` | `2026-01-15T12:00:00.000Z` |
+
+Foundry reports `acquired_at_timestamp` and `created_at_timestamp` as native timestamp columns. The two object types now use the output datasets as backing datasources while preserving their primary keys, object counts, and existing link-type topology. Post-remap verification found both object types and all six existing relation RIDs indexed. The transform gate is complete for the approved synthetic checkpoint; this does not establish production scheduling, real-imagery ingestion, or cost behavior.
 
 Each non-empty relationship is backed by its own two-column join dataset. The one-row run-to-candidate dataset required an explicit **Apply a schema** step after automatic inference initially failed.
 
@@ -152,9 +161,9 @@ Explicit owner approval is required before the remaining spike:
 
 1. [x] Create and authenticate to a Developer Tier enrollment with Carl's explicit approval.
 2. [ ] Complete the plan evidence: high-level limits and enabled applications are captured, but numeric compute/storage/GPU/user quotas and country/term limits remain unavailable.
-3. [ ] Media-set creation, catalog-level model state, and normalized object/link resources are confirmed. Raster-native behavior, the timestamp transform path, and OSDK/static-hosting configuration remain open.
+3. [ ] Media-set creation, catalog-level model state, normalized object/link resources, and the synthetic timestamp transform path are confirmed. Raster-native behavior and OSDK/static-hosting configuration remain open.
 4. [ ] Configure a restricted test application and record its exact resources and operation scopes.
-5. [ ] The exact synthetic bundle is present as raw files and media. Non-empty normalized datasets and the live Ontology preserve expected row counts, object identities, typed link endpoints, and available-media references. Empty-family behavior is guarded locally. Timestamp transform compatibility and deletion/cleanup behavior remain open.
+5. [ ] The exact synthetic bundle is present as raw files and media. Non-empty normalized datasets and the live Ontology preserve expected row counts, object identities, typed link endpoints, available-media references, and native acquisition/run timestamps. Empty-family behavior is guarded locally. Deletion/cleanup behavior remains open.
 6. [ ] Record durable visual evidence, usage impact, limitations, and the final go/adjust/no-go decision.
 
 Real Umbra imagery remains outside the live spike until its storage, license, sensitivity, and usage implications are separately reviewed.
