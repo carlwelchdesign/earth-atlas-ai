@@ -117,14 +117,17 @@ uv run echoatlas-package-palantir-import \
   --output data/platform/palantir-import-package
 ```
 
-The destination must not already exist. Package version 1.2.0 describes all six
+The destination must not already exist. Package version 1.3.0 describes all six
 object families, the aggregate relationship table, one two-column join table per
 declared link type, and media references. CSV files are emitted only for tables
 that contain rows. Zero-row families are marked `upload_ready: false` instead of
 producing a header-only file that a target could misinterpret as data. The manifest
 contains row counts, columns, and SHA-256 hashes. Nested values use canonical JSON
-text inside CSV cells. The command still performs no authentication or remote
-writes and does not create Ontology resources.
+text inside CSV cells. Recognized object timestamps retain their original RFC3339
+columns and add UTC epoch-millisecond companion columns for an explicit target-side
+timestamp conversion. Values with sub-millisecond precision fail packaging instead
+of being silently truncated. The command still performs no authentication or
+remote writes and does not create Ontology resources.
 
 Review the approval-gated [analyst workbench interface specification](docs/design/workbench-interface-v1.md) and [standalone prototype](prototypes/eat-des-001/README.md). The prototype is separate from production React and uses only synthetic design material.
 
