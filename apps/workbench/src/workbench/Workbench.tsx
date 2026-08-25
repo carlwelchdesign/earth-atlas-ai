@@ -18,6 +18,10 @@ import {
   type AssessmentEvent,
   type AssessmentStore,
 } from "./assessment";
+import {
+  createCandidateEvidenceExport,
+  createEvidenceDownloadHref,
+} from "./evidence";
 
 import type {
   AcquisitionView,
@@ -180,6 +184,7 @@ export function Workbench({ bundle, assessmentStore }: WorkbenchProps) {
           onReset={() => setZoomIndex(0)}
         />
         <CandidateSummary
+          bundle={bundle}
           candidate={selectedCandidate}
           events={assessmentEvents.filter(
             (event) => event.candidateId === selectedCandidateId,
@@ -193,7 +198,7 @@ export function Workbench({ bundle, assessmentStore }: WorkbenchProps) {
         />
       </main>
       <footer className="workbench-footer">
-        <span>Synthetic fixture · no satellite measurement represented</span>
+        <span>{bundle.evidence.attribution}</span>
         <span>Bundle contract {bundle.contractVersion}</span>
       </footer>
       <div className="sr-status" role="status" aria-live="polite">
@@ -639,16 +644,33 @@ function MapCandidate({
 }
 
 function CandidateSummary({
+  bundle,
   candidate,
   events,
   currentEvent,
   onStartAssessment,
 }: {
+  bundle: WorkbenchBundle;
   candidate: CandidateView | null;
   events: AssessmentEvent[];
   currentEvent: AssessmentEvent | null;
   onStartAssessment: (candidateId: string, invoker: HTMLElement) => void;
 }) {
+  const [tab, setTab] = useState<
+    "review" | "provenance" | "processing" | "history"
+  >("review");
+  const evidenceExport = useMemo(
+    () =>
+      candidate
+        ? createCandidateEvidenceExport({
+            bundle,
+            candidate,
+            assessments: events,
+            exportedAt: new Date().toISOString(),
+          })
+        : null,
+    [bundle, candidate, events],
+  );
   return (
     <aside className="summary-panel panel" aria-labelledby="summary-title">
       <div className="panel-heading">
@@ -668,34 +690,49 @@ function CandidateSummary({
       </div>
       {candidate ? (
         <div className="summary-content">
-          <div className="score-card">
-            <span>Heuristic change score</span>
-            <strong>{candidate.heuristicScore.toFixed(2)}</strong>
-            <p>Ranking signal only—not calibrated confidence or a finding.</p>
+          <div className="evidence-tabs" role="tablist" aria-label="Evidence">
+            {(["review", "provenance", "processing", "history"] as const).map(
+              (option) => (
+                <button
+                  key={option}
+                  type="button"
+                  role="tab"
+                  aria-selected={tab === option}
+                  aria-controls={`evidence-${option}`}
+                  onClick={() => setTab(option)}
+                >
+                  {capitalize(option)}
+                </button>
+              ),
+            )}
           </div>
-          <dl className="summary-metrics">
-            <div>
-              <dt>Area</dt>
-              <dd>{formatArea(candidate.areaSquareMeters)}</dd>
-            </div>
-            <div>
-              <dt>Pixels</dt>
-              <dd>{candidate.pixelCount}</dd>
-            </div>
-            <div>
-              <dt>Warnings</dt>
-              <dd>{candidate.warningCount}</dd>
-            </div>
-          </dl>
-          <div className="summary-warning">
-            <span aria-hidden="true">!</span>
-            <p>
-              Registration, moisture, slope, layover, and shadow can create
-              apparent differences.
-            </p>
-          </div>
-          {events.length > 0 ? (
-            <AssessmentHistory events={events} currentEvent={currentEvent} />
+          {tab === "review" ? <ReviewEvidence candidate={candidate} /> : null}
+          {tab === "provenance" ? (
+            <ProvenanceEvidence bundle={bundle} candidate={candidate} />
+          ) : null}
+          {tab === "processing" ? (
+            <ProcessingEvidence bundle={bundle} candidate={candidate} />
+          ) : null}
+          {tab === "history" ? (
+            <section id="evidence-history" role="tabpanel" aria-label="History">
+              {events.length > 0 ? (
+                <AssessmentHistory
+                  events={events}
+                  currentEvent={currentEvent}
+                />
+              ) : (
+                <p className="evidence-empty">No assessment events recorded.</p>
+              )}
+            </section>
+          ) : null}
+          {evidenceExport ? (
+            <a
+              className="secondary-button evidence-export"
+              href={createEvidenceDownloadHref(evidenceExport)}
+              download={`${bundle.bundleId}-${candidate.id}-evidence.json`}
+            >
+              Export evidence JSON
+            </a>
           ) : null}
           <button
             className="primary-button"
@@ -721,6 +758,211 @@ function CandidateSummary({
         </div>
       )}
     </aside>
+  );
+}
+
+function ReviewEvidence({ candidate }: { candidate: CandidateView }) {
+  return (
+    <section id="evidence-review" role="tabpanel" aria-label="Review">
+      <div className="score-card">
+        <span>Heuristic change score</span>
+        <strong>{candidate.heuristicScore.toFixed(2)}</strong>
+        <p>
+          Ranking signal from deterministic fixture measurements. It is not
+          calibrated confidence, a probability, or a confirmed finding.
+        </p>
+      </div>
+      <dl className="summary-metrics">
+        <div>
+          <dt>Area</dt>
+          <dd>{formatArea(candidate.areaSquareMeters)}</dd>
+        </div>
+        <div>
+          <dt>Pixels</dt>
+          <dd>{candidate.pixelCount}</dd>
+        </div>
+        <div>
+          <dt>Warnings</dt>
+          <dd>{candidate.warningCount}</dd>
+        </div>
+      </dl>
+      <EvidenceWarnings warnings={candidate.warnings} />
+    </section>
+  );
+}
+
+function ProvenanceEvidence({
+  bundle,
+  candidate,
+}: {
+  bundle: WorkbenchBundle;
+  candidate: CandidateView;
+}) {
+  const artifacts = bundle.evidence.artifacts;
+  return (
+    <section
+      className="evidence-section"
+      id="evidence-provenance"
+      role="tabpanel"
+      aria-label="Provenance"
+    >
+      <div className="lineage-notice">
+        <strong>Synthetic lineage</strong>
+        <p>{bundle.evidence.lineageNotice}</p>
+      </div>
+      <h3>Acquisition comparison</h3>
+      <div className="acquisition-evidence">
+        {bundle.evidence.acquisitions.map((acquisition) => (
+          <article key={acquisition.acquisitionId}>
+            <strong>{acquisition.provider}</strong>
+            <span>
+              {acquisition.productType} · {acquisition.polarization}
+            </span>
+            <span>
+              {acquisition.resolutionMeters} m · incidence{" "}
+              {acquisition.incidenceAngleDegrees}°
+            </span>
+            <EvidenceSourceLink link={acquisition.source} />
+            <Checksum
+              algorithm={acquisition.checksum.algorithm}
+              value={acquisition.checksum.value}
+            />
+          </article>
+        ))}
+      </div>
+      <h3>Referenced artifacts</h3>
+      <ul className="artifact-list">
+        {artifacts.map((artifact) => (
+          <li key={artifact.id}>
+            <div>
+              <strong>{artifact.label}</strong>
+              <span>
+                {candidate.evidenceArtifactIds.includes(artifact.id)
+                  ? "Candidate evidence"
+                  : "Run artifact"}
+                {" · "}
+                {artifact.mediaType}
+                {artifact.available
+                  ? ` · ${formatBytes(artifact.sizeBytes)}`
+                  : " · unavailable"}
+              </span>
+            </div>
+            {artifact.available ? (
+              <a href={artifact.path} target="_blank" rel="noreferrer">
+                Open artifact
+              </a>
+            ) : (
+              <span className="unavailable-link">Unavailable</span>
+            )}
+            <Checksum algorithm="SHA-256" value={artifact.sha256} />
+          </li>
+        ))}
+      </ul>
+      <p className="attribution-line">{bundle.evidence.attribution}</p>
+      <EvidenceSourceLink link={bundle.evidence.license} />
+    </section>
+  );
+}
+
+function ProcessingEvidence({
+  bundle,
+  candidate,
+}: {
+  bundle: WorkbenchBundle;
+  candidate: CandidateView;
+}) {
+  const unavailable = bundle.evidence.artifacts.filter(
+    (artifact) => !artifact.available,
+  );
+  return (
+    <section
+      className="evidence-section"
+      id="evidence-processing"
+      role="tabpanel"
+      aria-label="Processing"
+    >
+      <dl className="processing-facts">
+        <div>
+          <dt>Run</dt>
+          <dd>{bundle.evidence.run.id}</dd>
+        </div>
+        <div>
+          <dt>Software</dt>
+          <dd>{bundle.evidence.software.version}</dd>
+        </div>
+        <div>
+          <dt>Commit</dt>
+          <dd>{bundle.evidence.software.commit}</dd>
+        </div>
+      </dl>
+      <h3>Run parameters</h3>
+      <dl className="parameter-list">
+        {bundle.evidence.run.parameters.map((parameter) => (
+          <div key={parameter.name}>
+            <dt>{parameter.name}</dt>
+            <dd>{parameter.value}</dd>
+          </div>
+        ))}
+      </dl>
+      <EvidenceWarnings
+        warnings={[
+          ...candidate.warnings,
+          ...bundle.evidence.warnings,
+          ...unavailable.map(
+            (artifact) =>
+              `${artifact.label} is unavailable; valid evidence remains usable.`,
+          ),
+        ]}
+      />
+    </section>
+  );
+}
+
+function EvidenceWarnings({ warnings }: { warnings: string[] }) {
+  return (
+    <div className="summary-warning">
+      <span aria-hidden="true">!</span>
+      <div>
+        <strong>Limitations and warnings</strong>
+        <ul>
+          {warnings.map((warning) => (
+            <li key={warning}>{warning}</li>
+          ))}
+        </ul>
+      </div>
+    </div>
+  );
+}
+
+function EvidenceSourceLink({
+  link,
+}: {
+  link: WorkbenchBundle["evidence"]["license"];
+}) {
+  if (link.status === "unavailable" || !link.href) {
+    return (
+      <span className="unavailable-link">
+        {link.label} · source link unavailable
+      </span>
+    );
+  }
+  return (
+    <a href={link.href} target="_blank" rel="noreferrer">
+      {link.label}
+    </a>
+  );
+}
+
+function Checksum({ algorithm, value }: { algorithm: string; value: string }) {
+  return (
+    <span className="checksum" title={`${algorithm}: ${value}`}>
+      <span className="sr-status">
+        {algorithm}: {value}
+      </span>
+      <span aria-hidden="true">
+        {algorithm} · {value.slice(0, 12)}…
+      </span>
+    </span>
   );
 }
 
@@ -814,6 +1056,11 @@ function formatDate(timestamp: string) {
 
 function formatArea(area: number) {
   return `${new Intl.NumberFormat("en-US").format(area)} m²`;
+}
+
+function formatBytes(bytes: number) {
+  if (bytes < 1024) return `${bytes} B`;
+  return `${(bytes / 1024).toFixed(1)} KB`;
 }
 
 function capitalize(value: string) {

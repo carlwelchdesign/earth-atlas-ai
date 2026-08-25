@@ -1,4 +1,8 @@
 export const WORKBENCH_CONTRACT_VERSION = "1.0.0" as const;
+const ALLOWED_EVIDENCE_HOSTS = new Set([
+  "creativecommons.org",
+  "umbra-open-data-catalog.s3.us-west-2.amazonaws.com",
+]);
 
 export type AcquisitionRole = "before" | "after";
 export type BundleStatus = "succeeded" | "partial";
@@ -22,6 +26,8 @@ export interface CandidateView {
   pixelCount: number;
   heuristicScore: number;
   warningCount: number;
+  evidenceArtifactIds: string[];
+  warnings: string[];
   mapPosition: {
     leftPercent: number;
     topPercent: number;
@@ -29,6 +35,57 @@ export interface CandidateView {
     heightPercent: number;
     rotationDegrees: number;
   };
+}
+
+export type EvidenceLinkStatus = "available" | "unavailable";
+
+export interface EvidenceLink {
+  label: string;
+  href: string | null;
+  status: EvidenceLinkStatus;
+}
+
+export interface AcquisitionEvidence {
+  acquisitionId: string;
+  provider: string;
+  productType: string;
+  polarization: string;
+  resolutionMeters: number;
+  incidenceAngleDegrees: number;
+  source: EvidenceLink;
+  checksum: {
+    algorithm: string;
+    value: string;
+  };
+}
+
+export interface EvidenceArtifact {
+  id: string;
+  label: string;
+  mediaType: string;
+  path: string;
+  sha256: string;
+  sizeBytes: number;
+  required: boolean;
+  available: boolean;
+}
+
+export interface EvidenceView {
+  lineage: "synthetic-fixture" | "satellite-derived";
+  lineageNotice: string;
+  attribution: string;
+  license: EvidenceLink;
+  software: {
+    version: string;
+    commit: string;
+  };
+  run: {
+    id: string;
+    parameters: Array<{ name: string; value: string }>;
+  };
+  acquisitions: [AcquisitionEvidence, AcquisitionEvidence];
+  artifacts: EvidenceArtifact[];
+  warnings: string[];
 }
 
 export interface WorkbenchBundle {
@@ -43,6 +100,7 @@ export interface WorkbenchBundle {
   acquisitions: [AcquisitionView, AcquisitionView];
   candidates: CandidateView[];
   qualityWarnings: string[];
+  evidence: EvidenceView;
 }
 
 export type BundleLoader = () => Promise<unknown>;
@@ -107,6 +165,36 @@ export function parseWorkbenchBundle(source: unknown): WorkbenchBundle {
   ).map((warning, index) =>
     requireString(warning, `qualityWarnings[${index}]`),
   );
+  const evidence = parseEvidence(root.evidence);
+  const acquisitionIds = new Set(
+    parsedAcquisitions.map((acquisition) => acquisition.id),
+  );
+  const evidenceAcquisitionIds = new Set<string>();
+  for (const acquisition of evidence.acquisitions) {
+    if (evidenceAcquisitionIds.has(acquisition.acquisitionId)) {
+      throw invalid(
+        `duplicate evidence acquisition ID: ${acquisition.acquisitionId}`,
+      );
+    }
+    evidenceAcquisitionIds.add(acquisition.acquisitionId);
+    if (!acquisitionIds.has(acquisition.acquisitionId)) {
+      throw invalid(
+        `evidence acquisition does not reference a bundle acquisition: ${acquisition.acquisitionId}`,
+      );
+    }
+  }
+  const artifactIds = new Set(
+    evidence.artifacts.map((artifact) => artifact.id),
+  );
+  for (const candidate of candidates) {
+    for (const artifactId of candidate.evidenceArtifactIds) {
+      if (!artifactIds.has(artifactId)) {
+        throw invalid(
+          `candidate ${candidate.id} references unknown evidence artifact: ${artifactId}`,
+        );
+      }
+    }
+  }
   return {
     contractVersion: WORKBENCH_CONTRACT_VERSION,
     bundleId,
@@ -116,6 +204,7 @@ export function parseWorkbenchBundle(source: unknown): WorkbenchBundle {
     acquisitions: [before, after],
     candidates,
     qualityWarnings,
+    evidence,
   };
 }
 
@@ -182,6 +271,21 @@ function parseCandidate(source: unknown, index: number): CandidateView {
       record.warningCount,
       `candidates[${index}].warningCount`,
     ),
+    evidenceArtifactIds: requireArray(
+      record.evidenceArtifactIds,
+      `candidates[${index}].evidenceArtifactIds`,
+    ).map((id, artifactIndex) =>
+      requireString(
+        id,
+        `candidates[${index}].evidenceArtifactIds[${artifactIndex}]`,
+      ),
+    ),
+    warnings: requireArray(
+      record.warnings,
+      `candidates[${index}].warnings`,
+    ).map((warning, warningIndex) =>
+      requireString(warning, `candidates[${index}].warnings[${warningIndex}]`),
+    ),
     mapPosition: {
       leftPercent: requirePercent(
         position.leftPercent,
@@ -204,6 +308,149 @@ function parseCandidate(source: unknown, index: number): CandidateView {
         `candidates[${index}].rotationDegrees`,
       ),
     },
+  };
+}
+
+function parseEvidence(source: unknown): EvidenceView {
+  const record = requireRecord(source, "evidence");
+  const license = parseEvidenceLink(record.license, "evidence.license");
+  const software = requireRecord(record.software, "evidence.software");
+  const run = requireRecord(record.run, "evidence.run");
+  const acquisitions = requireArray(
+    record.acquisitions,
+    "evidence.acquisitions",
+  ).map((item, index) => parseAcquisitionEvidence(item, index));
+  if (acquisitions.length !== 2) {
+    throw invalid("evidence.acquisitions must contain exactly two records");
+  }
+  const artifacts = requireArray(record.artifacts, "evidence.artifacts").map(
+    (item, index) => parseEvidenceArtifact(item, index),
+  );
+  const artifactIds = new Set<string>();
+  for (const artifact of artifacts) {
+    if (artifactIds.has(artifact.id)) {
+      throw invalid(`duplicate evidence artifact ID: ${artifact.id}`);
+    }
+    artifactIds.add(artifact.id);
+  }
+  return {
+    lineage: requireEnum(
+      record.lineage,
+      ["synthetic-fixture", "satellite-derived"],
+      "evidence.lineage",
+    ),
+    lineageNotice: requireString(
+      record.lineageNotice,
+      "evidence.lineageNotice",
+    ),
+    attribution: requireString(record.attribution, "evidence.attribution"),
+    license,
+    software: {
+      version: requireString(software.version, "evidence.software.version"),
+      commit: requireCommit(software.commit, "evidence.software.commit"),
+    },
+    run: {
+      id: requireString(run.id, "evidence.run.id"),
+      parameters: requireArray(run.parameters, "evidence.run.parameters").map(
+        (item, index) => {
+          const parameter = requireRecord(
+            item,
+            `evidence.run.parameters[${index}]`,
+          );
+          return {
+            name: requireString(
+              parameter.name,
+              `evidence.run.parameters[${index}].name`,
+            ),
+            value: requireString(
+              parameter.value,
+              `evidence.run.parameters[${index}].value`,
+            ),
+          };
+        },
+      ),
+    },
+    acquisitions: acquisitions as [AcquisitionEvidence, AcquisitionEvidence],
+    artifacts,
+    warnings: requireArray(record.warnings, "evidence.warnings").map(
+      (warning, index) => requireString(warning, `evidence.warnings[${index}]`),
+    ),
+  };
+}
+
+function parseAcquisitionEvidence(
+  source: unknown,
+  index: number,
+): AcquisitionEvidence {
+  const path = `evidence.acquisitions[${index}]`;
+  const record = requireRecord(source, path);
+  const checksum = requireRecord(record.checksum, `${path}.checksum`);
+  return {
+    acquisitionId: requireString(record.acquisitionId, `${path}.acquisitionId`),
+    provider: requireString(record.provider, `${path}.provider`),
+    productType: requireString(record.productType, `${path}.productType`),
+    polarization: requireString(record.polarization, `${path}.polarization`),
+    resolutionMeters: requirePositiveNumber(
+      record.resolutionMeters,
+      `${path}.resolutionMeters`,
+    ),
+    incidenceAngleDegrees: requirePositiveNumber(
+      record.incidenceAngleDegrees,
+      `${path}.incidenceAngleDegrees`,
+    ),
+    source: parseEvidenceLink(record.source, `${path}.source`),
+    checksum: {
+      algorithm: requireString(
+        checksum.algorithm,
+        `${path}.checksum.algorithm`,
+      ),
+      value: requireString(checksum.value, `${path}.checksum.value`),
+    },
+  };
+}
+
+function parseEvidenceLink(source: unknown, path: string): EvidenceLink {
+  const record = requireRecord(source, path);
+  const status = requireEnum(
+    record.status,
+    ["available", "unavailable"],
+    `${path}.status`,
+  );
+  const href =
+    record.href === null ? null : requireSafeLink(record.href, `${path}.href`);
+  if (status === "available" && href === null) {
+    throw invalid(`${path}.href is required when the link is available`);
+  }
+  if (status === "unavailable" && href !== null) {
+    throw invalid(`${path}.href must be null when the link is unavailable`);
+  }
+  return {
+    label: requireString(record.label, `${path}.label`),
+    href,
+    status,
+  };
+}
+
+function parseEvidenceArtifact(
+  source: unknown,
+  index: number,
+): EvidenceArtifact {
+  const path = `evidence.artifacts[${index}]`;
+  const record = requireRecord(source, path);
+  const available = requireBoolean(record.available, `${path}.available`);
+  const required = requireBoolean(record.required, `${path}.required`);
+  if (required && !available) {
+    throw invalid(`${path} cannot be required and unavailable`);
+  }
+  return {
+    id: requireString(record.id, `${path}.id`),
+    label: requireString(record.label, `${path}.label`),
+    mediaType: requireMediaType(record.mediaType, `${path}.mediaType`),
+    path: requireSafeFixturePath(record.path, `${path}.path`),
+    sha256: requireSha256(record.sha256, `${path}.sha256`),
+    sizeBytes: requirePositiveInteger(record.sizeBytes, `${path}.sizeBytes`),
+    required,
+    available,
   };
 }
 
@@ -288,6 +535,49 @@ function requireSafeFixturePath(value: unknown, path: string): string {
     throw invalid(`${path} must be a safe local fixture path`);
   }
   return source;
+}
+
+function requireSafeLink(value: unknown, path: string): string {
+  const source = requireString(value, path);
+  if (source.startsWith("/fixtures/"))
+    return requireSafeFixturePath(source, path);
+  let url: URL;
+  try {
+    url = new URL(source);
+  } catch {
+    throw invalid(`${path} must be a safe local fixture path or HTTPS URL`);
+  }
+  if (url.protocol !== "https:" || url.username || url.password) {
+    throw invalid(`${path} must be an unauthenticated HTTPS URL`);
+  }
+  if (!ALLOWED_EVIDENCE_HOSTS.has(url.hostname)) {
+    throw invalid(`${path} host is not allowlisted`);
+  }
+  return url.href;
+}
+
+function requireSha256(value: unknown, path: string): string {
+  const checksum = requireString(value, path);
+  if (!/^[a-f0-9]{64}$/.test(checksum)) {
+    throw invalid(`${path} must be a lowercase SHA-256 checksum`);
+  }
+  return checksum;
+}
+
+function requireCommit(value: unknown, path: string): string {
+  const commit = requireString(value, path);
+  if (!/^[a-f0-9]{7,64}$/.test(commit)) {
+    throw invalid(`${path} must be a Git commit identifier`);
+  }
+  return commit;
+}
+
+function requireMediaType(value: unknown, path: string): string {
+  const mediaType = requireString(value, path);
+  if (!/^[a-z0-9.+-]+\/[a-z0-9.+-]+$/.test(mediaType)) {
+    throw invalid(`${path} must be a media type`);
+  }
+  return mediaType;
 }
 
 function requireExact<const T extends string>(
