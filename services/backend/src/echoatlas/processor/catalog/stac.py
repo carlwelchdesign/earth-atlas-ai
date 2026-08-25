@@ -27,7 +27,12 @@ class StacCatalogAdapter:
         self._client = client
 
     def traverse(
-        self, root_url: str, *, max_catalogs: int = 250, max_items: int = 250
+        self,
+        root_url: str,
+        *,
+        max_catalogs: int = 250,
+        max_items: int = 250,
+        include_assets: bool = True,
     ) -> TraversalResult:
         catalog_queue = deque([root_url])
         item_queue: deque[str] = deque()
@@ -80,7 +85,9 @@ class StacCatalogAdapter:
             visited_items.add(item_url)
             try:
                 item = self._client.get_json(item_url)
-                acquisition, item_warnings = self._normalize_item(item_url, item)
+                acquisition, item_warnings = self.normalize_item(
+                    item_url, item, include_assets=include_assets
+                )
             except (CatalogAccessError, ValidationError, ValueError, TypeError) as error:
                 items_skipped += 1
                 warnings.append(self._warning("item_invalid", item_url, str(error)))
@@ -102,8 +109,12 @@ class StacCatalogAdapter:
             ),
         )
 
-    def _normalize_item(
-        self, item_url: str, item: Mapping[str, Any]
+    def normalize_item(
+        self,
+        item_url: str,
+        item: Mapping[str, Any],
+        *,
+        include_assets: bool = True,
     ) -> tuple[Acquisition, list[CatalogWarning]]:
         warnings: list[CatalogWarning] = []
         properties = self._required_mapping(item, "properties")
@@ -128,31 +139,34 @@ class StacCatalogAdapter:
         raw_assets = item.get("assets", {})
         if not isinstance(raw_assets, dict):
             raise ValueError("item assets must be an object")
-        for name, raw_asset in raw_assets.items():
-            if not isinstance(name, str) or not isinstance(raw_asset, dict):
-                warnings.append(self._warning("malformed_asset", item_url, "asset is malformed"))
-                continue
-            raw_href = raw_asset.get("href")
-            href = self._resolve_link(item_url, raw_href) if raw_href else None
-            if href is None:
-                warnings.append(
-                    self._warning(
-                        "empty_asset_href", item_url, f"asset {name!r} has no usable href"
+        if include_assets:
+            for name, raw_asset in raw_assets.items():
+                if not isinstance(name, str) or not isinstance(raw_asset, dict):
+                    warnings.append(
+                        self._warning("malformed_asset", item_url, "asset is malformed")
+                    )
+                    continue
+                raw_href = raw_asset.get("href")
+                href = self._resolve_link(item_url, raw_href) if raw_href else None
+                if href is None:
+                    warnings.append(
+                        self._warning(
+                            "empty_asset_href", item_url, f"asset {name!r} has no usable href"
+                        )
+                    )
+                roles = raw_asset.get("roles")
+                assets.append(
+                    CatalogAsset(
+                        name=name,
+                        href=href,
+                        origin="stac",
+                        media_type=self._optional_string(raw_asset.get("type")),
+                        title=self._optional_string(raw_asset.get("title")),
+                        roles=tuple(role for role in roles if isinstance(role, str))
+                        if isinstance(roles, list)
+                        else (),
                     )
                 )
-            roles = raw_asset.get("roles")
-            assets.append(
-                CatalogAsset(
-                    name=name,
-                    href=href,
-                    origin="stac",
-                    media_type=self._optional_string(raw_asset.get("type")),
-                    title=self._optional_string(raw_asset.get("title")),
-                    roles=tuple(role for role in roles if isinstance(role, str))
-                    if isinstance(roles, list)
-                    else (),
-                )
-            )
 
         polarizations = properties.get("sar:polarizations")
         return (
@@ -161,12 +175,20 @@ class StacCatalogAdapter:
                 acquired_at=datetime.fromisoformat(acquired_at.replace("Z", "+00:00")),
                 bbox=bbox,
                 geometry=dict(geometry),
-                product_type=self._optional_string(properties.get("sar:product_type")),
+                product_type=self._optional_string(
+                    properties.get("sar:product_type") or properties.get("product:type")
+                ),
                 polarizations=tuple(value for value in polarizations if isinstance(value, str))
                 if isinstance(polarizations, list)
                 else (),
-                resolution_range_m=self._optional_float(properties.get("sar:resolution_range")),
-                resolution_azimuth_m=self._optional_float(properties.get("sar:resolution_azimuth")),
+                resolution_range_m=self._optional_float(
+                    properties.get("sar:resolution_range")
+                    or properties.get("sar:pixel_spacing_range")
+                ),
+                resolution_azimuth_m=self._optional_float(
+                    properties.get("sar:resolution_azimuth")
+                    or properties.get("sar:pixel_spacing_azimuth")
+                ),
                 platform=self._optional_string(properties.get("platform")),
                 observation_direction=self._optional_string(
                     properties.get("sar:observation_direction")

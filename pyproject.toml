@@ -26,6 +26,7 @@ dependencies = [
 [project.scripts]
 echoatlas-acquire = "echoatlas.processor.acquisition.cli:main"
 echoatlas-catalog = "echoatlas.processor.catalog.cli:main"
+echoatlas-search-catalog = "echoatlas.processor.catalog.search_cli:main"
 echoatlas-change-candidates = "echoatlas.processor.changes.cli:main"
 echoatlas-evaluate = "echoatlas.evaluation.cli:main"
 echoatlas-prepare-labeling = "echoatlas.evaluation.cli:labeling_main"

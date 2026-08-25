@@ -252,12 +252,14 @@ Outcome: the backend can query imagery availability for a bounded AOI and time r
 
 Acceptance:
 
-- [ ] A versioned request/result contract covers AOI, time range, provider, product, resolution, polarization, footprint, license, source identity, pagination, and warnings.
-- [ ] The Umbra public-catalog adapter supports bounded spatial search and a Sentinel-1 metadata adapter supplies the broad-coverage foundation.
-- [ ] Results include only provider-reported acquisitions and never imply coverage outside returned footprints.
-- [ ] AOI, response, result-count, pagination, timeout, cache, host-allowlist, and schema-validation limits fail safely.
-- [ ] Partial provider failures remain attributable and do not erase successful provider results.
-- [ ] Deterministic fixtures, contract tests, and a documented bounded live smoke test pass.
+- [x] A versioned request/result contract covers AOI, time range, provider, product, resolution, polarization, footprint, license, source identity, pagination, and warnings.
+- [x] The Umbra public-catalog adapter supports bounded spatial search and a Sentinel-1 metadata adapter supplies the broad-coverage foundation.
+- [x] Results include only provider-reported acquisitions and never imply coverage outside returned footprints.
+- [x] AOI, response, result-count, pagination, timeout, cache, host-allowlist, and schema-validation limits fail safely.
+- [x] Partial provider failures remain attributable and do not erase successful provider results.
+- [x] Deterministic fixtures, contract tests, and a documented bounded live smoke test pass.
+
+Implementation checkpoint: contract `1.0.0` is exposed at `POST /v1/catalog/search` and through `echoatlas-search-catalog`. AOI, time, provider, filter, cursor, response, host, redirect, timeout, cache, and sample limits are validated. Umbra uses a bounded static STAC traversal with explicit sampling warnings; Sentinel-1 uses the official Copernicus Data Space `sentinel-1-grd` Item Search API. Raw provider documents and asset/download details remain behind adapters. Deterministic tests cover success, empty/filter, pagination, cache, partial-provider failure, schema differences, and safety bounds. The 2026-08-25 bounded live smoke found 15 Sentinel-1 acquisitions and five Umbra acquisitions over the approved Bingham Canyon AOI with complete provider reports and no warnings. These are availability records, not approved pairs or change findings.
 
 Non-goals: paid Umbra tasking, global bulk downloads, image processing, or Palantir-only discovery.
 

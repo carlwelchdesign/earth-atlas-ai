@@ -48,6 +48,12 @@ class SafeMetadataClient:
         )
         try:
             with urlopen(request, timeout=self._timeout_seconds) as response:  # noqa: S310
+                final_url = response.geturl()
+                final_host = urlparse(final_url).hostname
+                if final_host not in self._allowed_hosts:
+                    raise CatalogAccessError(
+                        f"metadata redirect left the host allowlist: {final_url}"
+                    )
                 length = response.headers.get("Content-Length")
                 if length is not None and int(length) > self._max_response_bytes:
                     raise CatalogAccessError(f"metadata response exceeds size limit: {url}")

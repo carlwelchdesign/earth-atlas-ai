@@ -56,6 +56,19 @@ uv run echoatlas-catalog \
 
 This command only reads small STAC JSON and S3 listing XML documents. Object URLs and declared sizes are indexed, but raster payloads are never requested. See [the catalog indexer documentation](docs/architecture/catalog-indexer.md).
 
+Search a bounded AOI across provider-neutral catalog metadata:
+
+```bash
+uv run echoatlas-search-catalog \
+  --bbox=-112.2,40.45,-112.05,40.6 \
+  --start 2025-06-01T00:00:00Z \
+  --end 2025-08-01T00:00:00Z \
+  --provider sentinel-1 \
+  --page-size 5
+```
+
+The versioned search returns provider-reported acquisition footprints and metadata only. It does not download imagery, claim coverage outside returned footprints, or decide that acquisitions form a valid analysis pair. See [catalog search contract v1](docs/architecture/catalog-search-v1.md).
+
 Download the approved pair into the Git-ignored local cache:
 
 ```sh

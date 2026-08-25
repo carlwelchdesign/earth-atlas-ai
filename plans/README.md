@@ -6,6 +6,8 @@ EchoAtlas is a civilian disaster and infrastructure-change SAR intelligence work
 
 Post-MVP milestone M5 expands that proven workflow with a global **Explore** mode: a MapLibre globe and equivalent accessible results list let users define a civilian AOI, inspect truthful Umbra and Sentinel-1 catalog availability, select a candidate pair, and hand it to the existing **Analyze** workflow. Global navigation is not a promise of global Umbra coverage, paid tasking, or automatic scientific suitability.
 
+EAT-017 now supplies the versioned provider-neutral search boundary needed by Explore. The API and CLI query bounded provider metadata, preserve actual acquisition footprints, license and source identity, keep raw payloads behind adapters, and report provider failures or sample limits without erasing successful results. The MapLibre interface remains EAT-018 and does not begin until EAT-DES-002 design approval is recorded.
+
 Canonical GitHub repository: [carlwelchdesign/earth-atlas-ai](https://github.com/carlwelchdesign/earth-atlas-ai).
 
 ## Canonical plan
