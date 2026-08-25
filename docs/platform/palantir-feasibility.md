@@ -32,7 +32,7 @@ The approved synthetic checkpoint created two additional remote resources:
 - `EchoAtlas Synthetic Bundle Records`, dataset RID `ri.foundry.main.dataset.e8ddf29e-a9a8-4eba-9dc6-31c16ba00882`, containing the fixture's six structured JSON/GeoJSON files (8.4 KB reported by Foundry); and
 - an image media set, RID `ri.mio.main.media-set.b60973e7-8855-4253-be81-b15cdab72867`, containing `before.png`, `after.png`, `candidate-overlay.png`, and `change-score.png`. All four uploads succeeded. The media-set overview reports four items but `0B`, so byte-usage accounting is not treated as verified.
 
-Foundry reported “Unable to infer a schema for this dataset” for the heterogeneous raw JSON/GeoJSON bundle. This proves the bundle can be retained as a raw file collection, not that it is immediately tabular or Ontology-ready. A thin executor must normalize the six record families into stable, typed tables before object and link creation. The raw source files remain the portable source of truth.
+Foundry reported “Unable to infer a schema for this dataset” for the heterogeneous raw JSON/GeoJSON bundle. This proves the bundle can be retained as a raw file collection, not that it is immediately tabular or Ontology-ready. EchoAtlas now provides a deterministic normalization package with one CSV per object family, one link CSV, one media-reference CSV, and a hashed manifest. Scalar properties become columns and nested properties use canonical JSON text. The raw source files remain the portable source of truth.
 
 The live checkpoint resolves enrollment, plan-name, high-level capacity, application-catalog, raw-file import, and PNG media-set creation. It does not yet resolve raster-native geospatial behavior, transform execution, normalized Ontology object/link creation, OSDK/static-hosting configuration, restricted application scopes, usage impact, or cleanup behavior.
 
@@ -76,6 +76,27 @@ uv run echoatlas-plan-palantir-import \
 
 The command validates the bundle before mapping it. Its output explicitly records `requires_authenticated_target: true` and `writes_performed: false`. It does not install a Palantir SDK, request credentials, or contact a Palantir endpoint.
 
+Normalize the plan into stable tabular files:
+
+```sh
+uv run echoatlas-package-palantir-import \
+  --bundle data/fixtures/eat007-valid \
+  --output data/platform/palantir-import-package
+```
+
+The exporter writes atomically into a destination that must not already exist,
+preventing stale rows from surviving a later package. The package manifest records
+the source bundle and import-plan hashes plus every table's path, columns, row
+count, and SHA-256 hash. The six object tables preserve stable primary keys; the
+link table preserves typed source and target identities; and the media table
+contains only available artifacts. An object family with no records, such as the
+synthetic fixture's assessment family, is emitted as a header-only table rather
+than populated with invented data.
+
+This solves the local heterogeneous-file normalization problem. It does not prove
+Foundry schema inference, create datasets or Ontology resources, configure links,
+or perform remote writes.
+
 ## Live validation gate
 
 Explicit owner approval is required before the remaining spike:
@@ -84,7 +105,7 @@ Explicit owner approval is required before the remaining spike:
 2. [ ] Complete the plan evidence: high-level limits and enabled applications are captured, but numeric compute/storage/GPU/user quotas and country/term limits remain unavailable.
 3. [ ] Media-set creation and catalog-level model state are confirmed. Raster-native behavior, transforms, normalized Ontology resources, and OSDK/static-hosting configuration remain open.
 4. [ ] Configure a restricted test application and record its exact resources and operation scopes.
-5. [ ] The exact synthetic bundle is present as raw files and media. Normalize it, then verify object identities, links, media references, and deletion/cleanup behavior.
+5. [ ] The exact synthetic bundle is present as raw files and media, and a deterministic local normalization package now preserves object identities, links, and available-media references. Live normalized-dataset import, Ontology verification, and deletion/cleanup behavior remain open.
 6. [ ] Record durable visual evidence, usage impact, limitations, and the final go/adjust/no-go decision.
 
 Real Umbra imagery remains outside the live spike until its storage, license, sensitivity, and usage implications are separately reviewed.
