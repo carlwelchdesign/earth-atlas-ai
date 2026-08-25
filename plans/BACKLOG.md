@@ -139,10 +139,10 @@ Outcome: every candidate can be traced to inputs, processing, measurements, and 
 
 Acceptance:
 
-- [ ] Evidence drawer shows acquisition comparison, source links, checksums, license, run parameters, software version, artifacts, and warnings.
-- [ ] Score language explains the heuristic and avoids calibrated-confidence claims.
-- [ ] Broken external links or unavailable artifacts degrade safely.
-- [ ] Attribution is visible in the app and export.
+- [x] Evidence drawer shows acquisition comparison, source links, checksums, license, run parameters, software version, artifacts, and warnings.
+- [x] Score language explains the heuristic and avoids calibrated-confidence claims.
+- [x] Broken external links or unavailable artifacts degrade safely.
+- [x] Attribution is visible in the app and export.
 
 ### EAT-011 — Harden accessibility, responsiveness, and recovery states
 
