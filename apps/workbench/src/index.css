@@ -222,6 +222,17 @@ h3 {
   color: var(--muted);
   font-size: 0.66rem;
 }
+.platform-connection {
+  color: var(--muted);
+  font-size: 0.63rem;
+  white-space: nowrap;
+}
+.platform-connected {
+  color: var(--accent);
+}
+.platform-unavailable {
+  color: var(--warning);
+}
 
 .quality-banner,
 .state-notice {

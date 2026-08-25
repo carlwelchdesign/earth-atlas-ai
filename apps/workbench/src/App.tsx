@@ -8,6 +8,11 @@ import {
   type BundleLoader,
   type WorkbenchBundle,
 } from "./workbench/model";
+import {
+  initialPlatformConnectionState,
+  loadPalantirConnectionState,
+  type PlatformConnectionState,
+} from "./workbench/palantir";
 import { StateNotice, Workbench } from "./workbench/Workbench";
 
 type LoadState =
@@ -17,13 +22,17 @@ type LoadState =
 
 export function App({
   loadBundle = loadWorkbenchBundle,
+  loadPlatformConnection = loadPalantirConnectionState,
   assessmentStore,
 }: {
   loadBundle?: BundleLoader;
+  loadPlatformConnection?: () => Promise<PlatformConnectionState>;
   assessmentStore?: AssessmentStore;
 }) {
   const [attempt, setAttempt] = useState(0);
   const [state, setState] = useState<LoadState>({ status: "loading" });
+  const [platformConnection, setPlatformConnection] =
+    useState<PlatformConnectionState>(initialPlatformConnectionState);
 
   useEffect(() => {
     let active = true;
@@ -44,6 +53,25 @@ export function App({
       active = false;
     };
   }, [loadBundle, attempt]);
+
+  useEffect(() => {
+    let active = true;
+    loadPlatformConnection()
+      .then((connection) => {
+        if (active) setPlatformConnection(connection);
+      })
+      .catch(() => {
+        if (active)
+          setPlatformConnection({
+            status: "unavailable",
+            reason:
+              "The read-only Foundry check did not complete. The validated local bundle remains active.",
+          });
+      });
+    return () => {
+      active = false;
+    };
+  }, [loadPlatformConnection]);
 
   const retry = useCallback(() => {
     setState({ status: "loading" });
@@ -84,5 +112,11 @@ export function App({
     );
   }
 
-  return <Workbench bundle={state.bundle} assessmentStore={assessmentStore} />;
+  return (
+    <Workbench
+      bundle={state.bundle}
+      platformConnection={platformConnection}
+      assessmentStore={assessmentStore}
+    />
+  );
 }
