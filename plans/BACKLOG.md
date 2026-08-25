@@ -168,7 +168,7 @@ Acceptance:
 - [x] False-positive classes include geometry, water/moisture, speckle, shadow/layover, and registration artifacts where applicable.
 - [ ] Baseline results and unresolved domain-review needs are published without inflated accuracy claims.
 
-Implementation checkpoint: the evaluator contract, synthetic software-verification set, arithmetic baseline, labeling guide, and local candidate-review packet are implemented. The packet supports human triage without treating candidate geometry as circular ground truth. The evaluation set and pipeline baseline remain incomplete until independent Bingham Canyon regions receive qualified human SAR review and tuning-set separation is independently confirmed.
+Implementation checkpoint: the evaluator contract, synthetic software-verification set, arithmetic baseline, labeling guide, and local candidate-review packet are implemented. The packet supports human triage plus provisional polygon capture over the clean after image, with keyboard-editable projected coordinates and bounded JSON export. Candidate-directed regions remain explicitly separate from independent adjudicated labels and are not evaluator inputs. The evaluation set and pipeline baseline remain incomplete until Bingham Canyon regions receive qualified independent SAR review, adjudication, and tuning-set separation is independently confirmed.
 
 ### EAT-013 — Add feature-gated, evidence-grounded draft summaries
 

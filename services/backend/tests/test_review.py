@@ -194,6 +194,15 @@ def test_review_packet_preserves_lineage_and_references_local_images(tmp_path: P
     html = (output / "index.html").read_text()
     assert "Candidate decisions are not independent reference regions" in html
     assert "supported-needs-independent-reference" in html
+    assert "Provisional reference region" in html
+    assert "After image only · no candidate overlay" in html
+    assert 'id="reference-coordinates"' in html
+    assert 'id="confirm-clear-region"' in html
+    assert "reference_regions:referenceRegions" in html
+    assert "provisional-candidate-directed" in html
+    assert "polygonArea(region.points)<.5" in html
+    assert "Add reviewer name and role before exporting audit evidence" in html
+    assert "independent qualified review and adjudication required" in html
     assert "localStorage" in html
     assert not list(output.glob("*.png"))
 
