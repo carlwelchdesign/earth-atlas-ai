@@ -7,6 +7,8 @@ const ALLOWED_EVIDENCE_HOSTS = new Set([
 export type AcquisitionRole = "before" | "after";
 export type BundleStatus = "succeeded" | "partial";
 export type ComparisonMode = "before" | "two-up" | "after";
+export type FreshnessState = "current" | "stale";
+export type AssessmentPermissionState = "allowed" | "denied";
 
 export interface AcquisitionView {
   id: string;
@@ -97,6 +99,17 @@ export interface WorkbenchBundle {
     title: string;
     boundaryLabel: string;
   };
+  freshness: {
+    state: FreshnessState;
+    evaluatedAt: string;
+    reason: string | null;
+  };
+  permissions: {
+    assessments: {
+      state: AssessmentPermissionState;
+      reason: string | null;
+    };
+  };
   acquisitions: [AcquisitionView, AcquisitionView];
   candidates: CandidateView[];
   qualityWarnings: string[];
@@ -130,6 +143,46 @@ export function parseWorkbenchBundle(source: unknown): WorkbenchBundle {
       "mission.boundaryLabel",
     ),
   };
+  const freshnessSource = requireRecord(root.freshness, "freshness");
+  const freshness = {
+    state: requireEnum(
+      freshnessSource.state,
+      ["current", "stale"],
+      "freshness.state",
+    ),
+    evaluatedAt: requireTimestamp(
+      freshnessSource.evaluatedAt,
+      "freshness.evaluatedAt",
+    ),
+    reason: requireNullableString(freshnessSource.reason, "freshness.reason"),
+  };
+  if (freshness.state === "stale" && freshness.reason === null) {
+    throw invalid("freshness.reason is required when the bundle is stale");
+  }
+  const permissionsSource = requireRecord(root.permissions, "permissions");
+  const assessmentPermissionSource = requireRecord(
+    permissionsSource.assessments,
+    "permissions.assessments",
+  );
+  const assessmentPermission = {
+    state: requireEnum(
+      assessmentPermissionSource.state,
+      ["allowed", "denied"],
+      "permissions.assessments.state",
+    ),
+    reason: requireNullableString(
+      assessmentPermissionSource.reason,
+      "permissions.assessments.reason",
+    ),
+  };
+  if (
+    assessmentPermission.state === "denied" &&
+    assessmentPermission.reason === null
+  ) {
+    throw invalid(
+      "permissions.assessments.reason is required when permission is denied",
+    );
+  }
   const acquisitionSources = requireArray(root.acquisitions, "acquisitions");
   if (acquisitionSources.length !== 2) {
     throw invalid("acquisitions must contain exactly before and after records");
@@ -201,6 +254,8 @@ export function parseWorkbenchBundle(source: unknown): WorkbenchBundle {
     status,
     createdAt,
     mission,
+    freshness,
+    permissions: { assessments: assessmentPermission },
     acquisitions: [before, after],
     candidates,
     qualityWarnings,
@@ -471,6 +526,11 @@ function requireString(value: unknown, path: string): string {
     throw invalid(`${path} must be a non-empty string`);
   }
   return value;
+}
+
+function requireNullableString(value: unknown, path: string): string | null {
+  if (value === null) return null;
+  return requireString(value, path);
 }
 
 function requireBoolean(value: unknown, path: string): boolean {

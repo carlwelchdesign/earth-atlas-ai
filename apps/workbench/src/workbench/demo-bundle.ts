@@ -14,6 +14,17 @@ export const demoBundle: WorkbenchBundle = {
     title: "Bingham Canyon synthetic demonstration",
     boundaryLabel: "Approved review boundary",
   },
+  freshness: {
+    state: "current",
+    evaluatedAt: "2026-01-15T12:00:00Z",
+    reason: null,
+  },
+  permissions: {
+    assessments: {
+      state: "allowed",
+      reason: null,
+    },
+  },
   acquisitions: [
     {
       id: "acquisition-before-synthetic",
@@ -194,5 +205,33 @@ export const demoBundle: WorkbenchBundle = {
 
 export const loadDemoBundle: BundleLoader = async () => {
   await Promise.resolve();
-  return demoBundle;
+  const scenario =
+    typeof window === "undefined"
+      ? "default"
+      : new URLSearchParams(window.location.search).get("fixture");
+  return demoBundleForScenario(scenario);
 };
+
+export function demoBundleForScenario(scenario: string | null) {
+  const bundle = structuredClone(demoBundle);
+  if (scenario === "stale") {
+    bundle.freshness = {
+      state: "stale",
+      evaluatedAt: "2026-01-20T12:00:00Z",
+      reason: "The prepared bundle is older than the review policy window.",
+    };
+  } else if (scenario === "partial") {
+    bundle.status = "partial";
+    bundle.qualityWarnings = [
+      "The optional change-score preview is unavailable; comparison and candidate evidence remain usable.",
+    ];
+  } else if (scenario === "permission-denied") {
+    bundle.permissions.assessments = {
+      state: "denied",
+      reason: "This demonstration role does not have assessment permission.",
+    };
+  } else if (scenario === "missing-artifact") {
+    bundle.acquisitions[1].artifact.available = false;
+  }
+  return bundle;
+}

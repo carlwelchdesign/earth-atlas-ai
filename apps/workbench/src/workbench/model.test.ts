@@ -1,9 +1,21 @@
 import { describe, expect, it } from "vitest";
 
-import { demoBundle } from "./demo-bundle";
+import { demoBundle, demoBundleForScenario } from "./demo-bundle";
 import { InvalidWorkbenchBundleError, parseWorkbenchBundle } from "./model";
 
 describe("parseWorkbenchBundle", () => {
+  it("provides allowlisted recovery-state demo fixtures", () => {
+    expect(demoBundleForScenario("stale").freshness.state).toBe("stale");
+    expect(demoBundleForScenario("partial").status).toBe("partial");
+    expect(
+      demoBundleForScenario("permission-denied").permissions.assessments.state,
+    ).toBe("denied");
+    expect(
+      demoBundleForScenario("missing-artifact").acquisitions[1].artifact
+        .available,
+    ).toBe(false);
+    expect(demoBundleForScenario("unknown")).toEqual(demoBundle);
+  });
   it("normalizes acquisition order to before then after", () => {
     const bundle = structuredClone(demoBundle);
     bundle.acquisitions.reverse();
@@ -71,6 +83,20 @@ describe("parseWorkbenchBundle", () => {
     bundle.candidates[0].evidenceArtifactIds.push("artifact-unknown");
     expect(() => parseWorkbenchBundle(bundle)).toThrow(
       "references unknown evidence artifact",
+    );
+  });
+
+  it("requires reasons for stale freshness and denied assessment permission", () => {
+    const stale = structuredClone(demoBundle);
+    stale.freshness.state = "stale";
+    expect(() => parseWorkbenchBundle(stale)).toThrow(
+      "freshness.reason is required",
+    );
+
+    const denied = structuredClone(demoBundle);
+    denied.permissions.assessments.state = "denied";
+    expect(() => parseWorkbenchBundle(denied)).toThrow(
+      "permissions.assessments.reason is required",
     );
   });
 });

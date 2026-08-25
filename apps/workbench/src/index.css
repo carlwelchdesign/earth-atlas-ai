@@ -175,10 +175,28 @@ h3 {
   color: var(--accent);
 }
 .status-degraded,
-.status-missing {
+.status-missing,
+.status-stale {
   border-color: #725b35;
   background: var(--warning-soft);
   color: var(--warning);
+}
+.read-only-notice {
+  margin-top: 0.75rem;
+  padding: 0.75rem;
+  border: 1px solid #526575;
+  border-radius: 0.4rem;
+  background: #111d27;
+  color: #cad6dc;
+}
+.read-only-notice strong {
+  font-size: 0.7rem;
+}
+.read-only-notice p {
+  margin: 0.25rem 0 0;
+  color: var(--muted);
+  font-size: 0.66rem;
+  line-height: 1.5;
 }
 .status-candidate {
   border-color: var(--line-strong);
@@ -1127,8 +1145,26 @@ h3 {
   gap: 0.6rem;
 }
 .dialog-actions .primary-button,
-.dialog-actions .secondary-button {
+.dialog-actions .secondary-button,
+.dialog-actions .danger-button {
   min-height: 2.75rem;
+}
+.danger-button {
+  padding: 0.6rem 0.85rem;
+  border: 1px solid #8a4b50;
+  border-radius: 0.35rem;
+  background: var(--danger-soft);
+  color: #ffc4c0;
+  font-weight: 800;
+  cursor: pointer;
+}
+.discard-confirmation {
+  padding: 1rem;
+}
+.discard-confirmation p {
+  color: var(--muted);
+  font-size: 0.72rem;
+  line-height: 1.55;
 }
 .workbench-footer {
   display: flex;
