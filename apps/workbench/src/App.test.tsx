@@ -5,7 +5,8 @@ import {
   waitFor,
   within,
 } from "@testing-library/react";
-import { describe, expect, it } from "vitest";
+import axe from "axe-core";
+import { afterEach, describe, expect, it, vi } from "vitest";
 
 import { App } from "./App";
 import {
@@ -20,6 +21,8 @@ const load =
   () =>
     Promise.resolve(bundle);
 const copyBundle = () => structuredClone(demoBundle);
+
+afterEach(() => vi.unstubAllGlobals());
 
 describe("App", () => {
   it("shows a validation state while the bundle is loading", () => {
@@ -204,6 +207,107 @@ describe("App", () => {
       await screen.findByText("Validated with warnings"),
     ).toBeInTheDocument();
     expect(screen.getAllByText(bundle.qualityWarnings[0])).toHaveLength(2);
+    expect(
+      screen.getByRole("heading", {
+        name: "Partial bundle: optional outputs unavailable",
+      }),
+    ).toBeInTheDocument();
+  });
+
+  it("keeps stale evidence usable and records explicit continuation", async () => {
+    const bundle = copyBundle();
+    bundle.freshness = {
+      state: "stale",
+      evaluatedAt: "2026-01-20T12:00:00Z",
+      reason: "The prepared bundle is older than the review policy window.",
+    };
+    render(<App loadBundle={load(bundle)} />);
+
+    expect(await screen.findByText("Validated · stale")).toBeInTheDocument();
+    expect(
+      screen.getByText(/older than the review policy window/),
+    ).toBeInTheDocument();
+    fireEvent.click(
+      screen.getByRole("button", { name: "Continue with stale data" }),
+    );
+    expect(
+      screen.getAllByText(/continuation acknowledged for this session/),
+    ).toHaveLength(2);
+    expect(
+      screen.getByText(
+        "Stale bundle continuation acknowledged for this session.",
+      ),
+    ).toBeInTheDocument();
+  });
+
+  it("preserves evidence inspection when assessment permission is denied", async () => {
+    const bundle = copyBundle();
+    bundle.permissions.assessments = {
+      state: "denied",
+      reason: "This local role does not have assessment permission.",
+    };
+    render(<App loadBundle={load(bundle)} />);
+    fireEvent.click(
+      await screen.findByRole("button", { name: /C-001.*13,000 m²/ }),
+    );
+
+    expect(
+      screen.getByRole("heading", {
+        name: "Assessment permission unavailable",
+      }),
+    ).toBeInTheDocument();
+    expect(screen.getByRole("note")).toHaveTextContent("Read-only inspection");
+    expect(
+      screen.queryByRole("button", { name: "Record assessment" }),
+    ).not.toBeInTheDocument();
+    expect(screen.getByRole("tab", { name: "Provenance" })).toBeEnabled();
+  });
+
+  it("uses a read-only phone path while retaining assessment at 200% zoom equivalent", async () => {
+    mockMatchMedia(390);
+    const phone = render(<App loadBundle={load()} />);
+    fireEvent.click(
+      await screen.findByRole("button", { name: /C-001.*13,000 m²/ }),
+    );
+    expect(screen.getByRole("note")).toHaveTextContent(
+      "read-only phone layout",
+    );
+    expect(
+      screen.queryByRole("button", { name: "Record assessment" }),
+    ).not.toBeInTheDocument();
+    phone.unmount();
+
+    mockMatchMedia(640);
+    render(<App loadBundle={load()} />);
+    fireEvent.click(
+      await screen.findByRole("button", { name: /C-001.*13,000 m²/ }),
+    );
+    expect(
+      screen.getByRole("button", { name: "Record assessment" }),
+    ).toBeEnabled();
+  });
+
+  it("supports arrow, Home, and End navigation across evidence tabs", async () => {
+    render(<App loadBundle={load()} />);
+    fireEvent.click(
+      await screen.findByRole("button", { name: /C-001.*13,000 m²/ }),
+    );
+    const review = screen.getByRole("tab", { name: "Review" });
+    review.focus();
+    fireEvent.keyDown(review, { key: "ArrowRight" });
+    expect(screen.getByRole("tab", { name: "Provenance" })).toHaveFocus();
+    expect(screen.getByRole("tab", { name: "Provenance" })).toHaveAttribute(
+      "aria-selected",
+      "true",
+    );
+    fireEvent.keyDown(screen.getByRole("tab", { name: "Provenance" }), {
+      key: "End",
+    });
+    expect(screen.getByRole("tab", { name: "History" })).toHaveFocus();
+    fireEvent.keyDown(screen.getByRole("tab", { name: "History" }), {
+      key: "Home",
+    });
+    expect(screen.getByRole("tab", { name: "Review" })).toHaveFocus();
   });
 
   it("validates and appends an assessment, then filters reviewed and pending candidates", async () => {
@@ -332,4 +436,65 @@ describe("App", () => {
     expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
     await waitFor(() => expect(invoker).toHaveFocus());
   });
+
+  it("confirms before discarding a changed assessment draft", async () => {
+    render(<App loadBundle={load()} />);
+    fireEvent.click(
+      await screen.findByRole("button", { name: /C-001.*13,000 m²/ }),
+    );
+    const invoker = screen.getByRole("button", { name: "Record assessment" });
+    fireEvent.click(invoker);
+    fireEvent.change(screen.getByLabelText(/Analyst note/), {
+      target: { value: "Unsaved review note." },
+    });
+    fireEvent.keyDown(screen.getByRole("dialog"), { key: "Escape" });
+
+    expect(
+      screen.getByRole("heading", {
+        name: "Discard unsaved assessment draft?",
+      }),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole("button", { name: "Continue editing" }),
+    ).toHaveFocus();
+    fireEvent.click(screen.getByRole("button", { name: "Continue editing" }));
+    expect(screen.getByLabelText(/Analyst note/)).toHaveValue(
+      "Unsaved review note.",
+    );
+    fireEvent.click(screen.getByRole("button", { name: "Cancel" }));
+    fireEvent.click(screen.getByRole("button", { name: "Discard draft" }));
+    expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
+    await waitFor(() => expect(invoker).toHaveFocus());
+  });
+
+  it("has no automated accessibility violations in the populated workflow", async () => {
+    render(<App loadBundle={load()} />);
+    fireEvent.click(
+      await screen.findByRole("button", { name: /C-001.*13,000 m²/ }),
+    );
+    const results = await axe.run(document.body, {
+      rules: { "color-contrast": { enabled: false } },
+    });
+    expect(results.violations).toEqual([]);
+  });
 });
+
+function mockMatchMedia(width: number) {
+  vi.stubGlobal(
+    "matchMedia",
+    vi.fn((query: string) => {
+      const maxWidth = /max-width:\s*(\d+)px/.exec(query)?.[1];
+      const matches = maxWidth ? width <= Number(maxWidth) : false;
+      return {
+        matches,
+        media: query,
+        onchange: null,
+        addListener: vi.fn(),
+        removeListener: vi.fn(),
+        addEventListener: vi.fn(),
+        removeEventListener: vi.fn(),
+        dispatchEvent: vi.fn(() => true),
+      };
+    }),
+  );
+}

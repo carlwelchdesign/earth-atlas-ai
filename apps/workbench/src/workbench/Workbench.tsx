@@ -5,6 +5,7 @@ import {
   useRef,
   useState,
   type CSSProperties,
+  type KeyboardEvent,
 } from "react";
 
 import {
@@ -52,6 +53,8 @@ export function Workbench({ bundle, assessmentStore }: WorkbenchProps) {
   const [assessmentDialog, setAssessmentDialog] =
     useState<AssessmentDialogValue | null>(null);
   const [assessmentAnnouncement, setAssessmentAnnouncement] = useState("");
+  const [staleAccepted, setStaleAccepted] = useState(false);
+  const compactReadOnly = useMediaQuery("(max-width: 479px)");
   const assessmentInvoker = useRef<HTMLElement | null>(null);
   const [localAssessmentStore] = useState(
     () =>
@@ -73,12 +76,20 @@ export function Workbench({ bundle, assessmentStore }: WorkbenchProps) {
   );
   const degraded =
     bundle.status === "partial" || bundle.qualityWarnings.length > 0;
+  const stale = bundle.freshness.state === "stale";
   const status =
     missingAcquisitions.length > 0
       ? "missing"
-      : degraded
-        ? "degraded"
-        : "success";
+      : stale
+        ? "stale"
+        : degraded
+          ? "degraded"
+          : "success";
+  const assessmentUnavailableReason = compactReadOnly
+    ? "Assessment actions are unavailable in the read-only phone layout. Use a viewport at least 480 CSS pixels wide to record an assessment."
+    : bundle.permissions.assessments.state === "denied"
+      ? bundle.permissions.assessments.reason
+      : null;
   const zoom = zoomLevels[zoomIndex];
 
   function closeAssessmentDialog() {
@@ -140,25 +151,50 @@ export function Workbench({ bundle, assessmentStore }: WorkbenchProps) {
       </a>
       <MissionHeader bundle={bundle} status={status} />
       <QualityBanner bundle={bundle} status={status} />
+      {stale ? (
+        <StateNotice
+          kind="warning"
+          title="Stale bundle"
+          message={`${bundle.freshness.reason} Evaluated ${formatTimestamp(bundle.freshness.evaluatedAt)}.${staleAccepted ? " Stale data continuation acknowledged for this session." : " Review remains available; verify freshness before relying on the evidence."}`}
+          action={staleAccepted ? undefined : "Continue with stale data"}
+          onAction={() => {
+            setStaleAccepted(true);
+            setAssessmentAnnouncement(
+              "Stale bundle continuation acknowledged for this session.",
+            );
+          }}
+        />
+      ) : null}
       {status === "missing" ? (
         <StateNotice
           kind="warning"
           title="Required comparison artifact is missing"
           message={`${missingAcquisitions.map((item) => item.label).join(" and ")} imagery is unavailable. Available evidence remains visible, but the comparison is incomplete.`}
-          action="Choose another bundle"
         />
       ) : null}
-      {degraded ? (
+      {bundle.status === "partial" ? (
         <StateNotice
           kind="warning"
-          title="Validated bundle with quality warnings"
+          title="Partial bundle: optional outputs unavailable"
           message={
             bundle.qualityWarnings[0] ?? "An optional output is unavailable."
           }
-          action="Inspect warning"
+        />
+      ) : degraded ? (
+        <StateNotice
+          kind="warning"
+          title="Validated bundle with quality warnings"
+          message={bundle.qualityWarnings[0]}
         />
       ) : null}
-      <main className="workbench-grid">
+      {bundle.permissions.assessments.state === "denied" ? (
+        <StateNotice
+          kind="warning"
+          title="Assessment permission unavailable"
+          message={`${bundle.permissions.assessments.reason} Evidence inspection remains available.`}
+        />
+      ) : null}
+      <main className="workbench-grid" aria-label="Analyst workbench">
         <CandidateQueue
           candidates={bundle.candidates}
           currentAssessments={currentAssessments}
@@ -194,6 +230,7 @@ export function Workbench({ bundle, assessmentStore }: WorkbenchProps) {
               ? (currentAssessments.get(selectedCandidateId) ?? null)
               : null
           }
+          assessmentUnavailableReason={assessmentUnavailableReason}
           onStartAssessment={openAssessmentDialog}
         />
       </main>
@@ -218,7 +255,7 @@ export function Workbench({ bundle, assessmentStore }: WorkbenchProps) {
 
 interface MissionHeaderProps {
   bundle: WorkbenchBundle;
-  status: "success" | "degraded" | "missing";
+  status: "success" | "degraded" | "missing" | "stale";
 }
 
 function MissionHeader({ bundle, status }: MissionHeaderProps) {
@@ -228,6 +265,7 @@ function MissionHeader({ bundle, status }: MissionHeaderProps) {
     success: { icon: "✓", text: "Validated bundle" },
     degraded: { icon: "!", text: "Validated with warnings" },
     missing: { icon: "!", text: "Required artifact missing" },
+    stale: { icon: "!", text: "Validated · stale" },
   } as const;
   return (
     <header className="mission-header">
@@ -648,12 +686,14 @@ function CandidateSummary({
   candidate,
   events,
   currentEvent,
+  assessmentUnavailableReason,
   onStartAssessment,
 }: {
   bundle: WorkbenchBundle;
   candidate: CandidateView | null;
   events: AssessmentEvent[];
   currentEvent: AssessmentEvent | null;
+  assessmentUnavailableReason: string | null;
   onStartAssessment: (candidateId: string, invoker: HTMLElement) => void;
 }) {
   const [tab, setTab] = useState<
@@ -691,20 +731,20 @@ function CandidateSummary({
       {candidate ? (
         <div className="summary-content">
           <div className="evidence-tabs" role="tablist" aria-label="Evidence">
-            {(["review", "provenance", "processing", "history"] as const).map(
-              (option) => (
-                <button
-                  key={option}
-                  type="button"
-                  role="tab"
-                  aria-selected={tab === option}
-                  aria-controls={`evidence-${option}`}
-                  onClick={() => setTab(option)}
-                >
-                  {capitalize(option)}
-                </button>
-              ),
-            )}
+            {evidenceTabs.map((option) => (
+              <button
+                key={option}
+                type="button"
+                role="tab"
+                aria-selected={tab === option}
+                aria-controls={`evidence-${option}`}
+                tabIndex={tab === option ? 0 : -1}
+                onClick={() => setTab(option)}
+                onKeyDown={(event) => moveEvidenceTab(event, option, setTab)}
+              >
+                {capitalize(option)}
+              </button>
+            ))}
           </div>
           {tab === "review" ? <ReviewEvidence candidate={candidate} /> : null}
           {tab === "provenance" ? (
@@ -734,18 +774,27 @@ function CandidateSummary({
               Export evidence JSON
             </a>
           ) : null}
-          <button
-            className="primary-button"
-            type="button"
-            onClick={(event) =>
-              onStartAssessment(candidate.id, event.currentTarget)
-            }
-          >
-            {currentEvent ? "Correct assessment" : "Record assessment"}
-          </button>
-          <p className="future-boundary">
-            Every save appends an immutable audit event.
-          </p>
+          {assessmentUnavailableReason ? (
+            <div className="read-only-notice" role="note">
+              <strong>Read-only inspection</strong>
+              <p>{assessmentUnavailableReason}</p>
+            </div>
+          ) : (
+            <>
+              <button
+                className="primary-button"
+                type="button"
+                onClick={(event) =>
+                  onStartAssessment(candidate.id, event.currentTarget)
+                }
+              >
+                {currentEvent ? "Correct assessment" : "Record assessment"}
+              </button>
+              <p className="future-boundary">
+                Every save appends an immutable audit event.
+              </p>
+            </>
+          )}
         </div>
       ) : (
         <div className="empty-panel summary-empty">
@@ -1029,7 +1078,7 @@ export function StateNotice({
         <h2 id={titleId}>{title}</h2>
         <p>{message}</p>
       </div>
-      {action ? (
+      {action && onAction ? (
         <button className="secondary-button" type="button" onClick={onAction}>
           {action}
         </button>
@@ -1104,4 +1153,52 @@ function getInitialMode(): ComparisonMode {
     return "before";
   }
   return "two-up";
+}
+
+const evidenceTabs = ["review", "provenance", "processing", "history"] as const;
+type EvidenceTab = (typeof evidenceTabs)[number];
+
+function moveEvidenceTab(
+  event: KeyboardEvent<HTMLButtonElement>,
+  current: EvidenceTab,
+  setTab: (tab: EvidenceTab) => void,
+) {
+  const currentIndex = evidenceTabs.indexOf(current);
+  const nextIndex =
+    event.key === "ArrowRight" || event.key === "ArrowDown"
+      ? (currentIndex + 1) % evidenceTabs.length
+      : event.key === "ArrowLeft" || event.key === "ArrowUp"
+        ? (currentIndex - 1 + evidenceTabs.length) % evidenceTabs.length
+        : event.key === "Home"
+          ? 0
+          : event.key === "End"
+            ? evidenceTabs.length - 1
+            : null;
+  if (nextIndex === null) return;
+  event.preventDefault();
+  const next = evidenceTabs[nextIndex];
+  setTab(next);
+  const tabs =
+    event.currentTarget.parentElement?.querySelectorAll<HTMLElement>(
+      '[role="tab"]',
+    );
+  tabs?.[nextIndex]?.focus();
+}
+
+function useMediaQuery(query: string) {
+  const [matches, setMatches] = useState(() =>
+    typeof window.matchMedia === "function"
+      ? window.matchMedia(query).matches
+      : false,
+  );
+  useEffect(() => {
+    if (typeof window.matchMedia !== "function") return;
+    const media = window.matchMedia(query);
+    const synchronize = (event: MediaQueryListEvent | MediaQueryList) =>
+      setMatches(event.matches);
+    media.addEventListener("change", synchronize);
+    synchronize(media);
+    return () => media.removeEventListener("change", synchronize);
+  }, [query]);
+  return matches;
 }

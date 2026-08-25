@@ -39,14 +39,28 @@ export function AssessmentDialog({
   const titleId = useId();
   const descriptionId = useId();
   const headingRef = useRef<HTMLHeadingElement>(null);
+  const continueEditingRef = useRef<HTMLButtonElement>(null);
   const [disposition, setDisposition] = useState<AssessmentDisposition>(
     value.currentEvent?.disposition ?? "supported",
   );
   const [note, setNote] = useState(value.currentEvent?.note ?? "");
   const [error, setError] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
+  const [dirty, setDirty] = useState(false);
+  const [confirmingDiscard, setConfirmingDiscard] = useState(false);
 
   useEffect(() => headingRef.current?.focus(), []);
+  useEffect(() => {
+    if (confirmingDiscard) continueEditingRef.current?.focus();
+  }, [confirmingDiscard]);
+
+  function requestCancel() {
+    if (dirty) {
+      setConfirmingDiscard(true);
+      return;
+    }
+    onCancel();
+  }
 
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -93,7 +107,7 @@ export function AssessmentDialog({
         aria-modal="true"
         aria-labelledby={titleId}
         aria-describedby={descriptionId}
-        onKeyDown={(event) => trapDialogFocus(event, onCancel, saving)}
+        onKeyDown={(event) => trapDialogFocus(event, requestCancel, saving)}
       >
         <form onSubmit={(event) => void submit(event)}>
           <div className="dialog-heading">
@@ -111,75 +125,122 @@ export function AssessmentDialog({
               className="icon-button"
               type="button"
               aria-label="Close assessment"
-              onClick={onCancel}
+              onClick={requestCancel}
               disabled={saving}
             >
               ×
             </button>
           </div>
-          <p className="dialog-boundary" id={descriptionId}>
-            Record your review of this machine-generated candidate. This does
-            not establish real-world change, damage, cause, intent, or
-            operational status.
-          </p>
-          {value.currentEvent ? (
-            <div className="correction-notice">
-              The new event will supersede {value.currentEvent.eventId}. The
-              prior event remains in the audit history.
+          {confirmingDiscard ? (
+            <div className="discard-confirmation" role="alert">
+              <h3>Discard unsaved assessment draft?</h3>
+              <p id={descriptionId}>
+                Your selected action and note have not been saved. Discarding
+                closes this dialog and cannot restore the draft.
+              </p>
+              <div className="dialog-actions">
+                <button
+                  ref={continueEditingRef}
+                  className="primary-button"
+                  type="button"
+                  onClick={() => setConfirmingDiscard(false)}
+                >
+                  Continue editing
+                </button>
+                <button
+                  className="danger-button"
+                  type="button"
+                  onClick={onCancel}
+                >
+                  Discard draft
+                </button>
+              </div>
             </div>
-          ) : null}
-          <fieldset className="assessment-options" disabled={saving}>
-            <legend>Assessment action</legend>
-            {ASSESSMENT_DISPOSITIONS.map((option) => (
-              <label key={option}>
-                <input
-                  type="radio"
-                  name="assessment-disposition"
-                  value={option}
-                  checked={disposition === option}
-                  onChange={() => setDisposition(option)}
-                />
+          ) : (
+            <>
+              <p className="dialog-boundary" id={descriptionId}>
+                Record your review of this machine-generated candidate. This
+                does not establish real-world change, damage, cause, intent, or
+                operational status.
+              </p>
+              {value.currentEvent ? (
+                <div className="correction-notice">
+                  The new event will supersede {value.currentEvent.eventId}. The
+                  prior event remains in the audit history.
+                </div>
+              ) : null}
+              <fieldset className="assessment-options" disabled={saving}>
+                <legend>Assessment action</legend>
+                {ASSESSMENT_DISPOSITIONS.map((option) => (
+                  <label key={option}>
+                    <input
+                      type="radio"
+                      name="assessment-disposition"
+                      value={option}
+                      checked={disposition === option}
+                      onChange={() => {
+                        setDisposition(option);
+                        setDirty(true);
+                      }}
+                    />
+                    <span>
+                      <strong>{dispositionLabel(option)}</strong>
+                      <small>{dispositionDescription(option)}</small>
+                    </span>
+                  </label>
+                ))}
+              </fieldset>
+              <label className="note-field">
                 <span>
-                  <strong>{dispositionLabel(option)}</strong>
-                  <small>{dispositionDescription(option)}</small>
+                  Analyst note
+                  {disposition === "needs-context"
+                    ? " (required)"
+                    : " (optional)"}
                 </span>
+                <textarea
+                  value={note}
+                  onChange={(event) => {
+                    setNote(event.target.value);
+                    setDirty(true);
+                  }}
+                  maxLength={500}
+                  rows={5}
+                  disabled={saving}
+                  aria-describedby="note-count"
+                />
+                <small id="note-count">{note.length} / 500 characters</small>
               </label>
-            ))}
-          </fieldset>
-          <label className="note-field">
-            <span>
-              Analyst note
-              {disposition === "needs-context" ? " (required)" : " (optional)"}
-            </span>
-            <textarea
-              value={note}
-              onChange={(event) => setNote(event.target.value)}
-              maxLength={500}
-              rows={5}
-              disabled={saving}
-              aria-describedby="note-count"
-            />
-            <small id="note-count">{note.length} / 500 characters</small>
-          </label>
-          {error ? (
-            <div className="save-error" role="alert">
-              <strong>Assessment not saved</strong>
-              <span>{error} Your draft is still here. Retry when ready.</span>
-            </div>
-          ) : null}
-          <div className="dialog-actions">
-            <button
-              className="secondary-button"
-              type="button"
-              onClick={onCancel}
-              disabled={saving}
-            >
-              Cancel
-            </button>
-            <button className="primary-button" type="submit" disabled={saving}>
-              {saving ? "Saving…" : error ? "Retry save" : "Append assessment"}
-            </button>
-          </div>
+              {error ? (
+                <div className="save-error" role="alert">
+                  <strong>Assessment not saved</strong>
+                  <span>
+                    {error} Your draft is still here. Retry when ready.
+                  </span>
+                </div>
+              ) : null}
+              <div className="dialog-actions">
+                <button
+                  className="secondary-button"
+                  type="button"
+                  onClick={requestCancel}
+                  disabled={saving}
+                >
+                  Cancel
+                </button>
+                <button
+                  className="primary-button"
+                  type="submit"
+                  disabled={saving}
+                >
+                  {saving
+                    ? "Saving…"
+                    : error
+                      ? "Retry save"
+                      : "Append assessment"}
+                </button>
+              </div>
+            </>
+          )}
         </form>
       </section>
     </div>
