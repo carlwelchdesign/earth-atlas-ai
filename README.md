@@ -13,7 +13,7 @@ EchoAtlas is a planned civilian disaster and infrastructure-change SAR intellige
 - `docs/design`: approved or approval-gated product-design specifications and validation evidence.
 - `plans`: canonical product, architecture, governance, and execution plans.
 
-The portable analysis bundle is the boundary between processing, UI, tests, and future platform adapters. Palantir remains an optional later adapter rather than a required runtime.
+The portable analysis bundle is the boundary between processing, UI, tests, and optional platform adapters. The Palantir feasibility layer currently produces a network-free import plan; it is not a required runtime and has not authenticated to or written into Palantir.
 
 ## Prerequisites
 
@@ -97,6 +97,16 @@ uv run echoatlas-validate-bundle \
 ```
 
 The generated pixels and metadata are synthetic, CC0-licensed, and contain no Umbra imagery. The validator checks the exact contract version, bounded JSON, safe paths, hashes, sizes, media signatures, partial state, and cross-document references. See [the analysis-bundle v1 documentation](docs/architecture/analysis-bundle-v1.md).
+
+Project a validated bundle into the optional, network-free Palantir import contract:
+
+```sh
+uv run echoatlas-plan-palantir-import \
+  --bundle data/fixtures/eat007-valid \
+  --output data/platform/palantir-import-plan.json
+```
+
+This writes a local JSON plan only. It performs no authentication or remote writes. See the [Palantir feasibility spike](docs/platform/palantir-feasibility.md) for the current evidence, mapping, and approval-gated live validation steps.
 
 Review the approval-gated [analyst workbench interface specification](docs/design/workbench-interface-v1.md) and [standalone prototype](prototypes/eat-des-001/README.md). The prototype is separate from production React and uses only synthetic design material.
 

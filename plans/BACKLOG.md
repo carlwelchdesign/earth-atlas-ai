@@ -192,9 +192,11 @@ Acceptance:
 
 - [ ] Carl explicitly approves any account creation or authentication step.
 - [ ] Current tier limits, media/raster support, transform path, OSDK hosting, AIP availability, and restricted scopes are documented from the live enrollment.
-- [ ] Minimal mapping covers AOI, acquisition, run, artifact, candidate, and assessment.
-- [ ] No processing policy is moved exclusively into Foundry.
+- [x] Minimal mapping covers AOI, acquisition, run, artifact, candidate, and assessment.
+- [x] No processing policy is moved exclusively into Foundry.
 - [ ] Spike ends with a go/adjust/no-go decision, screenshots/evidence, and cost/access caveats.
+
+Implementation checkpoint: a deterministic, network-free import plan maps validated bundle objects, evidence media, and links without a Palantir SDK or remote writes. Public Palantir documentation supports a provisional **adjust** decision: use the platform only as an optional downstream Ontology/media/application layer. Current PNG previews are media evidence rather than raster-native GeoTIFF layers. Live tier quotas, product enablement, authenticated scopes, synthetic import evidence, screenshots, and the final decision remain approval-gated.
 
 ### EAT-015 — Package reproducible demo and release evidence
 
