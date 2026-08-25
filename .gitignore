@@ -31,3 +31,4 @@ data/*
 /cache/
 /working/
 fixtures/generated/
+apps/workbench/public/generated-demo/

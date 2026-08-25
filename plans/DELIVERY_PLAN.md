@@ -42,7 +42,7 @@ Gate: AI stays disabled unless citation, permission, and overclaiming evaluation
 
 Outcome: a bounded Palantir feasibility result exists, the standalone path remains intact, and a reproducible public-demo package is ready for owner review.
 
-Tickets: `EAT-014` and `EAT-015`.
+Tickets: `EAT-014`, `EAT-016`, and `EAT-015`.
 
 Gate: Developer Tier access and limits are feasibility results, not assumed capabilities. Public deployment and release require separate owner approval.
 
@@ -55,7 +55,8 @@ EAT-001 -> EAT-002 -> EAT-003 -> EAT-004 -> EAT-005 -> EAT-006 -> EAT-007
                                                                +-> EAT-012 -----------------------------------------+          |
                                                                                                                      +-> EAT-013
 EAT-007 -> EAT-014
-EAT-011 + EAT-012 + EAT-013 -> EAT-015
+EAT-011 -> EAT-016
+EAT-011 + EAT-012 + EAT-013 + EAT-016 -> EAT-015
 EAT-014 informs EAT-015 but does not block the standalone demo if platform access is unavailable.
 ```
 

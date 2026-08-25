@@ -205,6 +205,7 @@ export function Workbench({ bundle, assessmentStore }: WorkbenchProps) {
           acquisitions={bundle.acquisitions}
           boundaryLabel={bundle.mission.boundaryLabel}
           candidates={bundle.candidates}
+          lineage={bundle.evidence.lineage}
           comparisonMode={comparisonMode}
           onComparisonModeChange={setComparisonMode}
           overlayVisible={overlayVisible}
@@ -470,6 +471,7 @@ interface TemporalComparisonProps {
   acquisitions: [AcquisitionView, AcquisitionView];
   boundaryLabel: string;
   candidates: CandidateView[];
+  lineage: WorkbenchBundle["evidence"]["lineage"];
   comparisonMode: ComparisonMode;
   onComparisonModeChange: (mode: ComparisonMode) => void;
   overlayVisible: boolean;
@@ -487,6 +489,7 @@ function TemporalComparison({
   acquisitions,
   boundaryLabel,
   candidates,
+  lineage,
   comparisonMode,
   onComparisonModeChange,
   overlayVisible,
@@ -530,7 +533,7 @@ function TemporalComparison({
       <div
         className={`comparison-stage comparison-${comparisonMode}`}
         role="region"
-        aria-label={`${capitalize(comparisonMode)} synthetic image comparison. ${candidates.length} machine candidates are available.`}
+        aria-label={`${capitalize(comparisonMode)} ${lineage === "satellite-derived" ? "satellite-derived" : "synthetic"} image comparison. ${candidates.length} machine candidates are available.`}
       >
         {visibleAcquisitions.map((acquisition) => (
           <ImageView
@@ -817,7 +820,7 @@ function ReviewEvidence({ candidate }: { candidate: CandidateView }) {
         <span>Heuristic change score</span>
         <strong>{candidate.heuristicScore.toFixed(2)}</strong>
         <p>
-          Ranking signal from deterministic fixture measurements. It is not
+          Ranking signal from deterministic pipeline measurements. It is not
           calibrated confidence, a probability, or a confirmed finding.
         </p>
       </div>
@@ -856,7 +859,11 @@ function ProvenanceEvidence({
       aria-label="Provenance"
     >
       <div className="lineage-notice">
-        <strong>Synthetic lineage</strong>
+        <strong>
+          {bundle.evidence.lineage === "satellite-derived"
+            ? "Satellite-derived lineage"
+            : "Synthetic lineage"}
+        </strong>
         <p>{bundle.evidence.lineageNotice}</p>
       </div>
       <h3>Acquisition comparison</h3>

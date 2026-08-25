@@ -212,6 +212,31 @@ export const loadDemoBundle: BundleLoader = async () => {
   return demoBundleForScenario(scenario);
 };
 
+export const loadWorkbenchBundle: BundleLoader = async () => {
+  const scenario =
+    typeof window === "undefined"
+      ? null
+      : new URLSearchParams(window.location.search).get("fixture");
+  if (scenario) return demoBundleForScenario(scenario);
+  if (typeof fetch === "undefined") return demoBundleForScenario(null);
+
+  let response: Response;
+  try {
+    response = await fetch("/generated-demo/bundle.json", {
+      cache: "no-store",
+    });
+  } catch {
+    return demoBundleForScenario(null);
+  }
+  if (response.status === 404) return demoBundleForScenario(null);
+  if (!response.ok) {
+    throw new Error(
+      `Prepared demo request failed with status ${response.status}.`,
+    );
+  }
+  return response.json();
+};
+
 export function demoBundleForScenario(scenario: string | null) {
   const bundle = structuredClone(demoBundle);
   if (scenario === "stale") {
