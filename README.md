@@ -2,7 +2,7 @@
 
 EchoAtlas is a planned civilian disaster and infrastructure-change SAR intelligence workbench. It will turn public Umbra imagery into deterministic change candidates, evidence, and human-reviewed assessments.
 
-**Current status:** the Bingham Canyon civilian demonstration pair is approved and pinned. The backend can fetch those exact public Umbra objects into a bounded, checksum-verified local cache, produce deterministic AOI-cropped engineering previews on a declared common grid, generate a transparent baseline queue of pending change candidates, and validate a provider-neutral analysis bundle. It does not confirm physical change or provide operational intelligence.
+**Current status:** the Bingham Canyon civilian demonstration pair is approved and pinned. The backend can fetch those exact public Umbra objects into a bounded, checksum-verified local cache, produce deterministic AOI-cropped engineering previews on a declared common grid, generate a transparent baseline queue of pending change candidates, and prepare the real satellite-derived comparison for the local workbench. It does not confirm physical change or provide operational intelligence.
 
 ## Architecture
 
@@ -13,7 +13,7 @@ EchoAtlas is a planned civilian disaster and infrastructure-change SAR intellige
 - `docs/design`: approved or approval-gated product-design specifications and validation evidence.
 - `plans`: canonical product, architecture, governance, and execution plans.
 
-The portable analysis bundle is the boundary between processing, UI, tests, and optional platform adapters. The Palantir feasibility layer currently produces a network-free import plan and is not a required runtime. A Developer Tier enrollment and EchoAtlas project now exist. The exact tiny synthetic fixture has been uploaded as six raw structured files and four PNG evidence items, and its five non-empty object families plus six non-empty relationship families are indexed in the live Ontology. A separate generated GeoTIFF also verifies bounded TIFF ingestion and preview, while Ontology-backed map tiling remains unverified. No real Umbra imagery, credentials, API keys, OAuth clients, actions, or applications have been created.
+The portable analysis bundle is the boundary between processing, UI, tests, and optional platform adapters. The local workbench prefers a prepared real-data bundle when one has been staged and otherwise falls back to a clearly labeled synthetic fixture. The Palantir feasibility layer currently produces a network-free import plan and is not a required runtime. A Developer Tier enrollment and EchoAtlas project now exist. The exact tiny synthetic fixture has been uploaded as six raw structured files and four PNG evidence items, and its five non-empty object families plus six non-empty relationship families are indexed in the live Ontology. A separate generated GeoTIFF also verifies bounded TIFF ingestion and preview, while Ontology-backed map tiling remains unverified. No real Umbra imagery has been uploaded to Palantir, and no credentials, API keys, OAuth clients, actions, or applications have been created there.
 
 ## Prerequisites
 
@@ -85,6 +85,18 @@ uv run echoatlas-change-candidates \
 ```
 
 The score threshold, two-pixel registration tolerance, morphology, connectivity, minimum component size, and candidate-count guard are explicit parameters stored with the output. The default policy is an engineering heuristic for human review, not calibrated confidence. See [the baseline change-candidate documentation](docs/architecture/change-candidate-baseline.md).
+
+Stage the validated real comparison for the local workbench:
+
+```sh
+uv run echoatlas-prepare-workbench-demo \
+  --selection-manifest fixtures/demo/selection-manifest.v1.json \
+  --preview-run data/derived/echoatlas-bingham-canyon-2025-v1/preview-48b949a1b72ac7f8f54d \
+  --change-run data/derived/echoatlas-bingham-canyon-2025-v1/changes/change-9c8a27b2a55081fc6b07 \
+  --output apps/workbench/public/generated-demo
+```
+
+The command validates manifest lineage, hashes, sizes, dimensions, the quality report, and all 26 candidate records before atomically staging thumbnails, display evidence, candidate GeoJSON, and a runtime bundle. The destination is Git-ignored. Raw and aligned GeoTIFFs, cache/provider payloads, generated real-data artifacts, and assessment state remain outside version control. The destination must not already exist; remove or archive an earlier generated directory deliberately before rebuilding it.
 
 Generate and validate the tiny deterministic contract demonstration:
 

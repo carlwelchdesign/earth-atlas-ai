@@ -198,6 +198,21 @@ Acceptance:
 
 Implementation checkpoint: a deterministic, network-free import plan maps validated bundle objects, evidence media, and links without a Palantir SDK or remote writes. Package version 1.3.0 exports upload-ready object/media CSVs, preserves the aggregate link table, adds a dedicated two-column join CSV per declared link type, omits every zero-row object or link family from upload while retaining it in the hashed manifest, and adds lossless UTC epoch-millisecond companion columns for recognized object timestamps while preserving the original RFC3339 values. Carl explicitly approved and completed Developer Tier enrollment. The live plan reports limited vCPUs/GPUs/users, 60 object types, and 60–120K latest-generation LLM tokens per minute; the application catalog exposes Projects & Files, Data Connection, Pipeline Builder, Contour, Ontology Manager, Workshop, AIP Logic, Code Repositories, and AIP Assist. The `EchoAtlas` project contains the exact synthetic fixture as raw JSON/GeoJSON files and PNG media, isolated normalized datasets, five indexed non-empty object types, and six dataset-backed link types. The approved `EchoAtlas Timestamp Bridge` pipeline built native Timestamp outputs for both acquisition rows and the analysis-run row, then the two Ontology object types were remapped without changing their primary keys, counts, or link topology. A separate bounded synthetic GeoTIFF was accepted and rendered by a TIFF media set with its expected file size and dimensions; the UI did not expose the embedded georeferencing, so Ontology-backed map tiling remains open. The zero-row assessment dataset is invalid and does not back an object type. Developer Console still has zero applications and no credentials, OAuth clients, actions, or automations were created. Public and live evidence still supports a provisional **adjust** decision: use the platform only as an optional downstream Ontology/media/application layer. Raster map tiling, restricted scopes, usage/cleanup, durable visual evidence, and the final decision remain open.
 
+### EAT-016 — Load the real Bingham Canyon demo in the workbench
+
+Outcome: the standalone workbench can present the already processed, approved Umbra Bingham Canyon pair and deterministic candidates without committing raw imagery or generated real-data artifacts.
+
+Acceptance:
+
+- [x] A deterministic preparation command validates the pinned selection, processing, and change outputs, then stages only derived display assets and a runtime bundle in a gitignored directory.
+- [x] The workbench prefers the prepared real bundle, validates it through the provider-neutral contract, and retains an explicitly labeled synthetic fallback when the prepared bundle is unavailable.
+- [x] Real acquisition dates, source identity, checksums, CC BY 4.0 attribution, processing parameters, candidates, warnings, and interpretation limits are visible.
+- [x] Raw GeoTIFFs, caches, provider payloads, generated real imagery, and analyst assessment state are not committed.
+- [x] Focused tests cover preparation, real-bundle loading, invalid data, missing data, and synthetic fallback behavior.
+- [x] Desktop and mobile browser verification proves the prepared real imagery is visible and the review workflow remains usable.
+
+Non-goals: SAR-domain adjudication, calibrated accuracy claims, AI interpretation, Palantir upload, public deployment, or completion of `EAT-015`.
+
 ### EAT-015 — Package reproducible demo and release evidence
 
 Outcome: the project is ready for owner review as a truthful portfolio demonstration.

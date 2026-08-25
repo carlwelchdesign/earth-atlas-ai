@@ -35,8 +35,22 @@ describe("parseWorkbenchBundle", () => {
   it("rejects non-local artifact paths", () => {
     const bundle = structuredClone(demoBundle);
     bundle.acquisitions[0].artifact.src = "https://example.invalid/image.svg";
-    expect(() => parseWorkbenchBundle(bundle)).toThrow(
-      "safe local fixture path",
+    expect(() => parseWorkbenchBundle(bundle)).toThrow("safe local asset path");
+  });
+
+  it("accepts satellite-derived PNG assets in the prepared local directory", () => {
+    const bundle = structuredClone(demoBundle);
+    bundle.acquisitions[0].artifact.mediaType = "image/png";
+    bundle.acquisitions[0].artifact.src = "/generated-demo/before.png";
+    bundle.evidence.artifacts[0].mediaType = "image/png";
+    bundle.evidence.artifacts[0].path = "/generated-demo/before.png";
+    bundle.evidence.lineage = "satellite-derived";
+
+    expect(parseWorkbenchBundle(bundle).acquisitions[0].artifact).toMatchObject(
+      {
+        mediaType: "image/png",
+        src: "/generated-demo/before.png",
+      },
     );
   });
 

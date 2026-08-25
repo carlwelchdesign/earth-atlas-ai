@@ -17,7 +17,7 @@ export interface AcquisitionView {
   label: string;
   artifact: {
     available: boolean;
-    mediaType: "image/svg+xml";
+    mediaType: "image/svg+xml" | "image/png";
     src: string;
   };
 }
@@ -274,12 +274,12 @@ function parseAcquisition(source: unknown, index: number): AcquisitionView {
     ["before", "after"],
     `acquisitions[${index}].role`,
   );
-  const mediaType = requireExact(
+  const mediaType = requireEnum(
     artifactSource.mediaType,
-    "image/svg+xml",
+    ["image/svg+xml", "image/png"],
     `acquisitions[${index}].artifact.mediaType`,
   );
-  const src = requireSafeFixturePath(
+  const src = requireSafeLocalAssetPath(
     artifactSource.src,
     `acquisitions[${index}].artifact.src`,
   );
@@ -501,7 +501,7 @@ function parseEvidenceArtifact(
     id: requireString(record.id, `${path}.id`),
     label: requireString(record.label, `${path}.label`),
     mediaType: requireMediaType(record.mediaType, `${path}.mediaType`),
-    path: requireSafeFixturePath(record.path, `${path}.path`),
+    path: requireSafeLocalAssetPath(record.path, `${path}.path`),
     sha256: requireSha256(record.sha256, `${path}.sha256`),
     sizeBytes: requirePositiveInteger(record.sizeBytes, `${path}.sizeBytes`),
     required,
@@ -586,26 +586,28 @@ function requireTimestamp(value: unknown, path: string): string {
   return timestamp;
 }
 
-function requireSafeFixturePath(value: unknown, path: string): string {
+function requireSafeLocalAssetPath(value: unknown, path: string): string {
   const source = requireString(value, path);
   if (
-    !/^\/fixtures\/[A-Za-z0-9][A-Za-z0-9._/-]*$/.test(source) ||
+    !/^\/(fixtures|generated-demo)\/[A-Za-z0-9][A-Za-z0-9._/-]*$/.test(
+      source,
+    ) ||
     source.includes("..")
   ) {
-    throw invalid(`${path} must be a safe local fixture path`);
+    throw invalid(`${path} must be a safe local asset path`);
   }
   return source;
 }
 
 function requireSafeLink(value: unknown, path: string): string {
   const source = requireString(value, path);
-  if (source.startsWith("/fixtures/"))
-    return requireSafeFixturePath(source, path);
+  if (source.startsWith("/fixtures/") || source.startsWith("/generated-demo/"))
+    return requireSafeLocalAssetPath(source, path);
   let url: URL;
   try {
     url = new URL(source);
   } catch {
-    throw invalid(`${path} must be a safe local fixture path or HTTPS URL`);
+    throw invalid(`${path} must be a safe local asset path or HTTPS URL`);
   }
   if (url.protocol !== "https:" || url.username || url.password) {
     throw invalid(`${path} must be an unauthenticated HTTPS URL`);
