@@ -1,33 +1,85 @@
-const foundationBoundaries = [
-  "No source imagery is loaded",
-  "No change detection is running",
-  "No analyst conclusions are generated",
-] as const;
+import { useCallback, useEffect, useState } from "react";
 
-export function App() {
-  return (
-    <main className="foundation-shell">
-      <section className="foundation-card" aria-labelledby="foundation-title">
-        <p className="eyebrow">Repository foundation</p>
-        <h1 id="foundation-title">EchoAtlas</h1>
-        <p className="summary">
-          The development environment is ready for a planned, evidence-first SAR
-          analyst workbench.
-        </p>
+import { loadDemoBundle } from "./workbench/demo-bundle";
+import {
+  InvalidWorkbenchBundleError,
+  parseWorkbenchBundle,
+  type BundleLoader,
+  type WorkbenchBundle,
+} from "./workbench/model";
+import { StateNotice, Workbench } from "./workbench/Workbench";
 
-        <div className="status" role="status">
-          Foundation only — operational capabilities have not been implemented.
+type LoadState =
+  | { status: "loading" }
+  | { status: "ready"; bundle: WorkbenchBundle }
+  | { status: "invalid"; detail: string };
+
+export function App({
+  loadBundle = loadDemoBundle,
+}: {
+  loadBundle?: BundleLoader;
+}) {
+  const [attempt, setAttempt] = useState(0);
+  const [state, setState] = useState<LoadState>({ status: "loading" });
+
+  useEffect(() => {
+    let active = true;
+    loadBundle()
+      .then((source) => parseWorkbenchBundle(source))
+      .then((bundle) => {
+        if (active) setState({ status: "ready", bundle });
+      })
+      .catch((error: unknown) => {
+        if (!active) return;
+        const detail =
+          error instanceof InvalidWorkbenchBundleError
+            ? error.message
+            : "The bundle source could not be loaded.";
+        setState({ status: "invalid", detail });
+      });
+    return () => {
+      active = false;
+    };
+  }, [loadBundle, attempt]);
+
+  const retry = useCallback(() => {
+    setState({ status: "loading" });
+    setAttempt((current) => current + 1);
+  }, []);
+
+  if (state.status === "loading") {
+    return (
+      <main className="load-shell">
+        <div className="load-brand">
+          <span aria-hidden="true">EA</span>
+          <strong>EchoAtlas</strong>
         </div>
+        <StateNotice
+          kind="loading"
+          title="Validating bundle"
+          message="Checking the contract version, required fields, local artifact paths, and comparison records."
+        />
+      </main>
+    );
+  }
 
-        <section aria-labelledby="boundaries-title">
-          <h2 id="boundaries-title">Current boundaries</h2>
-          <ul>
-            {foundationBoundaries.map((boundary) => (
-              <li key={boundary}>{boundary}</li>
-            ))}
-          </ul>
-        </section>
-      </section>
-    </main>
-  );
+  if (state.status === "invalid") {
+    return (
+      <main className="load-shell">
+        <div className="load-brand">
+          <span aria-hidden="true">EA</span>
+          <strong>EchoAtlas</strong>
+        </div>
+        <StateNotice
+          kind="error"
+          title="Bundle rejected"
+          message={`No artifacts were rendered. ${state.detail}`}
+          action="Retry bundle"
+          onAction={retry}
+        />
+      </main>
+    );
+  }
+
+  return <Workbench bundle={state.bundle} />;
 }

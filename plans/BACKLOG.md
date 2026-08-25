@@ -116,10 +116,10 @@ Outcome: a user can load the demo bundle and compare the two acquisitions spatia
 
 Acceptance:
 
-- [ ] Map, AOI, synchronized imagery, candidate overlay, time toggle, legend, and selected-candidate state work.
-- [ ] Pointer reveal is optional; keyboard toggle and non-map candidate list provide equivalent access.
-- [ ] Loading, empty, invalid-bundle, missing-artifact, degraded, and success states are implemented.
-- [ ] No component reads Umbra-specific payloads directly.
+- [x] Map, AOI, synchronized imagery, candidate overlay, time toggle, legend, and selected-candidate state work.
+- [x] Pointer reveal is optional; keyboard toggle and non-map candidate list provide equivalent access.
+- [x] Loading, empty, invalid-bundle, missing-artifact, degraded, and success states are implemented.
+- [x] No component reads Umbra-specific payloads directly.
 
 ### EAT-009 — Implement analyst review queue and assessment audit trail
 

@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 560">
+  <defs>
+    <filter id="terrain">
+      <feTurbulence baseFrequency=".018 .052" numOctaves="4" seed="13" />
+      <feColorMatrix values=".56 0 0 0 .11  0 .63 0 0 .15  0 0 .7 0 .2  0 0 0 1 0" />
+    </filter>
+    <pattern id="scan" width="10" height="10" patternUnits="userSpaceOnUse">
+      <path d="M0 10 10 0" stroke="#a5b1b8" stroke-opacity=".07" />
+    </pattern>
+    <radialGradient id="pit" cx="52%" cy="47%" r="45%">
+      <stop offset="0" stop-color="#b2bdc3" stop-opacity=".28" />
+      <stop offset=".45" stop-color="#677781" stop-opacity=".15" />
+      <stop offset="1" stop-color="#101a21" stop-opacity="0" />
+    </radialGradient>
+  </defs>
+  <rect width="800" height="560" fill="#121d25" />
+  <rect width="800" height="560" filter="url(#terrain)" opacity=".85" />
+  <ellipse cx="412" cy="286" rx="282" ry="208" fill="url(#pit)" />
+  <g fill="none" stroke="#d7e0e4" stroke-opacity=".12">
+    <path d="M35 498C140 387 216 448 298 310S471 159 541 226 669 130 778 62" stroke-width="31" />
+    <path d="M-8 535C122 430 234 494 331 349S528 233 599 278 704 211 817 138" stroke-width="17" />
+    <path d="M81 438C168 349 220 391 280 277S429 124 507 190 610 107 724 42" stroke-width="9" />
+  </g>
+  <rect width="800" height="560" fill="url(#scan)" />
+</svg>
