@@ -2,12 +2,14 @@
 
 from echoatlas.adapters.palantir import PalantirImportPlan, plan_palantir_import
 from echoatlas.adapters.palantir_package import (
+    PalantirTableEntry,
     PalantirTablePackageManifest,
     write_palantir_import_package,
 )
 
 __all__ = [
     "PalantirImportPlan",
+    "PalantirTableEntry",
     "PalantirTablePackageManifest",
     "plan_palantir_import",
     "write_palantir_import_package",

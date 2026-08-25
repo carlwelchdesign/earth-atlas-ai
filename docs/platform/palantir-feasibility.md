@@ -34,7 +34,26 @@ The approved synthetic checkpoint created two additional remote resources:
 
 Foundry reported “Unable to infer a schema for this dataset” for the heterogeneous raw JSON/GeoJSON bundle. This proves the bundle can be retained as a raw file collection, not that it is immediately tabular or Ontology-ready. EchoAtlas now provides a deterministic normalization package with one CSV per object family, one link CSV, one media-reference CSV, and a hashed manifest. Scalar properties become columns and nested properties use canonical JSON text. The raw source files remain the portable source of truth.
 
-The live checkpoint resolves enrollment, plan-name, high-level capacity, application-catalog, raw-file import, and PNG media-set creation. It does not yet resolve raster-native geospatial behavior, transform execution, normalized Ontology object/link creation, OSDK/static-hosting configuration, restricted application scopes, usage impact, or cleanup behavior.
+The live checkpoint resolves enrollment, plan-name, high-level capacity, application-catalog, raw-file import, PNG media-set creation, and schema inference for non-empty normalized CSV tables. It does not yet resolve raster-native geospatial behavior, transform execution, Ontology object/link creation, OSDK/static-hosting configuration, restricted application scopes, usage impact, or cleanup behavior.
+
+### Live normalized datasets
+
+The approved normalized-import checkpoint created one small raw dataset per CSV so schemas were not mixed:
+
+| Logical table | Live result | Dataset RID |
+| --- | --- | --- |
+| Area of interest | 1 row, 7 columns | `ri.foundry.main.dataset.4a4b11e0-990d-43f4-be3b-47e151169613` |
+| Acquisition | 2 rows, 13 columns | `ri.foundry.main.dataset.a5ad41ac-0b91-4e5b-ba45-b6ed46c655b5` |
+| Analysis run | 1 row, 10 columns | `ri.foundry.main.dataset.7d385b94-d59c-4383-8419-474051382258` |
+| Evidence artifact | 4 rows, 10 columns | `ri.foundry.main.dataset.13628647-6005-41b5-9924-e54068870435` |
+| Change candidate | 1 row, 12 columns | `ri.foundry.main.dataset.bac8ffcc-5ae7-40a0-b12b-103f27061014` |
+| Analyst assessment | Source had 0 rows; Foundry incorrectly interpreted the header-only CSV as 1 row with two `untitled_column_*` string columns. This dataset is invalid and must not back an object type. | `ri.foundry.main.dataset.fb95ac11-4b2f-4fc5-8cea-0747a0a82575` |
+| Ontology links | 13 rows, 5 columns | `ri.foundry.main.dataset.2c1bf615-7df9-4734-8c0f-25f5902665f4` |
+| Media references | 4 rows, 5 columns | `ri.foundry.main.dataset.f7ff5093-412e-4035-9ff9-483b83c522c1` |
+
+Foundry preserved the declared identity/link column names. It inferred acquisition and run timestamps as `datetime`, artifact `required` as `boolean`, and artifact/media byte sizes as `integer`; canonical nested JSON remained `string`. These are live schema observations, not Ontology objects or links.
+
+The header-only assessment behavior invalidated package version 1.0.0's assumption that an empty CSV could safely represent a zero-row object family. Package version 1.1.0 records that family in the manifest with `row_count: 0`, `upload_ready: false`, and `omission_reason: no_rows`, and emits no assessment CSV. An empty Ontology type requires an explicitly defined schema or a future valid assessment event; EchoAtlas will not invent a row to force inference.
 
 ## Current public evidence
 
@@ -86,12 +105,12 @@ uv run echoatlas-package-palantir-import \
 
 The exporter writes atomically into a destination that must not already exist,
 preventing stale rows from surviving a later package. The package manifest records
-the source bundle and import-plan hashes plus every table's path, columns, row
-count, and SHA-256 hash. The six object tables preserve stable primary keys; the
-link table preserves typed source and target identities; and the media table
-contains only available artifacts. An object family with no records, such as the
-synthetic fixture's assessment family, is emitted as a header-only table rather
-than populated with invented data.
+the source bundle and import-plan hashes plus every table's columns and row count.
+Non-empty entries also include an upload-ready path and SHA-256 hash. Object tables
+preserve stable primary keys; the link table preserves typed source and target
+identities; and the media table contains only available artifacts. An object family
+with no records, such as the synthetic fixture's assessment family, remains in the
+manifest but emits no CSV and is explicitly marked non-uploadable.
 
 This solves the local heterogeneous-file normalization problem. It does not prove
 Foundry schema inference, create datasets or Ontology resources, configure links,
@@ -105,7 +124,7 @@ Explicit owner approval is required before the remaining spike:
 2. [ ] Complete the plan evidence: high-level limits and enabled applications are captured, but numeric compute/storage/GPU/user quotas and country/term limits remain unavailable.
 3. [ ] Media-set creation and catalog-level model state are confirmed. Raster-native behavior, transforms, normalized Ontology resources, and OSDK/static-hosting configuration remain open.
 4. [ ] Configure a restricted test application and record its exact resources and operation scopes.
-5. [ ] The exact synthetic bundle is present as raw files and media, and a deterministic local normalization package now preserves object identities, links, and available-media references. Live normalized-dataset import, Ontology verification, and deletion/cleanup behavior remain open.
+5. [ ] The exact synthetic bundle is present as raw files and media. Non-empty normalized datasets preserve expected row counts, columns, object identities, typed link endpoints, and available-media references. Empty-family behavior is now guarded locally. Ontology verification and deletion/cleanup behavior remain open.
 6. [ ] Record durable visual evidence, usage impact, limitations, and the final go/adjust/no-go decision.
 
 Real Umbra imagery remains outside the live spike until its storage, license, sensitivity, and usage implications are separately reviewed.

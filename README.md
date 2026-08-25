@@ -117,11 +117,13 @@ uv run echoatlas-package-palantir-import \
   --output data/platform/palantir-import-package
 ```
 
-The destination must not already exist. The command writes six object-family
-tables, one link table, one media-reference table, and a manifest containing row
-counts, columns, and SHA-256 hashes. Nested values use canonical JSON text inside
-CSV cells. It still performs no authentication or remote writes and does not
-create Ontology resources.
+The destination must not already exist. The manifest describes all six object
+families plus links and media references, but CSV files are emitted only for
+tables that contain rows. Zero-row families are marked `upload_ready: false`
+instead of producing a header-only file that a target could misinterpret as data.
+The manifest contains row counts, columns, and SHA-256 hashes. Nested values use
+canonical JSON text inside CSV cells. The command still performs no authentication
+or remote writes and does not create Ontology resources.
 
 Review the approval-gated [analyst workbench interface specification](docs/design/workbench-interface-v1.md) and [standalone prototype](prototypes/eat-des-001/README.md). The prototype is separate from production React and uses only synthetic design material.
 

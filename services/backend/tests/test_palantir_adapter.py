@@ -152,6 +152,10 @@ def test_package_writes_normalized_tables_with_hashes(tmp_path: Path) -> None:
     assert manifest.requires_authenticated_target is True
     assert manifest.writes_performed is False
     for table in manifest.tables:
+        if not table.upload_ready:
+            continue
+        assert table.relative_path is not None
+        assert table.sha256 is not None
         content = (output / table.relative_path).read_bytes()
         assert hashlib.sha256(content).hexdigest() == table.sha256
 
@@ -161,13 +165,16 @@ def test_package_writes_normalized_tables_with_hashes(tmp_path: Path) -> None:
     assert isinstance(json.loads(candidate_table[0]["geometry"]), dict)
     assert isinstance(json.loads(candidate_table[0]["evidence_artifact_ids"]), list)
 
-    assessment_table = output / "objects/analyst_assessment.csv"
-    assert assessment_table.read_text(encoding="utf-8") == "primary_key\n"
     assessment_record = next(
         table for table in manifest.tables if table.logical_name == "analyst_assessment"
     )
     assert assessment_record.row_count == 0
     assert assessment_record.columns == ("primary_key",)
+    assert assessment_record.upload_ready is False
+    assert assessment_record.omission_reason == "no_rows"
+    assert assessment_record.relative_path is None
+    assert assessment_record.sha256 is None
+    assert not (output / "objects/analyst_assessment.csv").exists()
 
 
 def test_package_is_byte_deterministic_across_equivalent_roots(tmp_path: Path) -> None:
