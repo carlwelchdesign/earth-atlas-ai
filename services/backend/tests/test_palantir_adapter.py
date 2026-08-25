@@ -144,11 +144,13 @@ def test_package_writes_normalized_tables_with_hashes(tmp_path: Path) -> None:
     root = generate_fixture(tmp_path / "bundle", software_commit=COMMIT)
     bundle = BundleValidator(SCHEMA_ROOT).validate(root)
     output = tmp_path / "package"
+    plan = plan_palantir_import(bundle)
 
-    manifest = write_palantir_import_package(plan_palantir_import(bundle), output)
+    manifest = write_palantir_import_package(plan, output)
 
     assert manifest.source_bundle_id == "bundle-bingham-canyon-synthetic-v1"
-    assert len(manifest.tables) == 8
+    assert manifest.package_version == "1.2.0"
+    assert len(manifest.tables) == 17
     assert manifest.requires_authenticated_target is True
     assert manifest.writes_performed is False
     for table in manifest.tables:
@@ -175,6 +177,46 @@ def test_package_writes_normalized_tables_with_hashes(tmp_path: Path) -> None:
     assert assessment_record.relative_path is None
     assert assessment_record.sha256 is None
     assert not (output / "objects/analyst_assessment.csv").exists()
+
+    run_candidate_links = _read_csv(output / "links/run_produces_candidate.csv")
+    assert run_candidate_links == [
+        {
+            "source_primary_key": next(
+                item.primary_key for item in plan.objects if item.object_type == "AnalysisRun"
+            ),
+            "target_primary_key": next(
+                item.primary_key for item in plan.objects if item.object_type == "ChangeCandidate"
+            ),
+        }
+    ]
+
+    expected_link_counts = {
+        "acquisition_covers_aoi": 2,
+        "run_uses_acquisition": 2,
+        "run_produces_artifact": 4,
+        "run_produces_candidate": 1,
+        "candidate_affects_aoi": 1,
+        "candidate_references_artifact": 3,
+    }
+    for logical_name, row_count in expected_link_counts.items():
+        table = next(item for item in manifest.tables if item.logical_name == logical_name)
+        assert table.row_count == row_count
+        assert table.upload_ready is True
+        assert len(_read_csv(output / f"links/{logical_name}.csv")) == row_count
+
+    assessment_link_names = {
+        "assessment_assesses_candidate",
+        "assessment_references_artifact",
+        "assessment_supersedes_assessment",
+    }
+    for logical_name in assessment_link_names:
+        table = next(item for item in manifest.tables if item.logical_name == logical_name)
+        assert table.row_count == 0
+        assert table.upload_ready is False
+        assert table.omission_reason == "no_rows"
+        assert not (output / f"links/{logical_name}.csv").exists()
+
+    assert len(_read_csv(output / "ontology_links.csv")) == len(plan.links)
 
 
 def test_package_is_byte_deterministic_across_equivalent_roots(tmp_path: Path) -> None:
