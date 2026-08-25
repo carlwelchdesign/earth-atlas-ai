@@ -31,6 +31,18 @@ OntologyLinkType = Literal[
     "assessmentSupersedesAssessment",
 ]
 
+ONTOLOGY_LINK_TYPES: tuple[OntologyLinkType, ...] = (
+    "acquisitionCoversAoi",
+    "runUsesAcquisition",
+    "runProducesArtifact",
+    "runProducesCandidate",
+    "candidateAffectsAoi",
+    "candidateReferencesArtifact",
+    "assessmentAssessesCandidate",
+    "assessmentReferencesArtifact",
+    "assessmentSupersedesAssessment",
+)
+
 ONTOLOGY_OBJECT_TYPES: tuple[OntologyObjectType, ...] = (
     "AreaOfInterest",
     "Acquisition",

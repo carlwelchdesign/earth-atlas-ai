@@ -15,7 +15,9 @@ from typing import Literal
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 
 from echoatlas.adapters.palantir import (
+    ONTOLOGY_LINK_TYPES,
     ONTOLOGY_OBJECT_TYPES,
+    OntologyLinkType,
     OntologyObjectType,
     PalantirImportPlan,
     PalantirOntologyObject,
@@ -31,6 +33,18 @@ _OBJECT_TABLE_NAMES: dict[OntologyObjectType, str] = {
     "EvidenceArtifact": "evidence_artifact",
     "ChangeCandidate": "change_candidate",
     "AnalystAssessment": "analyst_assessment",
+}
+
+_LINK_TABLE_NAMES: dict[OntologyLinkType, str] = {
+    "acquisitionCoversAoi": "acquisition_covers_aoi",
+    "runUsesAcquisition": "run_uses_acquisition",
+    "runProducesArtifact": "run_produces_artifact",
+    "runProducesCandidate": "run_produces_candidate",
+    "candidateAffectsAoi": "candidate_affects_aoi",
+    "candidateReferencesArtifact": "candidate_references_artifact",
+    "assessmentAssessesCandidate": "assessment_assesses_candidate",
+    "assessmentReferencesArtifact": "assessment_references_artifact",
+    "assessmentSupersedesAssessment": "assessment_supersedes_assessment",
 }
 
 
@@ -68,7 +82,7 @@ class PalantirTablePackageManifest(BaseModel):
 
     model_config = ConfigDict(frozen=True, extra="forbid")
 
-    package_version: Literal["1.1.0"] = "1.1.0"
+    package_version: Literal["1.2.0"] = "1.2.0"
     source_bundle_id: str = Field(min_length=1, max_length=200)
     source_manifest_sha256: str = Field(pattern=r"^[a-f0-9]{64}$")
     source_import_plan_sha256: str = Field(pattern=r"^[a-f0-9]{64}$")
@@ -211,6 +225,29 @@ def _render_tables(plan: PalantirImportPlan) -> tuple[_RenderedTable, ...]:
             link_rows,
         )
     )
+
+    join_columns = ("source_primary_key", "target_primary_key")
+    for link_type in ONTOLOGY_LINK_TYPES:
+        logical_name = _LINK_TABLE_NAMES[link_type]
+        join_rows = [
+            {
+                "source_primary_key": item.source_primary_key,
+                "target_primary_key": item.target_primary_key,
+            }
+            for item in sorted(
+                (item for item in plan.links if item.link_type == link_type),
+                key=lambda item: (item.source_primary_key, item.target_primary_key),
+            )
+        ]
+        rendered.append(
+            _render_table(
+                "ontology_links",
+                logical_name,
+                f"links/{logical_name}.csv",
+                join_columns,
+                join_rows,
+            )
+        )
 
     media_columns = (
         "artifact_primary_key",

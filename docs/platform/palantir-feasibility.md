@@ -1,6 +1,6 @@
 # Palantir feasibility spike
 
-Status: **provisional adjust with a live synthetic-import checkpoint** as of 2026-08-24. EchoAtlas can project a validated analysis bundle into a minimal Palantir-shaped import plan. Carl explicitly approved and completed AIP Developer Tier enrollment, the live plan and application catalog were inspected, and an `EchoAtlas` Foundry project was created. The exact tiny synthetic fixture has been uploaded as raw structured files and PNG evidence media. No real Umbra imagery, credentials, API keys, OAuth clients, EchoAtlas Ontology objects, or applications have been created.
+Status: **provisional adjust with a live synthetic-Ontology checkpoint** as of 2026-08-25. EchoAtlas can project a validated analysis bundle into a minimal Palantir-shaped import plan. Carl explicitly approved and completed AIP Developer Tier enrollment, the live plan and application catalog were inspected, and an `EchoAtlas` Foundry project was created. The exact tiny synthetic fixture has been uploaded as raw structured files and PNG evidence media; five object types and six non-empty link types now back that fixture in the live Ontology. No real Umbra imagery, credentials, API keys, OAuth clients, actions, or applications have been created.
 
 ## Decision
 
@@ -11,7 +11,7 @@ This is an **adjust**, not a full go:
 - proceed with the network-free mapping contract and a future thin executor;
 - do not make Foundry, AIP, or an OSDK application part of the standalone runtime;
 - do not move candidate scoring, evidence policy, or assessment semantics into a Palantir-only implementation;
-- defer a normalized Ontology import, restricted application configuration, cleanup validation, and the final go/no-go until the remaining evidence and approval gates are satisfied.
+- defer restricted application configuration, cleanup validation, and the final go/no-go until the remaining evidence and approval gates are satisfied.
 
 ## Live enrollment evidence
 
@@ -32,9 +32,9 @@ The approved synthetic checkpoint created two additional remote resources:
 - `EchoAtlas Synthetic Bundle Records`, dataset RID `ri.foundry.main.dataset.e8ddf29e-a9a8-4eba-9dc6-31c16ba00882`, containing the fixture's six structured JSON/GeoJSON files (8.4 KB reported by Foundry); and
 - an image media set, RID `ri.mio.main.media-set.b60973e7-8855-4253-be81-b15cdab72867`, containing `before.png`, `after.png`, `candidate-overlay.png`, and `change-score.png`. All four uploads succeeded. The media-set overview reports four items but `0B`, so byte-usage accounting is not treated as verified.
 
-Foundry reported “Unable to infer a schema for this dataset” for the heterogeneous raw JSON/GeoJSON bundle. This proves the bundle can be retained as a raw file collection, not that it is immediately tabular or Ontology-ready. EchoAtlas now provides a deterministic normalization package with one CSV per object family, one link CSV, one media-reference CSV, and a hashed manifest. Scalar properties become columns and nested properties use canonical JSON text. The raw source files remain the portable source of truth.
+Foundry reported “Unable to infer a schema for this dataset” for the heterogeneous raw JSON/GeoJSON bundle. This proves the bundle can be retained as a raw file collection, not that it is immediately tabular or Ontology-ready. EchoAtlas now provides a deterministic normalization package with one CSV per object family, a compatibility aggregate link CSV, one two-column join CSV per declared link type, one media-reference CSV, and a hashed manifest. Scalar properties become columns and nested properties use canonical JSON text. The raw source files remain the portable source of truth.
 
-The live checkpoint resolves enrollment, plan-name, high-level capacity, application-catalog, raw-file import, PNG media-set creation, and schema inference for non-empty normalized CSV tables. It does not yet resolve raster-native geospatial behavior, transform execution, Ontology object/link creation, OSDK/static-hosting configuration, restricted application scopes, usage impact, or cleanup behavior.
+The live checkpoint resolves enrollment, plan-name, high-level capacity, application-catalog, raw-file import, PNG media-set creation, schema inference for non-empty normalized CSV tables, and the minimum object/link mapping. It does not yet resolve raster-native geospatial behavior, a production transform path, OSDK/static-hosting configuration, restricted application scopes, usage impact, or cleanup behavior.
 
 ### Live normalized datasets
 
@@ -53,7 +53,34 @@ The approved normalized-import checkpoint created one small raw dataset per CSV 
 
 Foundry preserved the declared identity/link column names. It inferred acquisition and run timestamps as `datetime`, artifact `required` as `boolean`, and artifact/media byte sizes as `integer`; canonical nested JSON remained `string`. These are live schema observations, not Ontology objects or links.
 
-The header-only assessment behavior invalidated package version 1.0.0's assumption that an empty CSV could safely represent a zero-row object family. Package version 1.1.0 records that family in the manifest with `row_count: 0`, `upload_ready: false`, and `omission_reason: no_rows`, and emits no assessment CSV. An empty Ontology type requires an explicitly defined schema or a future valid assessment event; EchoAtlas will not invent a row to force inference.
+The header-only assessment behavior invalidated package version 1.0.0's assumption that an empty CSV could safely represent a zero-row object family. Package version 1.1.0 records that family in the manifest with `row_count: 0`, `upload_ready: false`, and `omission_reason: no_rows`, and emits no assessment CSV. Package version 1.2.0 applies the same rule to every declared link type and adds dedicated two-column join tables while preserving the aggregate link table for compatibility. An empty Ontology type or link requires an explicitly defined schema or a future valid assessment event; EchoAtlas will not invent a row to force inference.
+
+### Live Ontology resources
+
+The approved Ontology checkpoint created five object types from the non-empty synthetic tables. `AnalystAssessment` remains intentionally absent because the fixture contains no valid assessment event and the invalid zero-row dataset is never used.
+
+| Object type | Live rows / mapped properties | Ontology RID |
+| --- | --- | --- |
+| EchoAtlas Area of Interest | 1 row / 7 properties | `ri.ontology.main.object-type.7d82106a-dcfe-4693-93b3-ec0d33bbd230` |
+| Echo Atlas Normalized Acquisition | 2 rows / 12 properties | `ri.ontology.main.object-type.e9e52fa7-7ad0-4b0a-9a9a-fb1a4ad4cff0` |
+| EchoAtlas Analysis Run | 1 row / 9 properties | `ri.ontology.main.object-type.470eed9a-55e5-40ac-968c-b581d94e90f4` |
+| EchoAtlas Evidence Artifact | 4 rows / 10 properties | `ri.ontology.main.object-type.d85965ef-f0f2-4853-a27f-82069830027e` |
+| EchoAtlas Change Candidate | 1 row / 12 properties | `ri.ontology.main.object-type.435f50f8-8eee-4f9e-b8d1-07f50240ad0b` |
+
+Direct mapping exposed a timestamp boundary that remains part of the transform gate. Ontology Manager proposed `Struct<Timestamp,Offset>` for `acquired_at` and `created_at`, while the backing datasets reported `offsetdatetimeudt` to the indexer. Those two properties were excluded from the live object types so indexing could complete; their source columns remain unchanged in the datasets and package. A production import must transform them into a Foundry-supported timestamp representation rather than dropping or fabricating time values.
+
+Each non-empty relationship is backed by its own two-column join dataset. The one-row run-to-candidate dataset required an explicit **Apply a schema** step after automatic inference initially failed.
+
+| Link type | Rows | Join dataset RID | Relation RID |
+| --- | ---: | --- | --- |
+| Acquisition Covers AOI | 2 | `ri.foundry.main.dataset.d76e21b2-20e7-4847-9943-381ece87fbd5` | `ri.ontology.main.relation.544dfb6d-5af5-4546-b499-4438228c86e4` |
+| Run Uses Acquisition | 2 | `ri.foundry.main.dataset.4cd69b11-0e05-41e4-82cb-3a6c3b9d90c5` | `ri.ontology.main.relation.07a139c8-10fe-4b27-ac83-1727014efc52` |
+| Run Produces Artifact | 4 | `ri.foundry.main.dataset.06f2e172-7122-4827-ba29-6b05a7fef698` | `ri.ontology.main.relation.5d55cecb-df8b-4384-9c36-5d291c946c97` |
+| Run Produces Candidate | 1 | `ri.foundry.main.dataset.15627a0e-cdb7-4323-a401-0ad7daba9074` | `ri.ontology.main.relation.7d5d6266-fdc7-4dfe-b107-e803cbbdb0f5` |
+| Candidate Affects AOI | 1 | `ri.foundry.main.dataset.c142c589-ee74-46bd-980f-0e7862215473` | `ri.ontology.main.relation.71c99542-8c86-4919-bdf7-b3bb9e62af31` |
+| Candidate References Artifact | 3 | `ri.foundry.main.dataset.a9fd734e-4f24-487d-917b-b13392c3670e` | `ri.ontology.main.relation.9f6c05a9-d62b-4b95-bc8a-f8d2a831ba89` |
+
+The candidate remains synthetic and pending; an Ontology link does not turn it into analyst-confirmed change. No assessment type, assessment links, actions, automations, application restrictions, credentials, or cleanup operations were created in this checkpoint.
 
 ## Current public evidence
 
@@ -107,14 +134,17 @@ The exporter writes atomically into a destination that must not already exist,
 preventing stale rows from surviving a later package. The package manifest records
 the source bundle and import-plan hashes plus every table's columns and row count.
 Non-empty entries also include an upload-ready path and SHA-256 hash. Object tables
-preserve stable primary keys; the link table preserves typed source and target
-identities; and the media table contains only available artifacts. An object family
-with no records, such as the synthetic fixture's assessment family, remains in the
-manifest but emits no CSV and is explicitly marked non-uploadable.
+preserve stable primary keys; the aggregate link table preserves typed source and
+target identities; dedicated link-type tables expose only the two endpoint keys
+needed by Foundry join datasets; and the media table contains only available
+artifacts. An object or link family with no records, such as the synthetic fixture's
+assessment families, remains in the manifest but emits no CSV and is explicitly
+marked non-uploadable.
 
 This solves the local heterogeneous-file normalization problem. It does not prove
-Foundry schema inference, create datasets or Ontology resources, configure links,
-or perform remote writes.
+Foundry schema inference or perform remote writes. The approved live checkpoint
+used its output to create the resources documented above; the exporter itself
+remains network-free.
 
 ## Live validation gate
 
@@ -122,9 +152,9 @@ Explicit owner approval is required before the remaining spike:
 
 1. [x] Create and authenticate to a Developer Tier enrollment with Carl's explicit approval.
 2. [ ] Complete the plan evidence: high-level limits and enabled applications are captured, but numeric compute/storage/GPU/user quotas and country/term limits remain unavailable.
-3. [ ] Media-set creation and catalog-level model state are confirmed. Raster-native behavior, transforms, normalized Ontology resources, and OSDK/static-hosting configuration remain open.
+3. [ ] Media-set creation, catalog-level model state, and normalized object/link resources are confirmed. Raster-native behavior, the timestamp transform path, and OSDK/static-hosting configuration remain open.
 4. [ ] Configure a restricted test application and record its exact resources and operation scopes.
-5. [ ] The exact synthetic bundle is present as raw files and media. Non-empty normalized datasets preserve expected row counts, columns, object identities, typed link endpoints, and available-media references. Empty-family behavior is now guarded locally. Ontology verification and deletion/cleanup behavior remain open.
+5. [ ] The exact synthetic bundle is present as raw files and media. Non-empty normalized datasets and the live Ontology preserve expected row counts, object identities, typed link endpoints, and available-media references. Empty-family behavior is guarded locally. Timestamp transform compatibility and deletion/cleanup behavior remain open.
 6. [ ] Record durable visual evidence, usage impact, limitations, and the final go/adjust/no-go decision.
 
 Real Umbra imagery remains outside the live spike until its storage, license, sensitivity, and usage implications are separately reviewed.
