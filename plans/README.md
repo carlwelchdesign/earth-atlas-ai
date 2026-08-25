@@ -1,6 +1,6 @@
 # EchoAtlas planning package
 
-Status: EAT-001 through EAT-011 and EAT-DES-001 are complete. EAT-012 remains in qualified-review and adjudication. EAT-014 has a network-free bundle-to-Ontology import projection, an authenticated Developer Tier plan/application inventory, and an empty live EchoAtlas project. Synthetic import, restricted scopes, cleanup evidence, and the final decision remain open.
+Status: EAT-001 through EAT-011 and EAT-DES-001 are complete. EAT-012 remains in qualified-review and adjudication. EAT-014 has a network-free bundle-to-Ontology import projection, an authenticated Developer Tier plan/application inventory, and the exact synthetic fixture in a live EchoAtlas raw dataset and image media set. The raw mixed-format dataset did not auto-infer a schema; normalized Ontology import, restricted scopes, cleanup evidence, and the final decision remain open.
 
 EchoAtlas is a civilian disaster and infrastructure-change SAR intelligence workbench. The first release will prove one end-to-end analyst workflow with public Umbra data: select a comparable image pair, produce deterministic change candidates, inspect the evidence, and record a human assessment.
 
@@ -32,8 +32,8 @@ Canonical GitHub repository: [carlwelchdesign/earth-atlas-ai](https://github.com
 - The [AWS Open Data Registry](https://registry.opendata.aws/umbra-open-data/) describes Umbra's public SAR bucket, frequent updates, multiple time-series locations, GEC/SICD/SIDD/CPHD products, and CC BY 4.0 licensing.
 - The live [Umbra STAC root](https://umbra-open-data-catalog.s3.us-west-2.amazonaws.com/stac/catalog.json) reports STAC 1.1.0 and currently links 2024 and 2025 catalogs.
 - EAT-002 proved public object resolution despite empty STAC asset `href` values, and EAT-003 pinned the approved Bingham Canyon GEC pair with exact object identities, access evidence, and checksums.
-- The live Palantir enrollment identifies AIP Developer Tier as the current plan, reports limited compute/users plus a 60-object-type cap and LLM rate limits, and exposes the core data, Ontology, application, code, and AIP tools. Exact numeric compute/storage limits, model-family state, and restricted scopes remain explicit feasibility gates rather than MVP dependencies.
-- The [Palantir feasibility spike](../docs/platform/palantir-feasibility.md) maps the portable bundle locally, records the live enrollment checkpoint, and separates the remaining synthetic-import and restricted-application gates.
+- The live Palantir enrollment identifies AIP Developer Tier as the current plan, reports limited compute/users plus a 60-object-type cap and LLM rate limits, and exposes the core data, Ontology, application, code, and AIP tools. The Model Catalog is populated, but exact numeric compute/storage limits, successful model invocation, and restricted scopes remain explicit feasibility gates rather than MVP dependencies.
+- The [Palantir feasibility spike](../docs/platform/palantir-feasibility.md) maps the portable bundle locally, records the live enrollment and raw synthetic-import checkpoints, and separates the remaining normalization, Ontology, cleanup, and restricted-application gates.
 
 ## Definition of MVP complete
 

@@ -13,7 +13,7 @@ EchoAtlas is a planned civilian disaster and infrastructure-change SAR intellige
 - `docs/design`: approved or approval-gated product-design specifications and validation evidence.
 - `plans`: canonical product, architecture, governance, and execution plans.
 
-The portable analysis bundle is the boundary between processing, UI, tests, and optional platform adapters. The Palantir feasibility layer currently produces a network-free import plan and is not a required runtime. A Developer Tier enrollment and empty EchoAtlas project now exist, but no files, imagery, credentials, Ontology objects, applications, or bundle records have been uploaded or created.
+The portable analysis bundle is the boundary between processing, UI, tests, and optional platform adapters. The Palantir feasibility layer currently produces a network-free import plan and is not a required runtime. A Developer Tier enrollment and EchoAtlas project now exist. The exact tiny synthetic fixture has been uploaded as six raw structured files and four PNG evidence items; no real Umbra imagery, credentials, API keys, OAuth clients, EchoAtlas Ontology objects, or applications have been created.
 
 ## Prerequisites
 
