@@ -10,6 +10,8 @@ from PIL import Image
 from echoatlas.evaluation.review import (
     ReviewInputError,
     ReviewOutputExistsError,
+    _labeling_tiles,
+    prepare_labeling_packet,
     prepare_review_packet,
 )
 from echoatlas.processor.changes.models import (
@@ -205,6 +207,68 @@ def test_review_packet_preserves_lineage_and_references_local_images(tmp_path: P
     assert "independent qualified review and adjudication required" in html
     assert "localStorage" in html
     assert not list(output.glob("*.png"))
+
+
+def test_labeling_packet_excludes_candidate_inputs_and_tiles_full_grid(tmp_path: Path) -> None:
+    _, preview = _source_runs(tmp_path / "source")
+    output = tmp_path / "labeling" / "packet"
+
+    packet = prepare_labeling_packet(preview, output)
+
+    assert packet.processing_run_id == preview.name
+    assert [artifact.role for artifact in packet.artifacts] == ["before", "after"]
+    assert len(packet.tiles) == 1
+    assert packet.tiles[0].source_box == (0, 0, 10, 10)
+    assert all(artifact.source_url.startswith("../../source/") for artifact in packet.artifacts)
+    packet_json = (output / "labeling-packet.json").read_text()
+    html = (output / "index.html").read_text()
+    assert "change-test-candidate-0001" not in packet_json
+    assert "change-test-candidate-0001" not in html
+    assert '"candidates"' not in packet_json
+    assert '"change_run_id"' not in packet_json
+    assert "Machine-candidate geometry and scores are absent" in html
+    assert "provisional-candidate-hidden" in html
+    assert "coverage:{status:" in html
+    assert 'id="confirm-clear-draft-button"' in html
+    assert "has a contradictory saved review" in html
+    assert "normalizeStoredState()" in html
+    assert "qualified independent review, deduplication, and adjudication" in html
+    assert not list(output.glob("*.png"))
+
+
+def test_labeling_packet_validates_tile_configuration(tmp_path: Path) -> None:
+    _, preview = _source_runs(tmp_path / "source")
+
+    with pytest.raises(ReviewInputError, match="tile size"):
+        prepare_labeling_packet(preview, tmp_path / "small", tile_size=128)
+    with pytest.raises(ReviewInputError, match="tile overlap"):
+        prepare_labeling_packet(
+            preview,
+            tmp_path / "overlap",
+            tile_size=256,
+            tile_overlap=256,
+        )
+    with pytest.raises(ReviewInputError, match="4096-tile"):
+        _labeling_tiles(500_000, 500_000, tile_size=256, tile_overlap=0)
+
+
+def test_labeling_tiles_cover_large_grid_with_bounded_overlap() -> None:
+    tiles = _labeling_tiles(2763, 3922, tile_size=768, tile_overlap=64)
+
+    assert len(tiles) == 24
+    assert tiles[0].source_box == (0, 0, 768, 768)
+    assert tiles[-1].source_box == (1995, 3154, 768, 768)
+    assert {tile.row for tile in tiles} == set(range(1, 7))
+    assert {tile.column for tile in tiles} == set(range(1, 5))
+
+
+def test_labeling_packet_never_overwrites_existing_output(tmp_path: Path) -> None:
+    _, preview = _source_runs(tmp_path / "source")
+    output = tmp_path / "labeling"
+    output.mkdir()
+
+    with pytest.raises(ReviewOutputExistsError, match="already exists"):
+        prepare_labeling_packet(preview, output)
 
 
 def test_review_packet_rejects_modified_artifact(tmp_path: Path) -> None:

@@ -14,6 +14,7 @@ from urllib.parse import quote
 from PIL import Image
 from pydantic import BaseModel, ConfigDict, Field, ValidationError
 
+from echoatlas.evaluation.labeling_template import render_labeling_html
 from echoatlas.evaluation.review_template import render_review_html
 from echoatlas.processor.changes.models import (
     CandidateFeatureCollection,
@@ -72,6 +73,49 @@ class ReviewPacket(BaseModel):
     review_boundary: str = (
         "Candidate review decisions are audit evidence only. They are not independent "
         "reference regions and cannot establish pipeline accuracy."
+    )
+
+
+class LabelingArtifact(BaseModel):
+    model_config = ConfigDict(frozen=True, extra="forbid")
+
+    role: Literal["before", "after"]
+    source_url: str
+    sha256: str = Field(pattern=r"^[a-f0-9]{64}$")
+    width: int = Field(gt=0)
+    height: int = Field(gt=0)
+
+
+class LabelingTile(BaseModel):
+    model_config = ConfigDict(frozen=True, extra="forbid")
+
+    tile_id: str
+    row: int = Field(ge=1)
+    column: int = Field(ge=1)
+    source_box: tuple[int, int, int, int]
+
+
+class LabelingPacket(BaseModel):
+    model_config = ConfigDict(frozen=True, extra="forbid")
+
+    labeling_packet_version: Literal["1.0.0"] = "1.0.0"
+    packet_id: str
+    selection_id: str
+    processing_aoi_id: str
+    processing_run_id: str
+    source_processing_manifest_sha256: str = Field(pattern=r"^[a-f0-9]{64}$")
+    source_license: dict[str, str]
+    source_inputs: tuple[dict[str, object], dict[str, object]]
+    grid: dict[str, object]
+    artifacts: tuple[LabelingArtifact, LabelingArtifact]
+    tiles: tuple[LabelingTile, ...]
+    tile_size: int = Field(gt=0)
+    tile_overlap: int = Field(ge=0)
+    interpretation_limits: tuple[str, ...]
+    sensitivity_controls: tuple[str, ...]
+    labeling_boundary: str = (
+        "Machine-candidate geometry and scores are absent from this packet. Drawn regions "
+        "remain provisional until qualified review and adjudication are recorded."
     )
 
 
@@ -159,6 +203,76 @@ def prepare_review_packet(
         raise
 
 
+def prepare_labeling_packet(
+    preview_run: Path,
+    output_directory: Path,
+    *,
+    tile_size: int = 768,
+    tile_overlap: int = 64,
+) -> LabelingPacket:
+    """Create a candidate-hidden, local-only packet from validated before/after previews."""
+
+    if output_directory.exists():
+        raise ReviewOutputExistsError(f"labeling output already exists: {output_directory}")
+    if not 256 <= tile_size <= 2048:
+        raise ReviewInputError("tile size must be between 256 and 2048 pixels")
+    if tile_overlap < 0 or tile_size - tile_overlap < 64:
+        raise ReviewInputError(
+            "tile overlap must be non-negative and leave a stride of at least 64 pixels"
+        )
+
+    processing_manifest_path = preview_run / "processing-manifest.json"
+    processing = _read_model(
+        processing_manifest_path,
+        ProcessingRunManifest,
+        "processing manifest",
+    )
+    if preview_run.name != processing.run_id:
+        raise ReviewInputError("processing manifest ID does not match its directory")
+    quality_path, quality_sha256, quality_size = _quality_record(processing)
+    _validated_declared_artifact(
+        preview_run,
+        quality_path,
+        expected_sha256=quality_sha256,
+        expected_size=quality_size,
+    )
+    before_record = _preview_record(processing, "before")
+    after_record = _preview_record(processing, "after")
+    before_path = _validated_artifact(preview_run, before_record)
+    after_path = _validated_artifact(preview_run, after_record)
+    dimensions = (processing.grid.width, processing.grid.height)
+    for label, path in (("before preview", before_path), ("after preview", after_path)):
+        with Image.open(path) as image:
+            if image.size != dimensions:
+                raise ReviewInputError(
+                    f"{label} dimensions {image.size} do not match grid {dimensions}"
+                )
+
+    output_directory.parent.mkdir(parents=True, exist_ok=True)
+    temporary = Path(
+        tempfile.mkdtemp(prefix=f".{output_directory.name}-", dir=output_directory.parent)
+    )
+    try:
+        packet = _build_labeling_packet(
+            processing,
+            processing_manifest_sha256=_sha256(processing_manifest_path),
+            output_root=temporary,
+            artifact_paths=(before_path, after_path),
+            artifact_hashes=(before_record.sha256, after_record.sha256),
+            tile_size=tile_size,
+            tile_overlap=tile_overlap,
+        )
+        (temporary / "labeling-packet.json").write_text(
+            f"{json.dumps(packet.model_dump(mode='json'), indent=2, sort_keys=True)}\n"
+        )
+        (temporary / "index.html").write_text(render_labeling_html(packet))
+        temporary.replace(output_directory)
+        return packet
+    except Exception:
+        shutil.rmtree(temporary, ignore_errors=True)
+        raise
+
+
 def _build_packet(
     manifest: ChangeRunManifest,
     processing: ProcessingRunManifest,
@@ -224,6 +338,107 @@ def _build_packet(
         interpretation_limits=processing.interpretation_limits,
         sensitivity_controls=processing.sensitivity_controls,
     )
+
+
+def _build_labeling_packet(
+    processing: ProcessingRunManifest,
+    *,
+    processing_manifest_sha256: str,
+    output_root: Path,
+    artifact_paths: tuple[Path, Path],
+    artifact_hashes: tuple[str, str],
+    tile_size: int,
+    tile_overlap: int,
+) -> LabelingPacket:
+    packet_identity = json.dumps(
+        {
+            "processing_run_id": processing.run_id,
+            "processing_manifest_sha256": processing_manifest_sha256,
+            "artifact_hashes": artifact_hashes,
+            "tile_size": tile_size,
+            "tile_overlap": tile_overlap,
+            "labeling_packet_version": "1.0.0",
+        },
+        sort_keys=True,
+        separators=(",", ":"),
+    ).encode()
+    roles: tuple[Literal["before"], Literal["after"]] = ("before", "after")
+    artifacts = tuple(
+        LabelingArtifact(
+            role=cast(Literal["before", "after"], role),
+            source_url=_relative_url(output_root, path),
+            sha256=sha256,
+            width=processing.grid.width,
+            height=processing.grid.height,
+        )
+        for role, path, sha256 in zip(roles, artifact_paths, artifact_hashes, strict=True)
+    )
+    tiles = _labeling_tiles(
+        processing.grid.width,
+        processing.grid.height,
+        tile_size=tile_size,
+        tile_overlap=tile_overlap,
+    )
+    return LabelingPacket(
+        packet_id=f"labeling-{hashlib.sha256(packet_identity).hexdigest()[:20]}",
+        selection_id=processing.selection_id,
+        processing_aoi_id=processing.processing_aoi_id,
+        processing_run_id=processing.run_id,
+        source_processing_manifest_sha256=processing_manifest_sha256,
+        source_license=processing.source_license,
+        source_inputs=processing.inputs,
+        grid=processing.grid.model_dump(mode="json"),
+        artifacts=artifacts,  # type: ignore[arg-type]
+        tiles=tiles,
+        tile_size=tile_size,
+        tile_overlap=tile_overlap,
+        interpretation_limits=processing.interpretation_limits,
+        sensitivity_controls=processing.sensitivity_controls,
+    )
+
+
+def _labeling_tiles(
+    width: int,
+    height: int,
+    *,
+    tile_size: int,
+    tile_overlap: int,
+) -> tuple[LabelingTile, ...]:
+    x_positions = _axis_positions(width, tile_size, tile_overlap)
+    y_positions = _axis_positions(height, tile_size, tile_overlap)
+    if len(x_positions) * len(y_positions) > 4096:
+        raise ReviewInputError("labeling grid exceeds the 4096-tile packet limit")
+    return tuple(
+        LabelingTile(
+            tile_id=f"T-{index:03d}",
+            row=row,
+            column=column,
+            source_box=(
+                x,
+                y,
+                min(tile_size, width - x),
+                min(tile_size, height - y),
+            ),
+        )
+        for index, (row, column, x, y) in enumerate(
+            (
+                (row, column, x, y)
+                for row, y in enumerate(y_positions, start=1)
+                for column, x in enumerate(x_positions, start=1)
+            ),
+            start=1,
+        )
+    )
+
+
+def _axis_positions(length: int, tile_size: int, tile_overlap: int) -> tuple[int, ...]:
+    last_start = max(length - tile_size, 0)
+    if last_start == 0:
+        return (0,)
+    positions = list(range(0, last_start + 1, tile_size - tile_overlap))
+    if positions[-1] != last_start:
+        positions.append(last_start)
+    return tuple(positions)
 
 
 def _validate_identity(

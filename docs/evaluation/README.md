@@ -62,3 +62,19 @@ Export version `1.1.0` keeps candidate decisions and `reference_regions` separat
 - `provisional-candidate-directed` has closed polygon geometry but still requires independent qualified review and adjudication.
 
 These regions are candidate-directed because the reviewer reached them through the machine-candidate queue. They are not blinded, independent, or adjudicated labels, and the evaluator does not ingest them automatically. A later labeling checkpoint must establish an independently reviewed dataset and record adjudication before pipeline metrics are run.
+
+## Candidate-hidden reference labeling
+
+The separate labeling packet is built from the validated processing run only. It does not read the change run, candidate collection, candidate overlay, candidate identifiers, geometry, or scores. Deterministic overlapping tiles cover the complete preview grid so a reviewer can compare before/after imagery without machine-candidate cues.
+
+For the approved local run:
+
+```sh
+uv run echoatlas-prepare-labeling \
+  --preview-run data/derived/echoatlas-bingham-canyon-2025-v1/preview-48b949a1b72ac7f8f54d \
+  --output data/labeling/eat012-bingham-v1
+```
+
+Open `data/labeling/eat012-bingham-v1/index.html` locally. Reviewers can draw multiple regions per tile with a pointer or projected coordinates, record no-region or unresolved tile decisions, preserve incomplete drafts, and export partial or complete coverage. Contradictory decisions are rejected, draft and saved-region removal is explicit, and every export is bound to the processing-manifest checksum.
+
+The packet reduces candidate-confirmation bias but does not prove reviewer independence or expertise. Overlapping-tile regions can duplicate the same visible area. Exported `provisional-candidate-hidden` regions therefore require documented reviewer qualification, deduplication, independent review, and adjudication before conversion to `domain-reviewed` evaluation labels. The evaluator does not ingest this raw export automatically.
