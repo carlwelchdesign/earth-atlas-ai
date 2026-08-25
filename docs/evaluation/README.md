@@ -4,6 +4,8 @@ EAT-012 introduces a provider-neutral evaluation harness and a versioned synthet
 
 The committed synthetic set verifies arithmetic, one-to-one matching, tuning/evaluation separation, and false-positive accounting. It contains no SAR pixels and has not been reviewed by a qualified SAR practitioner. Its results are not a pipeline-accuracy claim.
 
+The committed [synthetic baseline](synthetic-baseline-v1.json) deliberately contains one exact match and one constructed example of each false-positive class. Its `1/7` candidate precision and `9/30` pixel precision are fixture arithmetic, not observed model or pipeline performance.
+
 Run it with:
 
 ```sh

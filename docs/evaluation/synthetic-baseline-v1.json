@@ -1,0 +1,150 @@
+{
+  "candidate_iou_threshold": 0.5,
+  "candidate_metrics": {
+    "f1": {
+      "denominator": 8,
+      "numerator": 2,
+      "value": 0.25
+    },
+    "false_negative_count": 0,
+    "false_positive_count": 6,
+    "precision": {
+      "denominator": 7,
+      "numerator": 1,
+      "value": 0.14285714285714285
+    },
+    "recall": {
+      "denominator": 1,
+      "numerator": 1,
+      "value": 1.0
+    },
+    "true_positive_count": 1
+  },
+  "case_results": [
+    {
+      "candidate_metrics": {
+        "f1": {
+          "denominator": 8,
+          "numerator": 2,
+          "value": 0.25
+        },
+        "false_negative_count": 0,
+        "false_positive_count": 6,
+        "precision": {
+          "denominator": 7,
+          "numerator": 1,
+          "value": 0.14285714285714285
+        },
+        "recall": {
+          "denominator": 1,
+          "numerator": 1,
+          "value": 1.0
+        },
+        "true_positive_count": 1
+      },
+      "case_id": "synthetic-artifact-taxonomy",
+      "false_positive_classes": {
+        "geometry": 1,
+        "other": 1,
+        "registration-artifact": 1,
+        "shadow-layover": 1,
+        "speckle": 1,
+        "water-moisture": 1
+      },
+      "fixture_id": "evaluation-synthetic-artifacts-v1",
+      "limitations": [
+        "Constructed polygons verify evaluator arithmetic and taxonomy only.",
+        "The fixture contains no radar measurements and cannot estimate pipeline accuracy."
+      ],
+      "pixel_metrics": {
+        "evaluated_pixel_count": 600,
+        "f1": {
+          "denominator": 39,
+          "numerator": 18,
+          "value": 0.46153846153846156
+        },
+        "false_negative_pixel_count": 0,
+        "false_positive_pixel_count": 21,
+        "intersection_over_union": {
+          "denominator": 30,
+          "numerator": 9,
+          "value": 0.3
+        },
+        "precision": {
+          "denominator": 30,
+          "numerator": 9,
+          "value": 0.3
+        },
+        "recall": {
+          "denominator": 9,
+          "numerator": 9,
+          "value": 1.0
+        },
+        "true_negative_pixel_count": 570,
+        "true_positive_pixel_count": 9
+      },
+      "region_metrics": {
+        "matched_iou_sum": 1.0,
+        "matched_region_count": 1,
+        "mean_matched_iou": 1.0,
+        "reference_region_count": 1
+      },
+      "review_statuses": [
+        "synthetic-established"
+      ],
+      "unclassified_false_positive_count": 0
+    }
+  ],
+  "evaluation_report_version": "1.0.0",
+  "evaluation_set_id": "echoatlas-synthetic-evaluator-v1",
+  "evaluation_set_version": "1.0.0",
+  "false_positive_classes": {
+    "geometry": 1,
+    "other": 1,
+    "registration-artifact": 1,
+    "shadow-layover": 1,
+    "speckle": 1,
+    "water-moisture": 1
+  },
+  "limitations": [
+    "This is a software-verification set, not a scientific benchmark.",
+    "No region or artifact annotation has been reviewed by a qualified SAR practitioner.",
+    "Do not use these results to claim accuracy, detection performance, or real-world validity."
+  ],
+  "pixel_metrics": {
+    "evaluated_pixel_count": 600,
+    "f1": {
+      "denominator": 39,
+      "numerator": 18,
+      "value": 0.46153846153846156
+    },
+    "false_negative_pixel_count": 0,
+    "false_positive_pixel_count": 21,
+    "intersection_over_union": {
+      "denominator": 30,
+      "numerator": 9,
+      "value": 0.3
+    },
+    "precision": {
+      "denominator": 30,
+      "numerator": 9,
+      "value": 0.3
+    },
+    "recall": {
+      "denominator": 9,
+      "numerator": 9,
+      "value": 1.0
+    },
+    "true_negative_pixel_count": 570,
+    "true_positive_pixel_count": 9
+  },
+  "purpose": "software-verification",
+  "region_metrics": {
+    "matched_iou_sum": 1.0,
+    "matched_region_count": 1,
+    "mean_matched_iou": 1.0,
+    "reference_region_count": 1
+  },
+  "software_commit": "f835e2e13e1b",
+  "unclassified_false_positive_count": 0
+}

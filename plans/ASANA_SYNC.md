@@ -40,7 +40,7 @@ The workspace's free tier does not support native milestone or dependency object
 | EAT-009 | [1217791310388863](https://app.asana.com/1/9789386902387/project/1217790716964797/task/1217791310388863) | M2 | complete — [PR #12](https://github.com/carlwelchdesign/earth-atlas-ai/pull/12) |
 | EAT-010 | [1217791261760678](https://app.asana.com/1/9789386902387/project/1217790716964797/task/1217791261760678) | M2 | complete — [PR #13](https://github.com/carlwelchdesign/earth-atlas-ai/pull/13) |
 | EAT-011 | [1217791261605332](https://app.asana.com/1/9789386902387/project/1217790716964797/task/1217791261605332) | M2 | complete — [PR #14](https://github.com/carlwelchdesign/earth-atlas-ai/pull/14) |
-| EAT-012 | [1217791377894365](https://app.asana.com/1/9789386902387/project/1217790716964797/task/1217791377894365) | M3 | not started |
+| EAT-012 | [1217791377894365](https://app.asana.com/1/9789386902387/project/1217790716964797/task/1217791377894365) | M3 | in progress — evaluator implemented; qualified SAR label review required |
 | EAT-013 | [1217791377839017](https://app.asana.com/1/9789386902387/project/1217790716964797/task/1217791377839017) | M3 | not started |
 | EAT-014 | [1217791310243387](https://app.asana.com/1/9789386902387/project/1217790716964797/task/1217791310243387) | M4 | not started |
 | EAT-015 | [1217791261752361](https://app.asana.com/1/9789386902387/project/1217790716964797/task/1217791261752361) | M4 | not started |
