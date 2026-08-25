@@ -185,6 +185,21 @@ h3 {
   background: #182832;
   color: #c6d3da;
 }
+.status-supported {
+  border-color: #3a766c;
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+.status-rejected {
+  border-color: #754146;
+  background: var(--danger-soft);
+  color: var(--danger);
+}
+.status-needs-context {
+  border-color: #725b35;
+  background: var(--warning-soft);
+  color: var(--warning);
+}
 .bundle-created {
   color: var(--muted);
   font-size: 0.66rem;
@@ -381,6 +396,44 @@ h3 {
 }
 .candidate-warnings span {
   color: var(--warning);
+}
+.queue-filters {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.25rem;
+  padding: 0.55rem 0.65rem;
+  border-bottom: 1px solid #1d2c35;
+}
+.queue-filters button {
+  min-height: 2.1rem;
+  padding: 0.35rem 0.25rem;
+  border: 1px solid transparent;
+  border-radius: 0.3rem;
+  background: transparent;
+  color: var(--muted);
+  font-size: 0.62rem;
+  font-weight: 800;
+  cursor: pointer;
+}
+.queue-filters button[aria-pressed="true"] {
+  border-color: var(--line-strong);
+  background: #1a2c36;
+  color: var(--text);
+}
+.assessment-row-status {
+  font-size: 0.57rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+.assessment-row-status.is-pending {
+  color: #80929c;
+}
+.assessment-row-status.is-reviewed {
+  color: var(--accent);
+}
+.filtered-empty {
+  min-height: 11rem;
 }
 
 .comparison-heading {
@@ -717,6 +770,214 @@ h3 {
 .summary-empty {
   min-height: 20rem;
 }
+.assessment-history {
+  margin-bottom: 0.75rem;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: 0.4rem;
+  background: #0a141a;
+}
+.history-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.6rem 0.7rem;
+  border-bottom: 1px solid var(--line);
+}
+.history-heading h3 {
+  margin: 0;
+  font-size: 0.7rem;
+}
+.history-heading span {
+  color: var(--muted);
+  font-size: 0.58rem;
+}
+.assessment-history ol {
+  max-height: 14rem;
+  margin: 0;
+  padding: 0;
+  overflow-y: auto;
+  list-style: none;
+}
+.assessment-history li {
+  padding: 0.65rem 0.7rem;
+  border-bottom: 1px solid #1d2c35;
+}
+.assessment-history li:last-child {
+  border-bottom: 0;
+}
+.assessment-history li > div {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+.assessment-history strong {
+  color: var(--accent);
+  font-size: 0.68rem;
+}
+.assessment-history li > div span,
+.assessment-history small {
+  color: var(--muted);
+  font-size: 0.56rem;
+}
+.assessment-history p {
+  margin: 0.35rem 0;
+  color: #c4d0d6;
+  font-size: 0.64rem;
+  line-height: 1.45;
+}
+.dialog-backdrop {
+  position: fixed;
+  z-index: 40;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  padding: 1rem;
+  overflow-y: auto;
+  background: rgb(2 8 11 / 78%);
+  backdrop-filter: blur(4px);
+}
+.assessment-dialog {
+  width: min(100%, 35rem);
+  max-height: calc(100vh - 2rem);
+  overflow-y: auto;
+  border: 1px solid var(--line-strong);
+  border-radius: 0.55rem;
+  background: var(--surface);
+  box-shadow: 0 28px 80px rgb(0 0 0 / 55%);
+}
+.assessment-dialog form {
+  display: grid;
+  gap: 0.85rem;
+  padding: 1rem;
+}
+.dialog-heading {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+}
+.dialog-heading h2 {
+  font-size: 1.25rem;
+}
+.icon-button {
+  display: grid;
+  flex: 0 0 auto;
+  width: 2.75rem;
+  height: 2.75rem;
+  place-items: center;
+  border: 1px solid var(--line);
+  border-radius: 0.35rem;
+  background: #14232c;
+  font-size: 1.2rem;
+  cursor: pointer;
+}
+.dialog-boundary,
+.correction-notice {
+  margin: 0;
+  color: #c5d0d6;
+  font-size: 0.72rem;
+  line-height: 1.5;
+}
+.dialog-boundary {
+  padding: 0.7rem;
+  border-left: 2px solid var(--warning);
+  background: #251f16;
+}
+.correction-notice {
+  padding: 0.65rem 0.7rem;
+  border: 1px solid #3a555e;
+  border-radius: 0.35rem;
+  background: #12232b;
+}
+.assessment-options {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.5rem;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+.assessment-options legend,
+.note-field > span {
+  margin-bottom: 0.45rem;
+  color: #cdd7dc;
+  font-size: 0.67rem;
+  font-weight: 800;
+}
+.assessment-options label {
+  display: flex;
+  gap: 0.5rem;
+  min-height: 5.3rem;
+  padding: 0.65rem;
+  border: 1px solid var(--line);
+  border-radius: 0.4rem;
+  background: #101c24;
+  cursor: pointer;
+}
+.assessment-options label:has(input:checked) {
+  border-color: #4a847c;
+  background: #16312f;
+}
+.assessment-options input {
+  flex: 0 0 auto;
+  margin-top: 0.12rem;
+  accent-color: var(--accent);
+}
+.assessment-options span {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+.assessment-options strong {
+  font-size: 0.68rem;
+}
+.assessment-options small {
+  color: var(--muted);
+  font-size: 0.6rem;
+  line-height: 1.4;
+}
+.note-field {
+  display: flex;
+  flex-direction: column;
+}
+.note-field textarea {
+  width: 100%;
+  resize: vertical;
+  border: 1px solid var(--line-strong);
+  border-radius: 0.35rem;
+  padding: 0.7rem;
+  background: #081219;
+  color: var(--text);
+  line-height: 1.45;
+}
+.note-field small {
+  align-self: flex-end;
+  margin-top: 0.3rem;
+  color: var(--muted);
+  font-size: 0.58rem;
+}
+.save-error {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  padding: 0.7rem;
+  border: 1px solid #754146;
+  border-radius: 0.35rem;
+  background: var(--danger-soft);
+  color: #f2c2be;
+  font-size: 0.68rem;
+  line-height: 1.45;
+}
+.dialog-actions {
+  display: grid;
+  grid-template-columns: 1fr 1.4fr;
+  gap: 0.6rem;
+}
+.dialog-actions .primary-button,
+.dialog-actions .secondary-button {
+  min-height: 2.75rem;
+}
 .workbench-footer {
   display: flex;
   justify-content: space-between;
@@ -784,6 +1045,11 @@ h3 {
   }
   .summary-metrics {
     margin: 0;
+  }
+  .assessment-history,
+  .summary-content > .primary-button,
+  .summary-content > .future-boundary {
+    grid-column: 1 / -1;
   }
 }
 
@@ -863,6 +1129,15 @@ h3 {
   }
   .workbench-footer {
     flex-direction: column;
+  }
+  .assessment-options {
+    grid-template-columns: 1fr;
+  }
+  .assessment-options label {
+    min-height: 4rem;
+  }
+  .dialog-actions {
+    grid-template-columns: 1fr;
   }
 }
 

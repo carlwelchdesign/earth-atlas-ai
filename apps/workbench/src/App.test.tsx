@@ -1,7 +1,18 @@
-import { fireEvent, render, screen, within } from "@testing-library/react";
+import {
+  fireEvent,
+  render,
+  screen,
+  waitFor,
+  within,
+} from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 
 import { App } from "./App";
+import {
+  InMemoryAssessmentStore,
+  type AssessmentDraft,
+  type AssessmentStore,
+} from "./workbench/assessment";
 import { demoBundle } from "./workbench/demo-bundle";
 
 const load =
@@ -36,7 +47,7 @@ describe("App", () => {
     fireEvent.click(screen.getByRole("button", { name: /C-001.*13,000 m²/ }));
     expect(
       screen.getByRole("button", { name: "Record assessment" }),
-    ).toBeDisabled();
+    ).toBeEnabled();
   });
 
   it("keeps queue and map selection synchronized", async () => {
@@ -140,5 +151,130 @@ describe("App", () => {
       await screen.findByText("Validated with warnings"),
     ).toBeInTheDocument();
     expect(screen.getAllByText(bundle.qualityWarnings[0])).toHaveLength(2);
+  });
+
+  it("validates and appends an assessment, then filters reviewed and pending candidates", async () => {
+    render(<App loadBundle={load()} />);
+    fireEvent.click(
+      await screen.findByRole("button", { name: /C-001.*13,000 m²/ }),
+    );
+    fireEvent.click(screen.getByRole("button", { name: "Record assessment" }));
+    expect(screen.getByRole("dialog", { name: "C-001" })).toBeInTheDocument();
+
+    fireEvent.click(screen.getByLabelText(/Needs context/));
+    fireEvent.click(screen.getByRole("button", { name: "Append assessment" }));
+    expect(await screen.findByRole("alert")).toHaveTextContent(
+      "Add a note describing the context needed",
+    );
+    fireEvent.change(screen.getByLabelText(/Analyst note/), {
+      target: { value: "Confirm whether the apparent edge follows layover." },
+    });
+    fireEvent.click(screen.getByRole("button", { name: "Retry save" }));
+
+    expect(
+      await screen.findByRole("button", { name: "Correct assessment" }),
+    ).toBeInTheDocument();
+    expect(screen.getAllByText("Needs context")).toHaveLength(3);
+    expect(screen.getByText("1 event")).toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole("button", { name: "Reviewed (1)" }));
+    expect(screen.getByRole("list", { name: "Candidates" })).toHaveTextContent(
+      "C-001",
+    );
+    expect(
+      screen.getByRole("list", { name: "Candidates" }),
+    ).not.toHaveTextContent("C-002");
+    fireEvent.click(screen.getByRole("button", { name: "Pending (2)" }));
+    expect(
+      screen.getByRole("list", { name: "Candidates" }),
+    ).not.toHaveTextContent("C-001");
+    expect(screen.getByRole("list", { name: "Candidates" })).toHaveTextContent(
+      "C-002",
+    );
+  });
+
+  it("appends a correction while retaining the superseded event", async () => {
+    render(<App loadBundle={load()} />);
+    fireEvent.click(
+      await screen.findByRole("button", { name: /C-002.*8,400 m²/ }),
+    );
+    fireEvent.click(screen.getByRole("button", { name: "Record assessment" }));
+    fireEvent.change(screen.getByLabelText(/Analyst note/), {
+      target: { value: "Initial analyst support." },
+    });
+    fireEvent.click(screen.getByRole("button", { name: "Append assessment" }));
+    fireEvent.click(
+      await screen.findByRole("button", { name: "Correct assessment" }),
+    );
+
+    expect(
+      screen.getByText(/will supersede assessment-0001/),
+    ).toBeInTheDocument();
+    fireEvent.click(screen.getByLabelText(/Rejected/));
+    fireEvent.change(screen.getByLabelText(/Analyst note/), {
+      target: { value: "Registration review does not support the candidate." },
+    });
+    fireEvent.click(screen.getByRole("button", { name: "Append assessment" }));
+
+    expect(await screen.findByText("2 events")).toBeInTheDocument();
+    expect(screen.getByText("Initial analyst support.")).toBeInTheDocument();
+    expect(screen.getByText("Superseded")).toBeInTheDocument();
+    expect(screen.getByText("Current")).toBeInTheDocument();
+    expect(screen.getAllByText("Rejected")).toHaveLength(3);
+  });
+
+  it("preserves the assessment draft after a failed save and retries idempotently", async () => {
+    const delegate = new InMemoryAssessmentStore({
+      candidateIds: demoBundle.candidates.map((candidate) => candidate.id),
+    });
+    let attempts = 0;
+    const store: AssessmentStore = {
+      append(draft: AssessmentDraft) {
+        attempts += 1;
+        if (attempts === 1)
+          return Promise.reject(new Error("Local store unavailable."));
+        return delegate.append(draft);
+      },
+    };
+    render(<App loadBundle={load()} assessmentStore={store} />);
+    fireEvent.click(
+      await screen.findByRole("button", { name: /C-003.*5,900 m²/ }),
+    );
+    fireEvent.click(screen.getByRole("button", { name: "Record assessment" }));
+    const note = screen.getByLabelText(/Analyst note/);
+    fireEvent.change(note, {
+      target: { value: "Retain this draft across failure." },
+    });
+    fireEvent.click(screen.getByRole("button", { name: "Append assessment" }));
+
+    expect(await screen.findByRole("alert")).toHaveTextContent(
+      "Local store unavailable",
+    );
+    expect(note).toHaveValue("Retain this draft across failure.");
+    fireEvent.click(screen.getByRole("button", { name: "Retry save" }));
+    expect(
+      await screen.findByRole("button", { name: "Correct assessment" }),
+    ).toBeInTheDocument();
+    expect(attempts).toBe(2);
+  });
+
+  it("closes the assessment dialog with Escape and restores focus", async () => {
+    render(<App loadBundle={load()} />);
+    fireEvent.click(
+      await screen.findByRole("button", { name: /C-001.*13,000 m²/ }),
+    );
+    const invoker = screen.getByRole("button", { name: "Record assessment" });
+    fireEvent.click(invoker);
+    const dialog = screen.getByRole("dialog");
+    const close = screen.getByRole("button", { name: "Close assessment" });
+    const append = screen.getByRole("button", { name: "Append assessment" });
+    close.focus();
+    fireEvent.keyDown(dialog, { key: "Tab", shiftKey: true });
+    expect(append).toHaveFocus();
+    fireEvent.keyDown(dialog, { key: "Tab" });
+    expect(close).toHaveFocus();
+    fireEvent.keyDown(dialog, { key: "Escape" });
+    expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
+    await waitFor(() => expect(invoker).toHaveFocus());
   });
 });

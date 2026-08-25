@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 
 import { loadDemoBundle } from "./workbench/demo-bundle";
+import type { AssessmentStore } from "./workbench/assessment";
 import {
   InvalidWorkbenchBundleError,
   parseWorkbenchBundle,
@@ -16,8 +17,10 @@ type LoadState =
 
 export function App({
   loadBundle = loadDemoBundle,
+  assessmentStore,
 }: {
   loadBundle?: BundleLoader;
+  assessmentStore?: AssessmentStore;
 }) {
   const [attempt, setAttempt] = useState(0);
   const [state, setState] = useState<LoadState>({ status: "loading" });
@@ -81,5 +84,5 @@ export function App({
     );
   }
 
-  return <Workbench bundle={state.bundle} />;
+  return <Workbench bundle={state.bundle} assessmentStore={assessmentStore} />;
 }
