@@ -106,7 +106,7 @@ Acceptance:
 - [x] Design tokens, typography, color, spacing, map styling, iconography, and component inventory are implementation-ready.
 - [x] Comparison controls, map/list synchronization, candidate selection, review actions, evidence inspection, and recovery interactions have annotated behavior.
 - [x] A clickable or equivalent walkthrough is evaluated against the core analyst scenario, and findings are resolved or recorded.
-- [ ] Carl approves the design direction and implementation handoff in Asana before `EAT-008` starts.
+- [x] Carl approves the design direction and implementation handoff in Asana before `EAT-008` starts.
 
 Non-goals: production React implementation, backend integration, final marketing identity, or public deployment.
 

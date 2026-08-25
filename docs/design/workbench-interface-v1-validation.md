@@ -1,6 +1,6 @@
 # EchoAtlas workbench v1 design validation
 
-Status: design artifact verification complete; independent user testing and Carl's approval remain open.
+Status: design artifact verification complete and approved by Carl Welch on 2026-08-24; independent user testing remains open.
 
 Date: 2026-08-24
 
@@ -80,7 +80,7 @@ Keyboard control semantics were inspected through the accessible DOM and role-ba
 
 ## Approval gate
 
-The specification and prototype are ready for Carl's design review. EAT-008 must not start until Carl explicitly approves the direction and implementation handoff in the EAT-DES-001 Asana task. Requested approval should acknowledge:
+Carl explicitly approved the direction and implementation handoff in the EAT-DES-001 Codex task on 2026-08-24; the approval was recorded in Asana. The approved handoff covers:
 
 1. the quiet analytical-instrument visual direction;
 2. the three-region desktop workspace and compact reflow;

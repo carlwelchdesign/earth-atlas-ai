@@ -1,6 +1,6 @@
 # EchoAtlas analyst workbench interface v1
 
-Status: implementation-ready design proposal awaiting Carl's approval in EAT-DES-001.
+Status: approved by Carl Welch for implementation on 2026-08-24 in EAT-DES-001.
 
 Ticket: [EAT-DES-001](https://app.asana.com/1/9789386902387/project/1217790716964797/task/1217792507769764)
 
@@ -417,4 +417,4 @@ The prototype is design evidence only. Production components must be rebuilt in 
 
 ## Approval gate
 
-Carl must approve this design direction and implementation handoff in EAT-DES-001 after reviewing the prototype and walkthrough findings. EAT-008 remains blocked until that explicit approval is recorded.
+Carl approved this design direction and implementation handoff in EAT-DES-001 on 2026-08-24 after reviewing the prototype and walkthrough findings. EAT-008 may begin after PR #9 merges and local `main` is synchronized.
