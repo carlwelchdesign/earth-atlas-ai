@@ -140,6 +140,59 @@ describe("App", () => {
     expect(screen.getByText("Required artifact missing")).toBeInTheDocument();
   });
 
+  it("traces a candidate through provenance, processing, warnings, and export", async () => {
+    render(<App loadBundle={load()} />);
+    fireEvent.click(
+      await screen.findByRole("button", { name: /C-001.*13,000 m²/ }),
+    );
+
+    expect(
+      screen.getByText("Ranking signal from deterministic", { exact: false }),
+    ).toHaveTextContent("not calibrated confidence");
+    fireEvent.click(screen.getByRole("tab", { name: "Provenance" }));
+    expect(screen.getByText("Synthetic lineage")).toBeInTheDocument();
+    expect(screen.getAllByText("EchoAtlas fixture generator")).toHaveLength(2);
+    expect(
+      screen.getByRole("link", { name: "Before fixture" }),
+    ).toHaveAttribute("href", "/fixtures/synthetic-before.svg");
+    expect(screen.getAllByText(/CC0-1.0/)).toHaveLength(2);
+
+    fireEvent.click(screen.getByRole("tab", { name: "Processing" }));
+    expect(screen.getByText("synthetic-change-run-v1")).toBeInTheDocument();
+    expect(screen.getByText("echoatlas-workbench 0.1.0")).toBeInTheDocument();
+    expect(
+      screen.getByText(/Change-score preview is unavailable/),
+    ).toBeInTheDocument();
+
+    const download = screen.getByRole("link", { name: "Export evidence JSON" });
+    expect(download).toHaveAttribute(
+      "download",
+      `${demoBundle.bundleId}-C-001-evidence.json`,
+    );
+    expect(download.getAttribute("href")).toContain("data:application/json");
+  });
+
+  it("renders an unavailable external source as text while keeping evidence usable", async () => {
+    const bundle = copyBundle();
+    bundle.evidence.acquisitions[0].source.status = "unavailable";
+    bundle.evidence.acquisitions[0].source.href = null;
+    render(<App loadBundle={load(bundle)} />);
+    fireEvent.click(
+      await screen.findByRole("button", { name: /C-001.*13,000 m²/ }),
+    );
+    fireEvent.click(screen.getByRole("tab", { name: "Provenance" }));
+
+    expect(
+      screen.getByText("Before fixture · source link unavailable"),
+    ).toBeInTheDocument();
+    expect(
+      screen.queryByRole("link", { name: "Before fixture" }),
+    ).not.toBeInTheDocument();
+    expect(
+      screen.getByRole("link", { name: "After fixture" }),
+    ).toBeInTheDocument();
+  });
+
   it("surfaces quality warnings without presenting them as a successful bundle", async () => {
     const bundle = copyBundle();
     bundle.status = "partial";
@@ -174,6 +227,7 @@ describe("App", () => {
     expect(
       await screen.findByRole("button", { name: "Correct assessment" }),
     ).toBeInTheDocument();
+    fireEvent.click(screen.getByRole("tab", { name: "History" }));
     expect(screen.getAllByText("Needs context")).toHaveLength(3);
     expect(screen.getByText("1 event")).toBeInTheDocument();
 
@@ -216,6 +270,7 @@ describe("App", () => {
     });
     fireEvent.click(screen.getByRole("button", { name: "Append assessment" }));
 
+    fireEvent.click(screen.getByRole("tab", { name: "History" }));
     expect(await screen.findByText("2 events")).toBeInTheDocument();
     expect(screen.getByText("Initial analyst support.")).toBeInTheDocument();
     expect(screen.getByText("Superseded")).toBeInTheDocument();
