@@ -1,6 +1,6 @@
 # Palantir feasibility spike
 
-Status: **provisional adjust** as of 2026-08-24. EchoAtlas can project a validated analysis bundle into a minimal Palantir-shaped import plan, but no Palantir account was created, no enrollment was authenticated, and no remote resource was changed. Live Developer Tier quotas and enabled products remain unverified.
+Status: **provisional adjust with a live-enrollment checkpoint** as of 2026-08-24. EchoAtlas can project a validated analysis bundle into a minimal Palantir-shaped import plan. Carl explicitly approved and completed AIP Developer Tier enrollment, the live plan and application catalog were inspected, and an empty `EchoAtlas` Foundry project was created. No files, imagery, credentials, API keys, Ontology objects, applications, or bundle records have been uploaded or created.
 
 ## Decision
 
@@ -11,7 +11,23 @@ This is an **adjust**, not a full go:
 - proceed with the network-free mapping contract and a future thin executor;
 - do not make Foundry, AIP, or an OSDK application part of the standalone runtime;
 - do not move candidate scoring, evidence policy, or assessment semantics into a Palantir-only implementation;
-- defer live import, authentication, screenshots, and the final go/no-go until Carl explicitly approves enrollment access.
+- defer live import, restricted application configuration, and the final go/no-go until the remaining evidence and approval gates are satisfied.
+
+## Live enrollment evidence
+
+The authenticated `earth-atlas-app` enrollment reports **AIP Developer Tier** as the current plan with the following limits:
+
+- limited vCPUs;
+- limited GPUs;
+- 60 object types;
+- 60–120K tokens per minute for latest-generation LLMs, with higher limits for other models;
+- limited users.
+
+The plan page does not publish numeric vCPU, GPU, or user quotas. The live Foundry home exposes Projects & Files, Data Connection, Pipeline Builder, Contour, Ontology Manager, Workshop, AIP Logic, Code Repositories, and AIP Assist. Exposure in the application catalog proves that the application is available to the enrollment; it does not prove that every connector, model family, operation, or administrative permission is enabled.
+
+An empty Foundry project named `EchoAtlas` was created with the description “SAR intelligence workbench for evidence review, change-candidate triage, and analyst assessment.” This was the only remote resource created during the checkpoint. The project contains no files.
+
+The live checkpoint resolves the enrollment, plan-name, high-level capacity, and application-catalog questions. It does not yet resolve media-set behavior, raster-native import, transform execution, Ontology object creation, OSDK/static-hosting configuration, model-family state, restricted application scopes, synthetic import, usage impact, or cleanup behavior.
 
 ## Current public evidence
 
@@ -19,8 +35,8 @@ Only Palantir-controlled documentation was used for capability claims. “Verifi
 
 | Question | Public evidence | Spike finding |
 | --- | --- | --- |
-| Developer Tier access | [Developer hub](https://www.palantir.com/docs/foundry/developers) advertises a free Developer Tier account; [getting started](https://www.palantir.com/docs/foundry/getting-started/overview) describes AIP Developer Tier as a trial account. | Signup exists, but the mixed free/trial language means duration and commercial terms must be checked during enrollment. |
-| Tier-wide limits | [Resource Management](https://www.palantir.com/docs/foundry/resource-management) explains compute and storage accounting. Exact Developer Tier quotas are not enumerated on the public pages reviewed. | The authenticated enrollment's plan/usage screens are required evidence before importing real artifacts or invoking AIP. |
+| Developer Tier access | [Developer hub](https://www.palantir.com/docs/foundry/developers) advertises a free Developer Tier account; [getting started](https://www.palantir.com/docs/foundry/getting-started/overview) describes AIP Developer Tier as a trial account. | The authenticated enrollment identifies the current plan as AIP Developer Tier. Duration and commercial conversion terms are not displayed on the plan page and remain a caveat. |
+| Tier-wide limits | [Resource Management](https://www.palantir.com/docs/foundry/resource-management) explains compute and storage accounting. Exact Developer Tier quotas are not enumerated on the public pages reviewed. | The live plan reports limited vCPUs, limited GPUs, 60 object types, 60–120K tokens/minute for latest-generation LLMs, and limited users. Numeric compute, storage, GPU, and user quotas remain undisclosed. |
 | Raster and imagery | [Raster data](https://www.palantir.com/docs/foundry/geospatial/raster_data/) documents TIFF/GeoTIFF, NITF, and JPEG2000 as raster media-set formats; PNG and JPEG are file-level formats. [Media limits](https://www.palantir.com/docs/foundry/media-sets-advanced-formats/media-usage-limits) documents per-item and transaction constraints plus compute usage. | Current EchoAtlas PNG previews can be media evidence, but they are not raster-native geospatial layers. A future raster-native path needs bounded GeoTIFF or another documented raster format. |
 | Transforms | [Media transforms](https://www.palantir.com/docs/foundry/pipeline-builder/transforms-transform-media) supports media manipulation and extraction in Pipeline Builder. | Useful for presentation or downstream enrichment, but EchoAtlas processing policy remains outside Foundry. |
 | Ontology and SDKs | [Developer Console](https://www.palantir.com/docs/foundry/developer-console/overview) generates application-specific OSDKs from selected Ontology resources. [SDK guidance](https://www.palantir.com/docs/foundry/api/v2/general/overview/sdks) distinguishes portable platform SDKs from enrollment-specific OSDKs. | Use an enrollment-specific OSDK for a Palantir UI; keep the import projection independent of generated SDK code. |
@@ -57,11 +73,11 @@ The command validates the bundle before mapping it. Its output explicitly record
 
 Explicit owner approval is required before the remaining spike:
 
-1. Create or authenticate to a Developer Tier enrollment.
-2. Capture the enrollment plan, compute/storage quotas, country/term limits, and enabled products.
-3. Confirm media-set creation, raster support, transforms, Ontology/OSDK resources, web hosting, and AIP state in that enrollment.
-4. Configure a restricted test application and record its exact resources and operation scopes.
-5. Import only the synthetic bundle first; verify object identities, links, media references, and deletion/cleanup behavior.
-6. Record screenshots, usage impact, limitations, and the final go/adjust/no-go decision.
+1. [x] Create and authenticate to a Developer Tier enrollment with Carl's explicit approval.
+2. [ ] Complete the plan evidence: high-level limits and enabled applications are captured, but numeric compute/storage/GPU/user quotas and country/term limits remain unavailable.
+3. [ ] Confirm media-set creation, raster support, transforms, Ontology/OSDK resources, web hosting, and model-family state in that enrollment.
+4. [ ] Configure a restricted test application and record its exact resources and operation scopes.
+5. [ ] Import only the synthetic bundle first; verify object identities, links, media references, and deletion/cleanup behavior.
+6. [ ] Record durable visual evidence, usage impact, limitations, and the final go/adjust/no-go decision.
 
 Real Umbra imagery remains outside the live spike until its storage, license, sensitivity, and usage implications are separately reviewed.
