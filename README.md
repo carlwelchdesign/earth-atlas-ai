@@ -108,6 +108,21 @@ uv run echoatlas-plan-palantir-import \
 
 This writes a local JSON plan only. It performs no authentication or remote writes. See the [Palantir feasibility spike](docs/platform/palantir-feasibility.md) for the current mapping, authenticated plan/application inventory, and remaining live-validation gates.
 
+Normalize a validated bundle into deterministic CSV tables suitable for the next
+Palantir dataset-import checkpoint:
+
+```sh
+uv run echoatlas-package-palantir-import \
+  --bundle data/fixtures/eat007-valid \
+  --output data/platform/palantir-import-package
+```
+
+The destination must not already exist. The command writes six object-family
+tables, one link table, one media-reference table, and a manifest containing row
+counts, columns, and SHA-256 hashes. Nested values use canonical JSON text inside
+CSV cells. It still performs no authentication or remote writes and does not
+create Ontology resources.
+
 Review the approval-gated [analyst workbench interface specification](docs/design/workbench-interface-v1.md) and [standalone prototype](prototypes/eat-des-001/README.md). The prototype is separate from production React and uses only synthetic design material.
 
 ## Delivery
