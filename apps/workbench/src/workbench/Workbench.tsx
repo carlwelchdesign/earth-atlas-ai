@@ -1,4 +1,23 @@
-import { useEffect, useId, useMemo, useState, type CSSProperties } from "react";
+import {
+  useEffect,
+  useId,
+  useMemo,
+  useRef,
+  useState,
+  type CSSProperties,
+} from "react";
+
+import {
+  AssessmentDialog,
+  type AssessmentDialogValue,
+} from "./AssessmentDialog";
+import {
+  InMemoryAssessmentStore,
+  dispositionLabel,
+  type AssessmentDraft,
+  type AssessmentEvent,
+  type AssessmentStore,
+} from "./assessment";
 
 import type {
   AcquisitionView,
@@ -9,11 +28,13 @@ import type {
 
 interface WorkbenchProps {
   bundle: WorkbenchBundle;
+  assessmentStore?: AssessmentStore;
 }
 
 const zoomLevels = [1, 1.2, 1.4] as const;
+let assessmentRequestSequence = 0;
 
-export function Workbench({ bundle }: WorkbenchProps) {
+export function Workbench({ bundle, assessmentStore }: WorkbenchProps) {
   const [selectedCandidateId, setSelectedCandidateId] = useState<string | null>(
     null,
   );
@@ -21,6 +42,24 @@ export function Workbench({ bundle }: WorkbenchProps) {
     useState<ComparisonMode>(getInitialMode);
   const [overlayVisible, setOverlayVisible] = useState(true);
   const [zoomIndex, setZoomIndex] = useState(0);
+  const [assessmentEvents, setAssessmentEvents] = useState<AssessmentEvent[]>(
+    [],
+  );
+  const [assessmentDialog, setAssessmentDialog] =
+    useState<AssessmentDialogValue | null>(null);
+  const [assessmentAnnouncement, setAssessmentAnnouncement] = useState("");
+  const assessmentInvoker = useRef<HTMLElement | null>(null);
+  const [localAssessmentStore] = useState(
+    () =>
+      new InMemoryAssessmentStore({
+        candidateIds: bundle.candidates.map((candidate) => candidate.id),
+      }),
+  );
+  const activeAssessmentStore = assessmentStore ?? localAssessmentStore;
+  const currentAssessments = useMemo(
+    () => currentAssessmentMap(assessmentEvents),
+    [assessmentEvents],
+  );
   const selectedCandidate =
     bundle.candidates.find(
       (candidate) => candidate.id === selectedCandidateId,
@@ -37,6 +76,38 @@ export function Workbench({ bundle }: WorkbenchProps) {
         ? "degraded"
         : "success";
   const zoom = zoomLevels[zoomIndex];
+
+  function closeAssessmentDialog() {
+    setAssessmentDialog(null);
+    queueMicrotask(() => assessmentInvoker.current?.focus());
+  }
+
+  function openAssessmentDialog(candidateId: string, invoker: HTMLElement) {
+    assessmentInvoker.current = invoker;
+    setAssessmentDialog({
+      requestId: createAssessmentRequestId(),
+      candidateId,
+      currentEvent: currentAssessments.get(candidateId) ?? null,
+    });
+  }
+
+  async function saveAssessment(draft: AssessmentDraft) {
+    const event = await activeAssessmentStore.append(draft);
+    setAssessmentEvents((current) =>
+      current.some((item) => item.eventId === event.eventId)
+        ? current
+        : [...current, event],
+    );
+    setAssessmentAnnouncement(
+      `${dispositionLabel(event.disposition)} assessment appended for ${event.candidateId}.`,
+    );
+    closeAssessmentDialog();
+  }
+
+  function selectCandidate(candidateId: string) {
+    setSelectedCandidateId(candidateId);
+    setAssessmentAnnouncement("");
+  }
 
   useEffect(() => {
     if (typeof window.matchMedia !== "function") return;
@@ -86,8 +157,9 @@ export function Workbench({ bundle }: WorkbenchProps) {
       <main className="workbench-grid">
         <CandidateQueue
           candidates={bundle.candidates}
+          currentAssessments={currentAssessments}
           selectedCandidateId={selectedCandidateId}
-          onSelect={setSelectedCandidateId}
+          onSelect={selectCandidate}
         />
         <TemporalComparison
           acquisitions={bundle.acquisitions}
@@ -98,7 +170,7 @@ export function Workbench({ bundle }: WorkbenchProps) {
           overlayVisible={overlayVisible}
           onOverlayVisibleChange={setOverlayVisible}
           selectedCandidateId={selectedCandidateId}
-          onCandidateSelect={setSelectedCandidateId}
+          onCandidateSelect={selectCandidate}
           zoom={zoom}
           zoomIndex={zoomIndex}
           onZoomIn={() =>
@@ -107,15 +179,34 @@ export function Workbench({ bundle }: WorkbenchProps) {
           onZoomOut={() => setZoomIndex((index) => Math.max(index - 1, 0))}
           onReset={() => setZoomIndex(0)}
         />
-        <CandidateSummary candidate={selectedCandidate} />
+        <CandidateSummary
+          candidate={selectedCandidate}
+          events={assessmentEvents.filter(
+            (event) => event.candidateId === selectedCandidateId,
+          )}
+          currentEvent={
+            selectedCandidateId
+              ? (currentAssessments.get(selectedCandidateId) ?? null)
+              : null
+          }
+          onStartAssessment={openAssessmentDialog}
+        />
       </main>
       <footer className="workbench-footer">
         <span>Synthetic fixture · no satellite measurement represented</span>
         <span>Bundle contract {bundle.contractVersion}</span>
       </footer>
       <div className="sr-status" role="status" aria-live="polite">
-        {selectionAnnouncement}
+        {assessmentAnnouncement || selectionAnnouncement}
       </div>
+      {assessmentDialog ? (
+        <AssessmentDialog
+          bundleId={bundle.bundleId}
+          value={assessmentDialog}
+          onCancel={closeAssessmentDialog}
+          onSave={saveAssessment}
+        />
+      ) : null}
     </div>
   );
 }
@@ -203,23 +294,37 @@ function QualityBanner({ bundle, status }: MissionHeaderProps) {
 
 interface CandidateQueueProps {
   candidates: CandidateView[];
+  currentAssessments: ReadonlyMap<string, AssessmentEvent>;
   selectedCandidateId: string | null;
   onSelect: (candidateId: string) => void;
 }
 
 function CandidateQueue({
   candidates,
+  currentAssessments,
   selectedCandidateId,
   onSelect,
 }: CandidateQueueProps) {
+  const [filter, setFilter] = useState<"all" | "pending" | "reviewed">("all");
+  const reviewedCount = currentAssessments.size;
   const sortedCandidates = useMemo(
     () =>
-      [...candidates].sort(
-        (left, right) =>
-          right.heuristicScore - left.heuristicScore ||
-          left.id.localeCompare(right.id),
-      ),
-    [candidates],
+      [...candidates]
+        .filter((candidate) => {
+          if (filter === "all") return true;
+          const reviewed = currentAssessments.has(candidate.id);
+          return filter === "reviewed" ? reviewed : !reviewed;
+        })
+        .sort((left, right) => {
+          const leftReviewed = currentAssessments.has(left.id) ? 1 : 0;
+          const rightReviewed = currentAssessments.has(right.id) ? 1 : 0;
+          return (
+            leftReviewed - rightReviewed ||
+            right.heuristicScore - left.heuristicScore ||
+            left.id.localeCompare(right.id)
+          );
+        }),
+    [candidates, currentAssessments, filter],
   );
   return (
     <section
@@ -245,40 +350,73 @@ function CandidateQueue({
         </div>
       ) : (
         <>
-          <p className="sort-rule">Highest score, then candidate ID</p>
-          <ol className="candidate-list" aria-label="Candidates">
-            {sortedCandidates.map((candidate, index) => (
-              <li key={candidate.id}>
-                <button
-                  className="candidate-row"
-                  type="button"
-                  aria-current={
-                    selectedCandidateId === candidate.id ? "true" : undefined
-                  }
-                  onClick={() => onSelect(candidate.id)}
-                >
-                  <span className="candidate-number" aria-hidden="true">
-                    {String(index + 1).padStart(2, "0")}
-                  </span>
-                  <span className="candidate-main">
-                    <strong>{candidate.id}</strong>
-                    <span>
-                      {formatArea(candidate.areaSquareMeters)} ·{" "}
-                      {candidate.pixelCount} px
-                    </span>
-                  </span>
-                  <span className="candidate-meta">
-                    <span className="candidate-score">
-                      {candidate.heuristicScore.toFixed(2)}
-                    </span>
-                    <span className="candidate-warnings">
-                      <span aria-hidden="true">!</span> {candidate.warningCount}
-                    </span>
-                  </span>
-                </button>
-              </li>
+          <div className="queue-filters" aria-label="Candidate status filter">
+            {(["all", "pending", "reviewed"] as const).map((option) => (
+              <button
+                key={option}
+                type="button"
+                aria-pressed={filter === option}
+                onClick={() => setFilter(option)}
+              >
+                {capitalize(option)}{" "}
+                {filterCount(option, candidates.length, reviewedCount)}
+              </button>
             ))}
-          </ol>
+          </div>
+          <p className="sort-rule">
+            Pending first, then score and candidate ID
+          </p>
+          {sortedCandidates.length === 0 ? (
+            <div className="empty-panel filtered-empty">
+              <span aria-hidden="true">◇</span>
+              <h3>No {filter} candidates</h3>
+              <p>Change the status filter to continue reviewing this bundle.</p>
+            </div>
+          ) : (
+            <ol className="candidate-list" aria-label="Candidates">
+              {sortedCandidates.map((candidate, index) => (
+                <li key={candidate.id}>
+                  <button
+                    className="candidate-row"
+                    type="button"
+                    aria-current={
+                      selectedCandidateId === candidate.id ? "true" : undefined
+                    }
+                    onClick={() => onSelect(candidate.id)}
+                  >
+                    <span className="candidate-number" aria-hidden="true">
+                      {String(index + 1).padStart(2, "0")}
+                    </span>
+                    <span className="candidate-main">
+                      <strong>{candidate.id}</strong>
+                      <span>
+                        {formatArea(candidate.areaSquareMeters)} ·{" "}
+                        {candidate.pixelCount} px
+                      </span>
+                    </span>
+                    <span className="candidate-meta">
+                      <span
+                        className={`assessment-row-status ${currentAssessments.has(candidate.id) ? "is-reviewed" : "is-pending"}`}
+                      >
+                        {currentAssessments.has(candidate.id)
+                          ? dispositionLabel(
+                              currentAssessments.get(candidate.id)!.disposition,
+                            )
+                          : "Pending"}
+                      </span>
+                      <span className="candidate-score">
+                        {candidate.heuristicScore.toFixed(2)}
+                      </span>
+                      <span className="candidate-warnings">
+                        <span aria-hidden="true">!</span>{" "}
+                        {candidate.warningCount}
+                      </span>
+                    </span>
+                  </button>
+                </li>
+              ))}
+            </ol>
+          )}
         </>
       )}
     </section>
@@ -500,7 +638,17 @@ function MapCandidate({
   );
 }
 
-function CandidateSummary({ candidate }: { candidate: CandidateView | null }) {
+function CandidateSummary({
+  candidate,
+  events,
+  currentEvent,
+  onStartAssessment,
+}: {
+  candidate: CandidateView | null;
+  events: AssessmentEvent[];
+  currentEvent: AssessmentEvent | null;
+  onStartAssessment: (candidateId: string, invoker: HTMLElement) => void;
+}) {
   return (
     <aside className="summary-panel panel" aria-labelledby="summary-title">
       <div className="panel-heading">
@@ -509,7 +657,13 @@ function CandidateSummary({ candidate }: { candidate: CandidateView | null }) {
           <h2 id="summary-title">{candidate?.id ?? "No candidate selected"}</h2>
         </div>
         {candidate ? (
-          <span className="status-pill status-candidate">Pending</span>
+          <span
+            className={`status-pill ${currentEvent ? `status-${currentEvent.disposition}` : "status-candidate"}`}
+          >
+            {currentEvent
+              ? dispositionLabel(currentEvent.disposition)
+              : "Pending"}
+          </span>
         ) : null}
       </div>
       {candidate ? (
@@ -540,11 +694,20 @@ function CandidateSummary({ candidate }: { candidate: CandidateView | null }) {
               apparent differences.
             </p>
           </div>
-          <button className="primary-button" type="button" disabled>
-            Record assessment
+          {events.length > 0 ? (
+            <AssessmentHistory events={events} currentEvent={currentEvent} />
+          ) : null}
+          <button
+            className="primary-button"
+            type="button"
+            onClick={(event) =>
+              onStartAssessment(candidate.id, event.currentTarget)
+            }
+          >
+            {currentEvent ? "Correct assessment" : "Record assessment"}
           </button>
           <p className="future-boundary">
-            Assessment actions begin in EAT-009.
+            Every save appends an immutable audit event.
           </p>
         </div>
       ) : (
@@ -558,6 +721,42 @@ function CandidateSummary({ candidate }: { candidate: CandidateView | null }) {
         </div>
       )}
     </aside>
+  );
+}
+
+function AssessmentHistory({
+  events,
+  currentEvent,
+}: {
+  events: AssessmentEvent[];
+  currentEvent: AssessmentEvent | null;
+}) {
+  return (
+    <section className="assessment-history" aria-labelledby="history-title">
+      <div className="history-heading">
+        <h3 id="history-title">Assessment history</h3>
+        <span>
+          {events.length} {events.length === 1 ? "event" : "events"}
+        </span>
+      </div>
+      <ol>
+        {[...events].reverse().map((event) => {
+          const current = event.eventId === currentEvent?.eventId;
+          return (
+            <li key={event.eventId}>
+              <div>
+                <strong>{dispositionLabel(event.disposition)}</strong>
+                <span>{current ? "Current" : "Superseded"}</span>
+              </div>
+              <p>{event.note || "No analyst note."}</p>
+              <small>
+                {event.eventId} · {formatTimestamp(event.createdAt)}
+              </small>
+            </li>
+          );
+        })}
+      </ol>
+    </section>
   );
 }
 
@@ -619,6 +818,35 @@ function formatArea(area: number) {
 
 function capitalize(value: string) {
   return value.charAt(0).toUpperCase() + value.slice(1);
+}
+
+function filterCount(
+  filter: "all" | "pending" | "reviewed",
+  total: number,
+  reviewed: number,
+) {
+  if (filter === "pending") return `(${total - reviewed})`;
+  if (filter === "reviewed") return `(${reviewed})`;
+  return `(${total})`;
+}
+
+function currentAssessmentMap(events: AssessmentEvent[]) {
+  const current = new Map<string, AssessmentEvent>();
+  for (const event of events) current.set(event.candidateId, event);
+  return current;
+}
+
+function createAssessmentRequestId() {
+  assessmentRequestSequence += 1;
+  return `assessment-request-${assessmentRequestSequence}`;
+}
+
+function formatTimestamp(timestamp: string) {
+  return new Date(timestamp).toLocaleString("en-US", {
+    dateStyle: "medium",
+    timeStyle: "short",
+    timeZone: "UTC",
+  });
 }
 
 function getInitialMode(): ComparisonMode {

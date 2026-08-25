@@ -127,11 +127,11 @@ Outcome: users can review candidates and record reversible assessments.
 
 Acceptance:
 
-- [ ] Pending/reviewed filters and deterministic sorting work.
-- [ ] Confirm, reject, and needs-context actions support notes and keyboard operation.
-- [ ] Assessments are validated append-only events; correction supersedes rather than deletes history.
-- [ ] Failed saves preserve the draft and offer retry.
-- [ ] Tests cover success, undo/supersede, invalid state, and persistence failure.
+- [x] Pending/reviewed filters and deterministic sorting work.
+- [x] Confirm, reject, and needs-context actions support notes and keyboard operation.
+- [x] Assessments are validated append-only events; correction supersedes rather than deletes history.
+- [x] Failed saves preserve the draft and offer retry.
+- [x] Tests cover success, undo/supersede, invalid state, and persistence failure.
 
 ### EAT-010 — Add evidence and provenance inspection
 
