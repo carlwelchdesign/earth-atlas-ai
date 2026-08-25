@@ -13,7 +13,7 @@ EchoAtlas is a planned civilian disaster and infrastructure-change SAR intellige
 - `docs/design`: approved or approval-gated product-design specifications and validation evidence.
 - `plans`: canonical product, architecture, governance, and execution plans.
 
-The portable analysis bundle is the boundary between processing, UI, tests, and optional platform adapters. The Palantir feasibility layer currently produces a network-free import plan; it is not a required runtime and has not authenticated to or written into Palantir.
+The portable analysis bundle is the boundary between processing, UI, tests, and optional platform adapters. The Palantir feasibility layer currently produces a network-free import plan and is not a required runtime. A Developer Tier enrollment and empty EchoAtlas project now exist, but no files, imagery, credentials, Ontology objects, applications, or bundle records have been uploaded or created.
 
 ## Prerequisites
 
@@ -106,7 +106,7 @@ uv run echoatlas-plan-palantir-import \
   --output data/platform/palantir-import-plan.json
 ```
 
-This writes a local JSON plan only. It performs no authentication or remote writes. See the [Palantir feasibility spike](docs/platform/palantir-feasibility.md) for the current evidence, mapping, and approval-gated live validation steps.
+This writes a local JSON plan only. It performs no authentication or remote writes. See the [Palantir feasibility spike](docs/platform/palantir-feasibility.md) for the current mapping, authenticated plan/application inventory, and remaining live-validation gates.
 
 Review the approval-gated [analyst workbench interface specification](docs/design/workbench-interface-v1.md) and [standalone prototype](prototypes/eat-des-001/README.md). The prototype is separate from production React and uses only synthetic design material.
 

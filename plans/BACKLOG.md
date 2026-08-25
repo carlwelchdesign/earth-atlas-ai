@@ -190,13 +190,13 @@ Outcome: a time-boxed spike proves or disproves a portable bundle-to-Palantir pa
 
 Acceptance:
 
-- [ ] Carl explicitly approves any account creation or authentication step.
+- [x] Carl explicitly approves any account creation or authentication step.
 - [ ] Current tier limits, media/raster support, transform path, OSDK hosting, AIP availability, and restricted scopes are documented from the live enrollment.
 - [x] Minimal mapping covers AOI, acquisition, run, artifact, candidate, and assessment.
 - [x] No processing policy is moved exclusively into Foundry.
 - [ ] Spike ends with a go/adjust/no-go decision, screenshots/evidence, and cost/access caveats.
 
-Implementation checkpoint: a deterministic, network-free import plan maps validated bundle objects, evidence media, and links without a Palantir SDK or remote writes. Public Palantir documentation supports a provisional **adjust** decision: use the platform only as an optional downstream Ontology/media/application layer. Current PNG previews are media evidence rather than raster-native GeoTIFF layers. Live tier quotas, product enablement, authenticated scopes, synthetic import evidence, screenshots, and the final decision remain approval-gated.
+Implementation checkpoint: a deterministic, network-free import plan maps validated bundle objects, evidence media, and links without a Palantir SDK or remote writes. Carl explicitly approved and completed Developer Tier enrollment. The live plan reports limited vCPUs/GPUs/users, 60 object types, and 60–120K latest-generation LLM tokens per minute; the application catalog exposes Projects & Files, Data Connection, Pipeline Builder, Contour, Ontology Manager, Workshop, AIP Logic, Code Repositories, and AIP Assist. An empty `EchoAtlas` Foundry project exists. Public and live evidence still supports a provisional **adjust** decision: use the platform only as an optional downstream Ontology/media/application layer. Media/raster behavior, model-family state, restricted scopes, synthetic import, cleanup, durable visual evidence, and the final decision remain open.
 
 ### EAT-015 — Package reproducible demo and release evidence
 
