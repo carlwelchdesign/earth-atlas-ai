@@ -8,7 +8,7 @@ import subprocess
 from pathlib import Path
 
 from echoatlas.evaluation.harness import EvaluationInputError, evaluate_set
-from echoatlas.evaluation.review import prepare_review_packet
+from echoatlas.evaluation.review import prepare_labeling_packet, prepare_review_packet
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -58,6 +58,34 @@ def review_main() -> int:
             {
                 "packet_id": packet.packet_id,
                 "candidate_count": len(packet.candidates),
+                "index": str(args.output / "index.html"),
+            },
+            indent=2,
+        )
+    )
+    return 0
+
+
+def labeling_main() -> int:
+    parser = argparse.ArgumentParser(
+        description=("Prepare a candidate-hidden local labeling packet from validated previews.")
+    )
+    parser.add_argument("--preview-run", required=True, type=Path)
+    parser.add_argument("--output", required=True, type=Path)
+    parser.add_argument("--tile-size", type=int, default=768)
+    parser.add_argument("--tile-overlap", type=int, default=64)
+    args = parser.parse_args()
+    packet = prepare_labeling_packet(
+        args.preview_run,
+        args.output,
+        tile_size=args.tile_size,
+        tile_overlap=args.tile_overlap,
+    )
+    print(
+        json.dumps(
+            {
+                "packet_id": packet.packet_id,
+                "tile_count": len(packet.tiles),
                 "index": str(args.output / "index.html"),
             },
             indent=2,
