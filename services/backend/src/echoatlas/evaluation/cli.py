@@ -8,6 +8,7 @@ import subprocess
 from pathlib import Path
 
 from echoatlas.evaluation.harness import EvaluationInputError, evaluate_set
+from echoatlas.evaluation.labeling import validate_labeling_export
 from echoatlas.evaluation.review import prepare_labeling_packet, prepare_review_packet
 
 
@@ -91,6 +92,23 @@ def labeling_main() -> int:
             indent=2,
         )
     )
+    return 0
+
+
+def labeling_validation_main() -> int:
+    parser = argparse.ArgumentParser(
+        description="Validate a candidate-hidden labeling export for adjudication readiness."
+    )
+    parser.add_argument("--packet", required=True, type=Path)
+    parser.add_argument("--export", required=True, type=Path)
+    parser.add_argument("--output", required=True, type=Path)
+    args = parser.parse_args()
+    report = validate_labeling_export(args.packet, args.export)
+    args.output.parent.mkdir(parents=True, exist_ok=True)
+    args.output.write_text(
+        f"{json.dumps(report.model_dump(mode='json'), indent=2, sort_keys=True)}\n"
+    )
+    print(args.output)
     return 0
 
 

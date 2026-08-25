@@ -1,6 +1,6 @@
 # EchoAtlas planning package
 
-Status: EAT-001 through EAT-011 and EAT-DES-001 are complete; EAT-012 is in progress with the evaluator and synthetic verification baseline implemented, while qualified SAR label review remains required for the pipeline benchmark.
+Status: EAT-001 through EAT-011 and EAT-DES-001 are complete; EAT-012 is in progress with the evaluator, synthetic verification baseline, candidate-hidden labeling, and export-readiness validation implemented, while qualified independent SAR review, deduplication, and adjudication remain required for the pipeline benchmark.
 
 EchoAtlas is a civilian disaster and infrastructure-change SAR intelligence workbench. The first release will prove one end-to-end analyst workflow with public Umbra data: select a comparable image pair, produce deterministic change candidates, inspect the evidence, and record a human assessment.
 

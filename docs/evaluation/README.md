@@ -78,3 +78,18 @@ uv run echoatlas-prepare-labeling \
 Open `data/labeling/eat012-bingham-v1/index.html` locally. Reviewers can draw multiple regions per tile with a pointer or projected coordinates, record no-region or unresolved tile decisions, preserve incomplete drafts, and export partial or complete coverage. Contradictory decisions are rejected, draft and saved-region removal is explicit, and every export is bound to the processing-manifest checksum.
 
 The packet reduces candidate-confirmation bias but does not prove reviewer independence or expertise. Overlapping-tile regions can duplicate the same visible area. Exported `provisional-candidate-hidden` regions therefore require documented reviewer qualification, deduplication, independent review, and adjudication before conversion to `domain-reviewed` evaluation labels. The evaluator does not ingest this raw export automatically.
+
+### Labeling-export validation
+
+Validate an exported labeling file against the exact packet that produced it:
+
+```sh
+uv run echoatlas-validate-labeling \
+  --packet data/labeling/eat012-bingham-v1/labeling-packet.json \
+  --export /path/to/labeling-4d5e1fb94868bc6ad11b-labels.json \
+  --output data/labeling/eat012-bingham-v1/readiness-report.json
+```
+
+The validator enforces the packet and processing-manifest identities, bounded input size, complete tile accounting, saved-review timestamps, unique region IDs, declared CRS, polygon-ring consistency, projected-to-pixel coordinate agreement, tile containment, and decision/region consistency. Structurally valid partial exports produce a report with explicit coverage and draft blockers.
+
+`ready_for_adjudication` means the export is complete enough to enter a separate human adjudication workflow. `ready_for_evaluation` is always `false`: the validator cannot verify reviewer identity, SAR expertise, independence, interpretation quality, cross-tile duplicates, or label correctness, and it never promotes provisional regions to `domain-reviewed` status.
