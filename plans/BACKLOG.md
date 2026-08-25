@@ -204,12 +204,12 @@ Outcome: the standalone workbench can present the already processed, approved Um
 
 Acceptance:
 
-- [ ] A deterministic preparation command validates the pinned selection, processing, and change outputs, then stages only derived display assets and a runtime bundle in a gitignored directory.
-- [ ] The workbench prefers the prepared real bundle, validates it through the provider-neutral contract, and retains an explicitly labeled synthetic fallback when the prepared bundle is unavailable.
-- [ ] Real acquisition dates, source identity, checksums, CC BY 4.0 attribution, processing parameters, candidates, warnings, and interpretation limits are visible.
-- [ ] Raw GeoTIFFs, caches, provider payloads, generated real imagery, and analyst assessment state are not committed.
-- [ ] Focused tests cover preparation, real-bundle loading, invalid data, missing data, and synthetic fallback behavior.
-- [ ] Desktop and mobile browser verification proves the prepared real imagery is visible and the review workflow remains usable.
+- [x] A deterministic preparation command validates the pinned selection, processing, and change outputs, then stages only derived display assets and a runtime bundle in a gitignored directory.
+- [x] The workbench prefers the prepared real bundle, validates it through the provider-neutral contract, and retains an explicitly labeled synthetic fallback when the prepared bundle is unavailable.
+- [x] Real acquisition dates, source identity, checksums, CC BY 4.0 attribution, processing parameters, candidates, warnings, and interpretation limits are visible.
+- [x] Raw GeoTIFFs, caches, provider payloads, generated real imagery, and analyst assessment state are not committed.
+- [x] Focused tests cover preparation, real-bundle loading, invalid data, missing data, and synthetic fallback behavior.
+- [x] Desktop and mobile browser verification proves the prepared real imagery is visible and the review workflow remains usable.
 
 Non-goals: SAR-domain adjudication, calibrated accuracy claims, AI interpretation, Palantir upload, public deployment, or completion of `EAT-015`.
 
