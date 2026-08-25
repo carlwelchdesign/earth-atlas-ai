@@ -1,0 +1,769 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Design-review prototype for the EchoAtlas evidence-first analyst workbench"
+    />
+    <title>EchoAtlas workbench design prototype</title>
+    <link rel="stylesheet" href="styles.css" />
+    <script src="prototype.js" defer></script>
+  </head>
+  <body data-review-state="default" data-comparison-mode="two-up">
+    <a class="skip-link" href="#candidate-queue">Skip to candidate queue</a>
+
+    <aside class="prototype-bar" aria-label="Design prototype controls">
+      <div>
+        <strong>Design review prototype</strong>
+        <span>Static synthetic data · no backend</span>
+      </div>
+      <label>
+        Review state
+        <select id="review-state">
+          <option value="default">Default</option>
+          <option value="selected">Candidate selected</option>
+          <option value="assessed">Assessment recorded</option>
+          <option value="loading">Loading</option>
+          <option value="empty">Empty</option>
+          <option value="invalid">Invalid bundle</option>
+          <option value="degraded">Degraded</option>
+          <option value="partial">Partial success</option>
+          <option value="stale">Stale bundle</option>
+          <option value="permission">Permission placeholder</option>
+        </select>
+      </label>
+    </aside>
+
+    <div class="app-shell">
+      <header class="mission-header">
+        <div class="brand-block">
+          <span class="brand-mark" aria-hidden="true">EA</span>
+          <div>
+            <p class="overline">EchoAtlas</p>
+            <h1>Bingham Canyon synthetic demonstration</h1>
+          </div>
+        </div>
+
+        <dl class="mission-facts">
+          <div>
+            <dt>Before</dt>
+            <dd>
+              <time datetime="2025-01-10T12:00:00Z"
+                >10 Jan 2025 · 12:00 UTC</time
+              >
+            </dd>
+          </div>
+          <div>
+            <dt>After</dt>
+            <dd>
+              <time datetime="2025-02-10T12:00:00Z"
+                >10 Feb 2025 · 12:00 UTC</time
+              >
+            </dd>
+          </div>
+          <div>
+            <dt>Review progress</dt>
+            <dd id="review-progress">0 of 3 reviewed</dd>
+          </div>
+        </dl>
+
+        <div class="header-actions">
+          <span class="status-pill status-system" id="bundle-status">
+            <span class="status-icon" aria-hidden="true">✓</span>
+            Validated bundle
+          </span>
+          <span class="freshness" id="freshness">Loaded 4 minutes ago</span>
+          <button class="button button-secondary" type="button">
+            Open bundle
+          </button>
+        </div>
+      </header>
+
+      <section
+        class="quality-banner"
+        id="quality-banner"
+        aria-labelledby="quality-title"
+      >
+        <span class="warning-symbol" aria-hidden="true">!</span>
+        <div>
+          <h2 id="quality-title">Interpretation boundary</h2>
+          <p id="quality-copy">
+            Machine-generated candidates require analyst review. The score does
+            not establish cause, damage, intent, or operational status.
+          </p>
+        </div>
+        <button
+          class="text-button"
+          type="button"
+          data-open-evidence="processing"
+        >
+          Inspect limitations
+        </button>
+      </section>
+
+      <section class="state-notice" id="state-notice" aria-live="polite" hidden>
+        <div class="state-notice-icon" aria-hidden="true"></div>
+        <div>
+          <p class="overline" id="state-kicker">Bundle state</p>
+          <h2 id="state-title">Validating bundle</h2>
+          <p id="state-message">
+            Checking contract version, file integrity, and references.
+          </p>
+        </div>
+        <button class="button button-secondary" id="state-action" type="button">
+          Cancel
+        </button>
+      </section>
+
+      <main class="workspace" id="workspace">
+        <section
+          class="candidate-panel panel"
+          id="candidate-queue"
+          aria-labelledby="queue-title"
+        >
+          <div class="panel-heading">
+            <div>
+              <p class="overline">Review queue</p>
+              <h2 id="queue-title">Change candidates</h2>
+            </div>
+            <span class="count-badge">3</span>
+          </div>
+
+          <div class="queue-tools">
+            <label class="filter-field">
+              <span>Filter</span>
+              <select>
+                <option>All candidates</option>
+                <option>Pending</option>
+                <option>Reviewed</option>
+              </select>
+            </label>
+            <button
+              class="icon-button"
+              type="button"
+              aria-label="Sort: highest score, then ID"
+            >
+              <span aria-hidden="true">↕</span>
+            </button>
+          </div>
+          <p class="sort-rule">Highest score, then candidate ID</p>
+
+          <ol class="candidate-list" aria-label="Candidates">
+            <li>
+              <button
+                class="candidate-row"
+                type="button"
+                data-candidate="C-001"
+              >
+                <span class="candidate-number" aria-hidden="true">01</span>
+                <span class="candidate-main">
+                  <strong>C-001</strong>
+                  <span>13,000 m² · 130 px</span>
+                </span>
+                <span class="candidate-meta">
+                  <span class="score">0.92</span>
+                  <span class="warning-count"
+                    ><span aria-hidden="true">!</span> 1</span
+                  >
+                </span>
+              </button>
+            </li>
+            <li>
+              <button
+                class="candidate-row"
+                type="button"
+                data-candidate="C-002"
+              >
+                <span class="candidate-number" aria-hidden="true">02</span>
+                <span class="candidate-main">
+                  <strong>C-002</strong>
+                  <span>8,400 m² · 84 px</span>
+                </span>
+                <span class="candidate-meta">
+                  <span class="score">0.78</span>
+                  <span class="warning-count"
+                    ><span aria-hidden="true">!</span> 2</span
+                  >
+                </span>
+              </button>
+            </li>
+            <li>
+              <button
+                class="candidate-row"
+                type="button"
+                data-candidate="C-003"
+              >
+                <span class="candidate-number" aria-hidden="true">03</span>
+                <span class="candidate-main">
+                  <strong>C-003</strong>
+                  <span>5,900 m² · 59 px</span>
+                </span>
+                <span class="candidate-meta">
+                  <span class="score">0.66</span>
+                  <span class="warning-count"
+                    ><span aria-hidden="true">!</span> 1</span
+                  >
+                </span>
+              </button>
+            </li>
+          </ol>
+
+          <div class="queue-progress">
+            <span>Review progress</span>
+            <strong id="queue-progress-value">0 / 3</strong>
+            <span class="progress-track" aria-hidden="true"><span></span></span>
+          </div>
+        </section>
+
+        <section
+          class="comparison-panel panel"
+          aria-labelledby="comparison-title"
+        >
+          <div class="panel-heading comparison-heading">
+            <div>
+              <p class="overline">Temporal comparison</p>
+              <h2 id="comparison-title">Approved review boundary</h2>
+            </div>
+            <div class="segmented-control" aria-label="Comparison mode">
+              <button type="button" data-mode="before" aria-pressed="false">
+                Before
+              </button>
+              <button type="button" data-mode="two-up" aria-pressed="true">
+                Two-up
+              </button>
+              <button type="button" data-mode="after" aria-pressed="false">
+                After
+              </button>
+            </div>
+          </div>
+
+          <div
+            class="comparison-stage"
+            role="region"
+            aria-label="Synthetic before and after image comparison for the approved review boundary. Three candidate outlines are visible."
+          >
+            <figure class="image-frame before-frame">
+              <figcaption>
+                <span>Before</span>
+                <time datetime="2025-01-10T12:00:00Z">10 Jan 2025</time>
+              </figcaption>
+              <svg viewBox="0 0 640 520" role="presentation" aria-hidden="true">
+                <defs>
+                  <filter id="terrain-before">
+                    <feTurbulence
+                      baseFrequency="0.018 0.045"
+                      numOctaves="4"
+                      seed="13"
+                    />
+                    <feColorMatrix
+                      values="0.65 0 0 0 0.12  0 0.69 0 0 0.15  0 0 0.75 0 0.2  0 0 0 1 0"
+                    />
+                  </filter>
+                  <pattern
+                    id="scan-before"
+                    width="8"
+                    height="8"
+                    patternUnits="userSpaceOnUse"
+                  >
+                    <path d="M0 8 8 0" stroke="#8ea0aa" stroke-opacity=".08" />
+                  </pattern>
+                </defs>
+                <rect width="640" height="520" fill="#17222b" />
+                <rect
+                  width="640"
+                  height="520"
+                  filter="url(#terrain-before)"
+                  opacity=".82"
+                />
+                <path
+                  class="bench"
+                  d="M70 410 C120 315 170 350 213 251 S332 115 390 180 477 130 574 71"
+                />
+                <path
+                  class="bench bench-2"
+                  d="M28 459 C109 378 179 414 247 292 S387 188 438 226 528 171 624 118"
+                />
+                <rect width="640" height="520" fill="url(#scan-before)" />
+                <path class="aoi-boundary" d="M46 64H594V466H46Z" />
+                <g class="candidate-shape candidate-one">
+                  <path d="M328 189 435 168 482 244 421 318 315 290 286 226Z" />
+                  <text x="374" y="157">01</text>
+                </g>
+                <g class="candidate-shape candidate-two">
+                  <path d="M146 304 222 281 259 340 215 395 135 369Z" />
+                  <text x="179" y="270">02</text>
+                </g>
+                <g class="candidate-shape candidate-three">
+                  <path d="M439 351 511 326 553 375 523 430 450 422 416 384Z" />
+                  <text x="470" y="320">03</text>
+                </g>
+              </svg>
+            </figure>
+
+            <figure class="image-frame after-frame">
+              <figcaption>
+                <span>After</span>
+                <time datetime="2025-02-10T12:00:00Z">10 Feb 2025</time>
+              </figcaption>
+              <svg viewBox="0 0 640 520" role="presentation" aria-hidden="true">
+                <defs>
+                  <filter id="terrain-after">
+                    <feTurbulence
+                      baseFrequency="0.019 0.047"
+                      numOctaves="4"
+                      seed="21"
+                    />
+                    <feColorMatrix
+                      values="0.72 0 0 0 0.1  0 0.76 0 0 0.13  0 0 0.81 0 0.18  0 0 0 1 0"
+                    />
+                  </filter>
+                  <pattern
+                    id="scan-after"
+                    width="8"
+                    height="8"
+                    patternUnits="userSpaceOnUse"
+                  >
+                    <path d="M0 8 8 0" stroke="#aab8c0" stroke-opacity=".09" />
+                  </pattern>
+                </defs>
+                <rect width="640" height="520" fill="#19242c" />
+                <rect
+                  width="640"
+                  height="520"
+                  filter="url(#terrain-after)"
+                  opacity=".86"
+                />
+                <path
+                  class="bench"
+                  d="M70 410 C120 315 170 350 213 251 S332 115 390 180 477 130 574 71"
+                />
+                <path
+                  class="bench bench-2"
+                  d="M28 459 C109 378 179 414 247 292 S387 188 438 226 528 171 624 118"
+                />
+                <path
+                  class="synthetic-delta"
+                  d="M303 213 361 179 441 194 469 252 416 304 339 287Z"
+                />
+                <rect width="640" height="520" fill="url(#scan-after)" />
+                <path class="aoi-boundary" d="M46 64H594V466H46Z" />
+                <g class="candidate-shape candidate-one">
+                  <path d="M328 189 435 168 482 244 421 318 315 290 286 226Z" />
+                  <text x="374" y="157">01</text>
+                </g>
+                <g class="candidate-shape candidate-two">
+                  <path d="M146 304 222 281 259 340 215 395 135 369Z" />
+                  <text x="179" y="270">02</text>
+                </g>
+                <g class="candidate-shape candidate-three">
+                  <path d="M439 351 511 326 553 375 523 430 450 422 416 384Z" />
+                  <text x="470" y="320">03</text>
+                </g>
+              </svg>
+            </figure>
+
+            <div class="map-tools" aria-label="Map view controls">
+              <button type="button" aria-label="Zoom in">+</button>
+              <button type="button" aria-label="Zoom out">−</button>
+              <button type="button" aria-label="Reset view">⌂</button>
+            </div>
+            <div class="map-scale" aria-hidden="true"><span></span> 250 m</div>
+          </div>
+
+          <footer class="comparison-footer">
+            <div class="legend" aria-label="Map legend">
+              <span><i class="legend-aoi"></i> Approved boundary</span>
+              <span><i class="legend-candidate"></i> Machine candidate</span>
+              <span><i class="legend-selected"></i> Selected candidate</span>
+            </div>
+            <label class="overlay-toggle">
+              <input type="checkbox" id="overlay-toggle" checked />
+              Candidate overlay
+            </label>
+          </footer>
+        </section>
+
+        <aside
+          class="evidence-panel panel"
+          id="evidence"
+          aria-labelledby="evidence-title"
+        >
+          <div class="panel-heading evidence-heading">
+            <div>
+              <p class="overline">Evidence inspector</p>
+              <h2 id="evidence-title">No candidate selected</h2>
+            </div>
+            <span
+              class="status-pill status-candidate"
+              id="candidate-status"
+              hidden
+              >Pending</span
+            >
+          </div>
+
+          <div class="orientation-panel" id="orientation-panel">
+            <span class="orientation-symbol" aria-hidden="true">◇</span>
+            <h3>Select a candidate</h3>
+            <p>
+              Inspect measurements, evidence, provenance, processing limits, and
+              assessment history.
+            </p>
+            <p class="orientation-note">
+              You can select from the queue without using the map.
+            </p>
+          </div>
+
+          <div class="evidence-content" id="evidence-content" hidden>
+            <div
+              class="evidence-tabs"
+              role="tablist"
+              aria-label="Candidate evidence"
+            >
+              <button
+                id="tab-review"
+                role="tab"
+                aria-selected="true"
+                aria-controls="panel-review"
+                data-tab="review"
+              >
+                Review
+              </button>
+              <button
+                id="tab-provenance"
+                role="tab"
+                aria-selected="false"
+                aria-controls="panel-provenance"
+                data-tab="provenance"
+              >
+                Provenance
+              </button>
+              <button
+                id="tab-processing"
+                role="tab"
+                aria-selected="false"
+                aria-controls="panel-processing"
+                data-tab="processing"
+              >
+                Processing
+              </button>
+              <button
+                id="tab-history"
+                role="tab"
+                aria-selected="false"
+                aria-controls="panel-history"
+                data-tab="history"
+              >
+                History
+              </button>
+            </div>
+
+            <section
+              class="tab-panel"
+              id="panel-review"
+              role="tabpanel"
+              aria-labelledby="tab-review"
+            >
+              <div class="score-summary">
+                <div>
+                  <span>Heuristic change score</span>
+                  <strong>0.92</strong>
+                </div>
+                <p>
+                  Ranking signal only—not calibrated confidence or a finding.
+                </p>
+              </div>
+              <dl class="metric-grid">
+                <div>
+                  <dt>Area</dt>
+                  <dd>13,000 m²</dd>
+                </div>
+                <div>
+                  <dt>Pixels</dt>
+                  <dd>130</dd>
+                </div>
+                <div>
+                  <dt>Brightening</dt>
+                  <dd>72%</dd>
+                </div>
+                <div>
+                  <dt>Darkening</dt>
+                  <dd>8%</dd>
+                </div>
+              </dl>
+              <div class="inline-warning">
+                <span aria-hidden="true">!</span>
+                <p>
+                  Registration, moisture, slope, layover, and shadow can create
+                  apparent differences.
+                </p>
+              </div>
+              <h3>Evidence artifacts</h3>
+              <ul class="artifact-list">
+                <li>
+                  <span class="artifact-icon" aria-hidden="true">▧</span
+                  ><span
+                    ><strong>Before preview</strong
+                    ><small>PNG · available · 214 KB</small></span
+                  ><button type="button">Inspect</button>
+                </li>
+                <li>
+                  <span class="artifact-icon" aria-hidden="true">▧</span
+                  ><span
+                    ><strong>After preview</strong
+                    ><small>PNG · available · 227 KB</small></span
+                  ><button type="button">Inspect</button>
+                </li>
+                <li>
+                  <span class="artifact-icon" aria-hidden="true">▦</span
+                  ><span
+                    ><strong>Change score</strong
+                    ><small>PNG · available · 96 KB</small></span
+                  ><button type="button">Inspect</button>
+                </li>
+              </ul>
+            </section>
+
+            <section
+              class="tab-panel"
+              id="panel-provenance"
+              role="tabpanel"
+              aria-labelledby="tab-provenance"
+              hidden
+            >
+              <h3>Source acquisitions</h3>
+              <dl class="detail-list">
+                <div>
+                  <dt>Provider</dt>
+                  <dd>EchoAtlas synthetic fixture</dd>
+                </div>
+                <div>
+                  <dt>Source license</dt>
+                  <dd>CC0-1.0</dd>
+                </div>
+                <div>
+                  <dt>Before source ID</dt>
+                  <dd><code>before-source</code></dd>
+                </div>
+                <div>
+                  <dt>After source ID</dt>
+                  <dd><code>after-source</code></dd>
+                </div>
+                <div>
+                  <dt>Bundle ID</dt>
+                  <dd><code>bundle-bingham-canyon-synthetic-v1</code></dd>
+                </div>
+              </dl>
+            </section>
+
+            <section
+              class="tab-panel"
+              id="panel-processing"
+              role="tabpanel"
+              aria-labelledby="tab-processing"
+              hidden
+            >
+              <h3>Processing and limitations</h3>
+              <dl class="detail-list">
+                <div>
+                  <dt>Mode</dt>
+                  <dd>Deterministic synthetic</dd>
+                </div>
+                <div>
+                  <dt>Threshold</dt>
+                  <dd>0.50</dd>
+                </div>
+                <div>
+                  <dt>Minimum pixels</dt>
+                  <dd>8</dd>
+                </div>
+                <div>
+                  <dt>Software commit</dt>
+                  <dd><code>2cce02b</code></dd>
+                </div>
+                <div>
+                  <dt>Contract</dt>
+                  <dd>Analysis bundle 1.0.0</dd>
+                </div>
+              </dl>
+              <p class="limitation-copy">
+                The score is an engineering heuristic for prioritizing review.
+                It cannot infer cause, damage, intent, safety, environmental
+                compliance, or operational status.
+              </p>
+            </section>
+
+            <section
+              class="tab-panel"
+              id="panel-history"
+              role="tabpanel"
+              aria-labelledby="tab-history"
+              hidden
+            >
+              <div class="empty-history" id="empty-history">
+                <h3>No analyst assessment</h3>
+                <p>This machine candidate remains pending review.</p>
+              </div>
+              <article class="history-event" id="history-event" hidden>
+                <div>
+                  <span class="status-pill status-context">Needs context</span>
+                  <span>Current event</span>
+                </div>
+                <h3>Assessment A-001</h3>
+                <p>
+                  Additional acquisition context is needed before this candidate
+                  can be supported or rejected.
+                </p>
+                <dl>
+                  <div>
+                    <dt>Analyst</dt>
+                    <dd>Demo analyst</dd>
+                  </div>
+                  <div>
+                    <dt>Recorded</dt>
+                    <dd>Just now</dd>
+                  </div>
+                  <div>
+                    <dt>Evidence</dt>
+                    <dd>3 artifacts</dd>
+                  </div>
+                </dl>
+              </article>
+            </section>
+
+            <div class="assessment-actions">
+              <button
+                class="button button-primary"
+                id="record-assessment"
+                type="button"
+              >
+                Record assessment
+              </button>
+              <button
+                class="button button-secondary"
+                id="record-correction"
+                type="button"
+                hidden
+              >
+                Record correction
+              </button>
+              <p id="assessment-help">
+                Records a separate append-only analyst event.
+              </p>
+            </div>
+          </div>
+
+          <div class="disabled-assessment" id="disabled-assessment">
+            <button class="button button-primary" type="button" disabled>
+              Record assessment
+            </button>
+            <p>Select a candidate before recording an assessment.</p>
+          </div>
+          <p class="mobile-readonly">
+            Mobile inspection is read-only. Use a tablet or desktop to record an
+            assessment.
+          </p>
+        </aside>
+      </main>
+
+      <footer class="app-footer">
+        <span
+          >Synthetic design fixture · no satellite measurement represented</span
+        >
+        <span>Bundle contract 1.0.0</span>
+      </footer>
+    </div>
+
+    <dialog
+      class="assessment-dialog"
+      id="assessment-dialog"
+      aria-labelledby="assessment-title"
+    >
+      <form method="dialog" id="assessment-form">
+        <header>
+          <div>
+            <p class="overline">Analyst event · C-001</p>
+            <h2 id="assessment-title" tabindex="-1">
+              Record analyst assessment
+            </h2>
+          </div>
+          <button
+            class="dialog-close"
+            value="cancel"
+            aria-label="Close assessment dialog"
+          >
+            ×
+          </button>
+        </header>
+        <p class="dialog-intro">
+          This creates a separate append-only analyst event. It does not change
+          the machine candidate or establish cause, damage, intent, or
+          operational status.
+        </p>
+        <fieldset>
+          <legend>Assessment</legend>
+          <label class="decision-option">
+            <input type="radio" name="decision" value="supported" />
+            <span
+              ><strong>Supported</strong
+              ><small
+                >Evidence supports retaining this observable difference for
+                review.</small
+              ></span
+            >
+          </label>
+          <label class="decision-option">
+            <input type="radio" name="decision" value="rejected" />
+            <span
+              ><strong>Rejected</strong
+              ><small
+                >Evidence does not support retaining this candidate.</small
+              ></span
+            >
+          </label>
+          <label class="decision-option">
+            <input type="radio" name="decision" value="context" />
+            <span
+              ><strong>Needs context</strong
+              ><small>Evidence is insufficient or conflicting.</small></span
+            >
+          </label>
+        </fieldset>
+        <label class="notes-field">
+          Notes <span>Optional</span>
+          <textarea
+            rows="4"
+            placeholder="Record the evidence or context behind this assessment."
+          ></textarea>
+        </label>
+        <div class="referenced-evidence">
+          <span>Evidence referenced</span>
+          <strong>Before preview · After preview · Change score</strong>
+        </div>
+        <p class="form-error" id="assessment-error" role="alert" hidden>
+          Your draft is safe. The assessment could not be saved. Retry or
+          cancel.
+        </p>
+        <footer>
+          <button class="button button-secondary" value="cancel">Cancel</button>
+          <button
+            class="button button-primary"
+            id="save-assessment"
+            value="default"
+            disabled
+          >
+            Save assessment
+          </button>
+        </footer>
+      </form>
+    </dialog>
+
+    <div
+      class="status-announcement"
+      id="status-announcement"
+      role="status"
+      aria-live="polite"
+    ></div>
+  </body>
+</html>

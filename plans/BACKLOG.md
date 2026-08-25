@@ -97,15 +97,15 @@ Outcome: an approved, implementation-ready interface specification establishes t
 
 Acceptance:
 
-- [ ] Primary analyst workflow, navigation model, screen inventory, and information hierarchy are documented.
-- [ ] Low-fidelity wireframes cover the mission header, temporal map, synchronized comparison, review queue, evidence drawer, and assessment flow.
-- [ ] High-fidelity desktop designs cover default, candidate-selected, and assessment-recorded states.
-- [ ] Loading, empty, error, degraded, partial-success, stale-data, disabled-action, and permission-placeholder states are designed.
-- [ ] Tablet/mobile inspection layouts and 200% zoom behavior are specified.
-- [ ] Keyboard order, visible focus, screen-reader labels/status announcements, non-map alternatives, contrast, and reduced-motion behavior are documented.
-- [ ] Design tokens, typography, color, spacing, map styling, iconography, and component inventory are implementation-ready.
-- [ ] Comparison controls, map/list synchronization, candidate selection, review actions, evidence inspection, and recovery interactions have annotated behavior.
-- [ ] A clickable or equivalent walkthrough is evaluated against the core analyst scenario, and findings are resolved or recorded.
+- [x] Primary analyst workflow, navigation model, screen inventory, and information hierarchy are documented.
+- [x] Low-fidelity wireframes cover the mission header, temporal map, synchronized comparison, review queue, evidence drawer, and assessment flow.
+- [x] High-fidelity desktop designs cover default, candidate-selected, and assessment-recorded states.
+- [x] Loading, empty, error, degraded, partial-success, stale-data, disabled-action, and permission-placeholder states are designed.
+- [x] Tablet/mobile inspection layouts and 200% zoom behavior are specified.
+- [x] Keyboard order, visible focus, screen-reader labels/status announcements, non-map alternatives, contrast, and reduced-motion behavior are documented.
+- [x] Design tokens, typography, color, spacing, map styling, iconography, and component inventory are implementation-ready.
+- [x] Comparison controls, map/list synchronization, candidate selection, review actions, evidence inspection, and recovery interactions have annotated behavior.
+- [x] A clickable or equivalent walkthrough is evaluated against the core analyst scenario, and findings are resolved or recorded.
 - [ ] Carl approves the design direction and implementation handoff in Asana before `EAT-008` starts.
 
 Non-goals: production React implementation, backend integration, final marketing identity, or public deployment.

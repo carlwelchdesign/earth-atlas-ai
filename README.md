@@ -10,6 +10,7 @@ EchoAtlas is a planned civilian disaster and infrastructure-change SAR intellige
 - `apps/workbench`: React and TypeScript analyst application.
 - `schemas`: versioned analysis-bundle contracts.
 - `fixtures`: pinned source selections and bounded synthetic fixture documentation.
+- `docs/design`: approved or approval-gated product-design specifications and validation evidence.
 - `plans`: canonical product, architecture, governance, and execution plans.
 
 The portable analysis bundle is the boundary between processing, UI, tests, and future platform adapters. Palantir remains an optional later adapter rather than a required runtime.
@@ -96,6 +97,8 @@ uv run echoatlas-validate-bundle \
 ```
 
 The generated pixels and metadata are synthetic, CC0-licensed, and contain no Umbra imagery. The validator checks the exact contract version, bounded JSON, safe paths, hashes, sizes, media signatures, partial state, and cross-document references. See [the analysis-bundle v1 documentation](docs/architecture/analysis-bundle-v1.md).
+
+Review the approval-gated [analyst workbench interface specification](docs/design/workbench-interface-v1.md) and [standalone prototype](prototypes/eat-des-001/README.md). The prototype is separate from production React and uses only synthetic design material.
 
 ## Delivery
 
