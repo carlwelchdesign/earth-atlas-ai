@@ -150,10 +150,10 @@ Outcome: the complete deterministic workflow is usable under realistic interacti
 
 Acceptance:
 
-- [ ] Keyboard-only path, visible focus, landmarks, labels, contrast, zoom, and screen-reader status announcements are verified.
-- [ ] Desktop analysis and read-only tablet/mobile layouts are visually inspected.
-- [ ] Retry, partial success, stale bundle, permission placeholder, and destructive confirmation language are verified.
-- [ ] Automated accessibility checks and a manual checklist pass.
+- [x] Keyboard-only path, visible focus, landmarks, labels, contrast, zoom, and screen-reader status announcements are verified.
+- [x] Desktop analysis and read-only tablet/mobile layouts are visually inspected.
+- [x] Retry, partial success, stale bundle, permission placeholder, and destructive confirmation language are verified.
+- [x] Automated accessibility checks and a manual checklist pass.
 
 ## M3 — Evaluation and explainable assistance
 
