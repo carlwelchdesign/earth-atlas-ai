@@ -1,0 +1,40 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "stac_version": "1.1.0",
+      "id": "S1C-IW-GRD-001",
+      "collection": "sentinel-1-grd",
+      "bbox": [-112.3, 39.3, -108.9, 41.3],
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[-112.3, 41.0], [-109.2, 41.3], [-108.9, 39.8], [-111.9, 39.3], [-112.3, 41.0]]]
+      },
+      "properties": {
+        "datetime": "2025-07-30T01:18:09Z",
+        "platform": "sentinel-1c",
+        "product:type": "IW_GRDH_1S_C",
+        "sar:polarizations": ["VV", "VH"],
+        "sar:pixel_spacing_range": 10.0,
+        "sar:pixel_spacing_azimuth": 10.0,
+        "sar:observation_direction": "right",
+        "sat:orbit_state": "ascending",
+        "view:incidence_angle": 39.1
+      },
+      "assets": {},
+      "links": [
+        {
+          "rel": "self",
+          "href": "https://stac.dataspace.copernicus.eu/v1/collections/sentinel-1-grd/items/S1C-IW-GRD-001"
+        }
+      ]
+    }
+  ],
+  "links": [
+    {
+      "rel": "next",
+      "href": "https://stac.dataspace.copernicus.eu/v1/search?token=page-2"
+    }
+  ]
+}

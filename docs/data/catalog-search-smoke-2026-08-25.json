@@ -1,0 +1,56 @@
+{
+  "accessed_at": "2026-08-25T22:55:15Z",
+  "contract_version": "1.0.0",
+  "metadata_only": true,
+  "large_imagery_downloaded": false,
+  "aoi": {
+    "bbox": [-112.2, 40.45, -112.05, 40.6],
+    "story": "approved Bingham Canyon central-pit review area"
+  },
+  "searches": [
+    {
+      "provider": "sentinel-1",
+      "source": "https://stac.dataspace.copernicus.eu/v1/search",
+      "collection": "sentinel-1-grd",
+      "start_at": "2025-06-01T00:00:00Z",
+      "end_at": "2025-08-01T00:00:00Z",
+      "query_id": "1e574fc3eb8b3d72",
+      "status": "complete",
+      "sampled_result_count": 15,
+      "has_more": false,
+      "warning_count": 0,
+      "first_page_item_ids": [
+        "S1C_IW_GRDH_1SDV_20250730T011809_20250730T011834_003443_006EA9_BFC5_COG",
+        "S1C_IW_GRDH_1SDV_20250723T012625_20250723T012650_003341_006BA6_99E8_COG",
+        "S1A_IW_GRDH_1SDV_20250722T133432_20250722T133457_060197_077AF2_6F88_COG",
+        "S1C_IW_GRDH_1SDV_20250718T011809_20250718T011834_003268_006985_44E5_COG",
+        "S1C_IW_GRDH_1SDV_20250711T012624_20250711T012649_003166_006694_38D5_COG"
+      ]
+    },
+    {
+      "provider": "umbra",
+      "source": "https://umbra-open-data-catalog.s3.us-west-2.amazonaws.com/stac/2025/2025-06/catalog.json",
+      "start_at": "2025-06-01T00:00:00Z",
+      "end_at": "2025-07-01T00:00:00Z",
+      "max_catalogs": 40,
+      "max_items": 300,
+      "query_id": "91577441506471c7",
+      "status": "complete",
+      "sampled_result_count": 5,
+      "has_more": false,
+      "warning_count": 0,
+      "item_ids": [
+        "124149f5-502d-488d-8e8c-e88794f1d200",
+        "fd4c3274-0cea-4c9f-91ff-0638bf07b33c",
+        "f20c78a1-6baa-4d09-8ab9-c2954d49e4d9",
+        "89284e7a-04bc-4917-9467-502f2ff3bece",
+        "50d2b9b7-74d6-44d4-8da4-b6d1231da7b5"
+      ]
+    }
+  ],
+  "limitations": [
+    "Live provider catalogs can change after this access timestamp.",
+    "Umbra uses a bounded static hierarchy traversal and this smoke starts at one month catalog.",
+    "Returned footprints show provider-reported acquisitions, not suitable pairs or change findings."
+  ]
+}

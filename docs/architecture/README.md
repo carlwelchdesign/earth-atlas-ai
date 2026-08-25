@@ -5,6 +5,7 @@ EchoAtlas begins as a modular monolith rather than separate deployable services:
 - `echoatlas.api` owns HTTP parsing, response contracts, and application orchestration.
 - `echoatlas.processor` owns deterministic domain policy and geospatial processing.
 - `echoatlas.processor.catalog` now owns the provider-edge STAC traversal and public-S3 metadata resolution introduced by EAT-002.
+- [Catalog search contract v1](catalog-search-v1.md) defines EAT-017's bounded Umbra and Sentinel-1 metadata search, normalized API boundary, partial-provider behavior, caching, pagination, and live smoke evidence.
 - the React workbench will consume versioned API and analysis-bundle contracts rather than provider payloads.
 
 This structure keeps Python raster dependencies in one reproducible environment while preserving boundaries that can be split later if measured deployment or scaling needs justify it.
