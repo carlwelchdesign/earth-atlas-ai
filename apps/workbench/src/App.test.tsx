@@ -53,6 +53,46 @@ describe("App", () => {
     ).toBeEnabled();
   });
 
+  it("reports a bounded read-only Foundry connection without relabeling the bundle", async () => {
+    render(
+      <App
+        loadBundle={load()}
+        loadPlatformConnection={() =>
+          Promise.resolve({
+            status: "connected",
+            analysisRunAvailable: true,
+          })
+        }
+      />,
+    );
+
+    expect(
+      await screen.findByText("Palantir read-only · synthetic run available"),
+    ).toBeInTheDocument();
+    expect(screen.getByText(/no Umbra pixels represented/)).toBeInTheDocument();
+  });
+
+  it("keeps the validated local bundle active when Foundry is unavailable", async () => {
+    render(
+      <App
+        loadBundle={load()}
+        loadPlatformConnection={() =>
+          Promise.reject(new Error("Foundry unavailable"))
+        }
+      />,
+    );
+
+    expect(
+      await screen.findByText("Palantir unavailable · local bundle active"),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole("heading", {
+        level: 1,
+        name: demoBundle.mission.title,
+      }),
+    ).toBeInTheDocument();
+  });
+
   it("keeps queue and map selection synchronized", async () => {
     render(<App loadBundle={load()} />);
     const queueCandidate = await screen.findByRole("button", {
