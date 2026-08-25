@@ -1,0 +1,61 @@
+{
+  "features": [
+    {
+      "geometry": {
+        "coordinates": [[[1, 16], [4, 16], [4, 19], [1, 19], [1, 16]]],
+        "type": "Polygon"
+      },
+      "id": "candidate-match",
+      "type": "Feature"
+    },
+    {
+      "geometry": {
+        "coordinates": [[[6, 16], [8, 16], [8, 18], [6, 18], [6, 16]]],
+        "type": "Polygon"
+      },
+      "id": "candidate-geometry",
+      "type": "Feature"
+    },
+    {
+      "geometry": {
+        "coordinates": [[[10, 16], [12, 16], [12, 18], [10, 18], [10, 16]]],
+        "type": "Polygon"
+      },
+      "id": "candidate-water-moisture",
+      "type": "Feature"
+    },
+    {
+      "geometry": {
+        "coordinates": [[[14, 17], [15, 17], [15, 18], [14, 18], [14, 17]]],
+        "type": "Polygon"
+      },
+      "id": "candidate-speckle",
+      "type": "Feature"
+    },
+    {
+      "geometry": {
+        "coordinates": [[[17, 16], [19, 16], [19, 18], [17, 18], [17, 16]]],
+        "type": "Polygon"
+      },
+      "id": "candidate-shadow-layover",
+      "type": "Feature"
+    },
+    {
+      "geometry": {
+        "coordinates": [[[21, 16], [23, 16], [23, 18], [21, 18], [21, 16]]],
+        "type": "Polygon"
+      },
+      "id": "candidate-registration",
+      "type": "Feature"
+    },
+    {
+      "geometry": {
+        "coordinates": [[[25, 16], [27, 16], [27, 18], [25, 18], [25, 16]]],
+        "type": "Polygon"
+      },
+      "id": "candidate-other",
+      "type": "Feature"
+    }
+  ],
+  "type": "FeatureCollection"
+}

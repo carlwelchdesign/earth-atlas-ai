@@ -164,9 +164,11 @@ Outcome: change candidates can be evaluated honestly against human-reviewed regi
 Acceptance:
 
 - [ ] Evaluation set has provenance, review status, labeling guidance, and separation from tuning fixtures.
-- [ ] Candidate-level and pixel/region metrics define grain, denominator, nullability, and limits.
-- [ ] False-positive classes include geometry, water/moisture, speckle, shadow/layover, and registration artifacts where applicable.
+- [x] Candidate-level and pixel/region metrics define grain, denominator, nullability, and limits.
+- [x] False-positive classes include geometry, water/moisture, speckle, shadow/layover, and registration artifacts where applicable.
 - [ ] Baseline results and unresolved domain-review needs are published without inflated accuracy claims.
+
+Implementation checkpoint: the evaluator contract, synthetic software-verification set, arithmetic baseline, and labeling guide are implemented. The evaluation set and pipeline baseline remain incomplete until Bingham Canyon regions receive qualified human SAR review and tuning-set separation is independently confirmed.
 
 ### EAT-013 — Add feature-gated, evidence-grounded draft summaries
 

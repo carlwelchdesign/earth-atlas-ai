@@ -1,0 +1,103 @@
+{
+  "candidate_iou_threshold": 0.5,
+  "cases": [
+    {
+      "case_id": "synthetic-artifact-taxonomy",
+      "false_positive_annotations": [
+        {
+          "candidate_id": "candidate-geometry",
+          "failure_class": "geometry",
+          "review_status": "synthetic-established",
+          "reviewed_at": null,
+          "reviewer": null
+        },
+        {
+          "candidate_id": "candidate-water-moisture",
+          "failure_class": "water-moisture",
+          "review_status": "synthetic-established",
+          "reviewed_at": null,
+          "reviewer": null
+        },
+        {
+          "candidate_id": "candidate-speckle",
+          "failure_class": "speckle",
+          "review_status": "synthetic-established",
+          "reviewed_at": null,
+          "reviewer": null
+        },
+        {
+          "candidate_id": "candidate-shadow-layover",
+          "failure_class": "shadow-layover",
+          "review_status": "synthetic-established",
+          "reviewed_at": null,
+          "reviewer": null
+        },
+        {
+          "candidate_id": "candidate-registration",
+          "failure_class": "registration-artifact",
+          "review_status": "synthetic-established",
+          "reviewed_at": null,
+          "reviewer": null
+        },
+        {
+          "candidate_id": "candidate-other",
+          "failure_class": "other",
+          "review_status": "synthetic-established",
+          "reviewed_at": null,
+          "reviewer": null
+        }
+      ],
+      "fixture_id": "evaluation-synthetic-artifacts-v1",
+      "evaluation_geometry": {
+        "coordinates": [[[0, 0], [30, 0], [30, 20], [0, 20], [0, 0]]],
+        "type": "Polygon"
+      },
+      "geometry_crs": "EPSG:3857",
+      "grid": {
+        "crs": "EPSG:3857",
+        "height": 20,
+        "transform": [1, 0, 0, 0, -1, 20],
+        "width": 30
+      },
+      "limitations": [
+        "Constructed polygons verify evaluator arithmetic and taxonomy only.",
+        "The fixture contains no radar measurements and cannot estimate pipeline accuracy."
+      ],
+      "prediction_path": "predictions.geojson",
+      "reference_regions": [
+        {
+          "geometry": {
+            "coordinates": [[[1, 16], [4, 16], [4, 19], [1, 19], [1, 16]]],
+            "type": "Polygon"
+          },
+          "guidance_version": "1.0.0",
+          "region_id": "reference-change-1",
+          "review_status": "synthetic-established",
+          "reviewed_at": null,
+          "reviewer": null
+        }
+      ]
+    }
+  ],
+  "evaluation_set_id": "echoatlas-synthetic-evaluator-v1",
+  "evaluation_set_version": "1.0.0",
+  "limitations": [
+    "This is a software-verification set, not a scientific benchmark.",
+    "No region or artifact annotation has been reviewed by a qualified SAR practitioner.",
+    "Do not use these results to claim accuracy, detection performance, or real-world validity."
+  ],
+  "provenance": {
+    "created_at": "2026-08-24T00:00:00Z",
+    "labeling_guidance": "docs/evaluation/labeling-guidance-v1.md",
+    "labeling_guidance_version": "1.0.0",
+    "source_artifacts": [],
+    "source_description": "Constructed grid polygons covering one match and each declared false-positive taxonomy class.",
+    "source_kind": "synthetic",
+    "source_license": "CC0-1.0"
+  },
+  "purpose": "software-verification",
+  "tuning_fixture_ids": [
+    "change-test-v1",
+    "echoatlas-bingham-canyon-2025-v1"
+  ]
+}
