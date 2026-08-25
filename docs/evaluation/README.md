@@ -42,7 +42,7 @@ uv run echoatlas-prepare-review \
   --output data/review/eat012-bingham-v1
 ```
 
-Open `data/review/eat012-bingham-v1/index.html` locally. The packet provides synchronized before, after, and candidate-overlay crops for all 26 candidates. Decisions and notes stay in browser storage until explicitly exported as JSON.
+Open `data/review/eat012-bingham-v1/index.html` locally. The packet provides synchronized before, after, and candidate-overlay crops for all 26 candidates. Decisions, notes, and provisional polygon drafts stay in browser storage until explicitly exported as JSON.
 
 Review choices have deliberately narrow meanings:
 
@@ -51,3 +51,14 @@ Review choices have deliberately narrow meanings:
 - `Unresolved` preserves uncertainty without forcing a label.
 
 The export is audit evidence for the labeling process. It is not accepted directly by `echoatlas-evaluate`, because evaluating a candidate against its own reviewed geometry would be circular.
+
+### Provisional reference-region capture
+
+The packet also provides a separate polygon workspace over the clean after image, without the candidate overlay. A reviewer can add points with a pointer or enter projected `x,y` coordinates directly for keyboard-equivalent access. The interaction supports undo, explicit polygon closure, and a confirmed clear action.
+
+Export version `1.1.0` keeps candidate decisions and `reference_regions` separate. Each region includes its candidate context, declared grid CRS, projected points, raster pixel points, closure state, timestamp, and one of two bounded statuses:
+
+- `draft-incomplete` has points but no valid polygon geometry.
+- `provisional-candidate-directed` has closed polygon geometry but still requires independent qualified review and adjudication.
+
+These regions are candidate-directed because the reviewer reached them through the machine-candidate queue. They are not blinded, independent, or adjudicated labels, and the evaluator does not ingest them automatically. A later labeling checkpoint must establish an independently reviewed dataset and record adjudication before pipeline metrics are run.
