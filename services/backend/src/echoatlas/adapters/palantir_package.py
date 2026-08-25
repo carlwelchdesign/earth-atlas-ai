@@ -6,9 +6,11 @@ import csv
 import hashlib
 import io
 import json
+import re
 import shutil
 import tempfile
 from dataclasses import dataclass
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import Literal
 
@@ -47,6 +49,15 @@ _LINK_TABLE_NAMES: dict[OntologyLinkType, str] = {
     "assessmentSupersedesAssessment": "assessment_supersedes_assessment",
 }
 
+_TIMESTAMP_PROPERTIES: dict[OntologyObjectType, tuple[str, ...]] = {
+    "AreaOfInterest": (),
+    "Acquisition": ("acquired_at",),
+    "AnalysisRun": ("created_at",),
+    "EvidenceArtifact": (),
+    "ChangeCandidate": (),
+    "AnalystAssessment": ("recorded_at",),
+}
+
 
 class PalantirTableEntry(BaseModel):
     model_config = ConfigDict(frozen=True, extra="forbid")
@@ -82,12 +93,13 @@ class PalantirTablePackageManifest(BaseModel):
 
     model_config = ConfigDict(frozen=True, extra="forbid")
 
-    package_version: Literal["1.2.0"] = "1.2.0"
+    package_version: Literal["1.3.0"] = "1.3.0"
     source_bundle_id: str = Field(min_length=1, max_length=200)
     source_manifest_sha256: str = Field(pattern=r"^[a-f0-9]{64}$")
     source_import_plan_sha256: str = Field(pattern=r"^[a-f0-9]{64}$")
     table_format: Literal["csv"] = "csv"
     nested_value_encoding: Literal["canonical_json"] = "canonical_json"
+    timestamp_companion_encoding: Literal["utc_epoch_milliseconds"] = "utc_epoch_milliseconds"
     tables: tuple[PalantirTableEntry, ...]
     requires_authenticated_target: Literal[True] = True
     writes_performed: Literal[False] = False
@@ -173,14 +185,16 @@ def _render_tables(plan: PalantirImportPlan) -> tuple[_RenderedTable, ...]:
             (item for item in plan.objects if item.object_type == object_type),
             key=lambda item: item.primary_key,
         )
-        columns = _object_columns(objects)
-        rows = [
-            {
-                "primary_key": item.primary_key,
-                **{key: _cell_value(item.properties.get(key)) for key in columns[1:]},
-            }
-            for item in objects
-        ]
+        object_values = [_object_values(item) for item in objects]
+        columns = _object_columns(object_values)
+        rows = []
+        for item, values in zip(objects, object_values, strict=True):
+            rows.append(
+                {
+                    "primary_key": item.primary_key,
+                    **{key: values.get(key, "") for key in columns[1:]},
+                }
+            )
         logical_name = _OBJECT_TABLE_NAMES[object_type]
         rendered.append(
             _render_table(
@@ -304,11 +318,52 @@ def _render_table(
     )
 
 
-def _object_columns(objects: list[PalantirOntologyObject]) -> tuple[str, ...]:
-    property_columns = sorted({key for item in objects for key in item.properties})
+def _object_values(item: PalantirOntologyObject) -> dict[str, str]:
+    values = {key: _cell_value(value) for key, value in item.properties.items()}
+    for source_column in _TIMESTAMP_PROPERTIES[item.object_type]:
+        if source_column not in item.properties:
+            continue
+        companion_column = f"{source_column}_epoch_millis"
+        if companion_column in item.properties:
+            raise ValueError(
+                f"ontology properties cannot use reserved timestamp companion column "
+                f"{companion_column}"
+            )
+        values[companion_column] = str(
+            _utc_epoch_millis(item.properties[source_column], source_column)
+        )
+    return values
+
+
+def _object_columns(object_values: list[dict[str, str]]) -> tuple[str, ...]:
+    property_columns = sorted({key for values in object_values for key in values})
     if "primary_key" in property_columns:
         raise ValueError("ontology properties cannot use the reserved primary_key column")
     return ("primary_key", *property_columns)
+
+
+def _utc_epoch_millis(value: object, source_column: str) -> int:
+    if not isinstance(value, str):
+        raise TypeError(f"{source_column} must be an RFC3339 string")
+    fractional = re.search(r"\.(\d+)(?=Z$|[+-]\d{2}:\d{2}$)", value)
+    if fractional is not None and any(digit != "0" for digit in fractional.group(1)[3:]):
+        raise ValueError(
+            f"{source_column} has sub-millisecond precision that cannot be represented without loss"
+        )
+    try:
+        parsed = datetime.fromisoformat(value.replace("Z", "+00:00"))
+    except ValueError as error:
+        raise ValueError(f"{source_column} must be a valid RFC3339 timestamp") from error
+    if parsed.tzinfo is None or parsed.utcoffset() is None:
+        raise ValueError(f"{source_column} must include a UTC offset")
+
+    utc_value = parsed.astimezone(UTC)
+    if utc_value.microsecond % 1000:
+        raise ValueError(
+            f"{source_column} has sub-millisecond precision that cannot be represented without loss"
+        )
+    delta = utc_value - datetime(1970, 1, 1, tzinfo=UTC)
+    return delta.days * 86_400_000 + delta.seconds * 1000 + delta.microseconds // 1000
 
 
 def _cell_value(value: object) -> str:

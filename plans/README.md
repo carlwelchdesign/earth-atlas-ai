@@ -1,6 +1,6 @@
 # EchoAtlas planning package
 
-Status: EAT-001 through EAT-011 and EAT-DES-001 are complete. EAT-012 remains in qualified-review and adjudication. EAT-014 has a network-free bundle-to-Ontology projection, a zero-row-safe version 1.2.0 normalized-table package, an authenticated Developer Tier inventory, live raw/media/normalized synthetic imports, and five object types linked by six dataset-backed relations. Restricted scopes, raster/transform validation, cleanup evidence, durable visual evidence, and the final decision remain open.
+Status: EAT-001 through EAT-011 and EAT-DES-001 are complete. EAT-012 remains in qualified-review and adjudication. EAT-014 has a network-free bundle-to-Ontology projection, a zero-row-safe version 1.3.0 normalized-table package with an explicit epoch-millisecond timestamp bridge, an authenticated Developer Tier inventory, live raw/media/normalized synthetic imports, and five object types linked by six dataset-backed relations. Restricted scopes, live raster/transform validation, cleanup evidence, durable visual evidence, and the final decision remain open.
 
 EchoAtlas is a civilian disaster and infrastructure-change SAR intelligence workbench. The first release will prove one end-to-end analyst workflow with public Umbra data: select a comparable image pair, produce deterministic change candidates, inspect the evidence, and record a human assessment.
 

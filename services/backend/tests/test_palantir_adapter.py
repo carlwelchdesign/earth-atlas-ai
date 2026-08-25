@@ -149,7 +149,8 @@ def test_package_writes_normalized_tables_with_hashes(tmp_path: Path) -> None:
     manifest = write_palantir_import_package(plan, output)
 
     assert manifest.source_bundle_id == "bundle-bingham-canyon-synthetic-v1"
-    assert manifest.package_version == "1.2.0"
+    assert manifest.package_version == "1.3.0"
+    assert manifest.timestamp_companion_encoding == "utc_epoch_milliseconds"
     assert len(manifest.tables) == 17
     assert manifest.requires_authenticated_target is True
     assert manifest.writes_performed is False
@@ -166,6 +167,16 @@ def test_package_writes_normalized_tables_with_hashes(tmp_path: Path) -> None:
     assert candidate_table[0]["status"] == "pending"
     assert isinstance(json.loads(candidate_table[0]["geometry"]), dict)
     assert isinstance(json.loads(candidate_table[0]["evidence_artifact_ids"]), list)
+
+    acquisition_table = _read_csv(output / "objects/acquisition.csv")
+    assert {row["acquired_at"]: row["acquired_at_epoch_millis"] for row in acquisition_table} == {
+        "2025-01-10T12:00:00Z": "1736510400000",
+        "2025-02-10T12:00:00Z": "1739188800000",
+    }
+
+    run_table = _read_csv(output / "objects/analysis_run.csv")
+    assert run_table[0]["created_at"] == "2026-01-15T12:00:00Z"
+    assert run_table[0]["created_at_epoch_millis"] == "1768478400000"
 
     assessment_record = next(
         table for table in manifest.tables if table.logical_name == "analyst_assessment"
@@ -217,6 +228,68 @@ def test_package_writes_normalized_tables_with_hashes(tmp_path: Path) -> None:
         assert not (output / f"links/{logical_name}.csv").exists()
 
     assert len(_read_csv(output / "ontology_links.csv")) == len(plan.links)
+
+
+def test_package_normalizes_timestamp_offsets_without_losing_source_value(
+    tmp_path: Path,
+) -> None:
+    root = generate_fixture(tmp_path / "bundle", software_commit=COMMIT)
+    bundle = BundleValidator(SCHEMA_ROOT).validate(root)
+    plan = plan_palantir_import(bundle)
+    objects = tuple(
+        item.model_copy(
+            update={
+                "properties": {
+                    **item.properties,
+                    "created_at": "2026-01-15T04:00:00-08:00",
+                }
+            }
+        )
+        if item.object_type == "AnalysisRun"
+        else item
+        for item in plan.objects
+    )
+
+    write_palantir_import_package(
+        plan.model_copy(update={"objects": objects}),
+        tmp_path / "package",
+    )
+
+    run = _read_csv(tmp_path / "package/objects/analysis_run.csv")[0]
+    assert run["created_at"] == "2026-01-15T04:00:00-08:00"
+    assert run["created_at_epoch_millis"] == "1768478400000"
+
+
+@pytest.mark.parametrize(
+    "created_at",
+    ["2026-01-15T12:00:00.000001Z", "2026-01-15T12:00:00.0000001Z"],
+)
+def test_package_rejects_lossy_sub_millisecond_timestamp(
+    tmp_path: Path,
+    created_at: str,
+) -> None:
+    root = generate_fixture(tmp_path / "bundle", software_commit=COMMIT)
+    bundle = BundleValidator(SCHEMA_ROOT).validate(root)
+    plan = plan_palantir_import(bundle)
+    objects = tuple(
+        item.model_copy(
+            update={
+                "properties": {
+                    **item.properties,
+                    "created_at": created_at,
+                }
+            }
+        )
+        if item.object_type == "AnalysisRun"
+        else item
+        for item in plan.objects
+    )
+
+    with pytest.raises(ValueError, match="sub-millisecond precision"):
+        write_palantir_import_package(
+            plan.model_copy(update={"objects": objects}),
+            tmp_path / "package",
+        )
 
 
 def test_package_is_byte_deterministic_across_equivalent_roots(tmp_path: Path) -> None:
