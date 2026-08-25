@@ -8,10 +8,11 @@ import io
 import json
 import shutil
 import tempfile
+from dataclasses import dataclass
 from pathlib import Path
 from typing import Literal
 
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import BaseModel, ConfigDict, Field, model_validator
 
 from echoatlas.adapters.palantir import (
     ONTOLOGY_OBJECT_TYPES,
@@ -21,6 +22,7 @@ from echoatlas.adapters.palantir import (
 )
 
 TableKind = Literal["ontology_objects", "ontology_links", "media_uploads"]
+OmissionReason = Literal["no_rows"]
 
 _OBJECT_TABLE_NAMES: dict[OntologyObjectType, str] = {
     "AreaOfInterest": "area_of_interest",
@@ -32,15 +34,33 @@ _OBJECT_TABLE_NAMES: dict[OntologyObjectType, str] = {
 }
 
 
-class PalantirTableFile(BaseModel):
+class PalantirTableEntry(BaseModel):
     model_config = ConfigDict(frozen=True, extra="forbid")
 
     kind: TableKind
     logical_name: str = Field(min_length=1, max_length=200)
-    relative_path: str = Field(min_length=1, max_length=1000)
+    relative_path: str | None = Field(default=None, min_length=1, max_length=1000)
     row_count: int = Field(ge=0)
     columns: tuple[str, ...]
-    sha256: str = Field(pattern=r"^[a-f0-9]{64}$")
+    sha256: str | None = Field(default=None, pattern=r"^[a-f0-9]{64}$")
+    upload_ready: bool
+    omission_reason: OmissionReason | None = None
+
+    @model_validator(mode="after")
+    def validate_upload_state(self) -> PalantirTableEntry:
+        if self.upload_ready:
+            if self.row_count == 0 or self.relative_path is None or self.sha256 is None:
+                raise ValueError("upload-ready tables require rows, a path, and a hash")
+            if self.omission_reason is not None:
+                raise ValueError("upload-ready tables cannot have an omission reason")
+        elif (
+            self.row_count != 0
+            or self.relative_path is not None
+            or self.sha256 is not None
+            or self.omission_reason != "no_rows"
+        ):
+            raise ValueError("omitted tables must be empty and marked no_rows")
+        return self
 
 
 class PalantirTablePackageManifest(BaseModel):
@@ -48,13 +68,13 @@ class PalantirTablePackageManifest(BaseModel):
 
     model_config = ConfigDict(frozen=True, extra="forbid")
 
-    package_version: Literal["1.0.0"] = "1.0.0"
+    package_version: Literal["1.1.0"] = "1.1.0"
     source_bundle_id: str = Field(min_length=1, max_length=200)
     source_manifest_sha256: str = Field(pattern=r"^[a-f0-9]{64}$")
     source_import_plan_sha256: str = Field(pattern=r"^[a-f0-9]{64}$")
     table_format: Literal["csv"] = "csv"
     nested_value_encoding: Literal["canonical_json"] = "canonical_json"
-    tables: tuple[PalantirTableFile, ...]
+    tables: tuple[PalantirTableEntry, ...]
     requires_authenticated_target: Literal[True] = True
     writes_performed: Literal[False] = False
 
@@ -74,22 +94,24 @@ def write_palantir_import_package(
 
     plan_bytes = plan.model_dump_json().encode("utf-8")
     rendered = _render_tables(plan)
-    table_files = tuple(
-        PalantirTableFile(
-            kind=kind,
-            logical_name=logical_name,
-            relative_path=relative_path,
-            row_count=row_count,
-            columns=columns,
-            sha256=_sha256_bytes(content),
+    table_entries = tuple(
+        PalantirTableEntry(
+            kind=table.kind,
+            logical_name=table.logical_name,
+            relative_path=table.relative_path,
+            row_count=table.row_count,
+            columns=table.columns,
+            sha256=_sha256_bytes(table.content) if table.content is not None else None,
+            upload_ready=table.content is not None,
+            omission_reason=None if table.content is not None else "no_rows",
         )
-        for kind, logical_name, relative_path, row_count, columns, content in rendered
+        for table in rendered
     )
     manifest = PalantirTablePackageManifest(
         source_bundle_id=plan.source_bundle_id,
         source_manifest_sha256=plan.source_manifest_sha256,
         source_import_plan_sha256=_sha256_bytes(plan_bytes),
-        tables=table_files,
+        tables=table_entries,
     )
 
     output_directory.parent.mkdir(parents=True, exist_ok=True)
@@ -100,10 +122,12 @@ def write_palantir_import_package(
         )
     )
     try:
-        for _, _, relative_path, _, _, content in rendered:
-            destination = temporary_directory / relative_path
+        for table in rendered:
+            if table.relative_path is None or table.content is None:
+                continue
+            destination = temporary_directory / table.relative_path
             destination.parent.mkdir(parents=True, exist_ok=True)
-            destination.write_bytes(content)
+            destination.write_bytes(table.content)
         (temporary_directory / "package-manifest.json").write_text(
             f"{manifest.model_dump_json(indent=2)}\n",
             encoding="utf-8",
@@ -118,13 +142,18 @@ def write_palantir_import_package(
     return manifest
 
 
-def _render_tables(
-    plan: PalantirImportPlan,
-) -> tuple[
-    tuple[TableKind, str, str, int, tuple[str, ...], bytes],
-    ...,
-]:
-    rendered: list[tuple[TableKind, str, str, int, tuple[str, ...], bytes]] = []
+@dataclass(frozen=True)
+class _RenderedTable:
+    kind: TableKind
+    logical_name: str
+    relative_path: str | None
+    row_count: int
+    columns: tuple[str, ...]
+    content: bytes | None
+
+
+def _render_tables(plan: PalantirImportPlan) -> tuple[_RenderedTable, ...]:
+    rendered: list[_RenderedTable] = []
     for object_type in ONTOLOGY_OBJECT_TYPES:
         objects = sorted(
             (item for item in plan.objects if item.object_type == object_type),
@@ -139,15 +168,13 @@ def _render_tables(
             for item in objects
         ]
         logical_name = _OBJECT_TABLE_NAMES[object_type]
-        relative_path = f"objects/{logical_name}.csv"
         rendered.append(
-            (
+            _render_table(
                 "ontology_objects",
                 logical_name,
-                relative_path,
-                len(rows),
+                f"objects/{logical_name}.csv",
                 columns,
-                _csv_bytes(columns, rows),
+                rows,
             )
         )
 
@@ -176,13 +203,12 @@ def _render_tables(
         )
     ]
     rendered.append(
-        (
+        _render_table(
             "ontology_links",
             "ontology_links",
             "ontology_links.csv",
-            len(link_rows),
             link_columns,
-            _csv_bytes(link_columns, link_rows),
+            link_rows,
         )
     )
 
@@ -204,16 +230,41 @@ def _render_tables(
         for item in sorted(plan.media_uploads, key=lambda item: item.artifact_primary_key)
     ]
     rendered.append(
-        (
+        _render_table(
             "media_uploads",
             "media_uploads",
             "media_uploads.csv",
-            len(media_rows),
             media_columns,
-            _csv_bytes(media_columns, media_rows),
+            media_rows,
         )
     )
     return tuple(rendered)
+
+
+def _render_table(
+    kind: TableKind,
+    logical_name: str,
+    relative_path: str,
+    columns: tuple[str, ...],
+    rows: list[dict[str, str]],
+) -> _RenderedTable:
+    if not rows:
+        return _RenderedTable(
+            kind=kind,
+            logical_name=logical_name,
+            relative_path=None,
+            row_count=0,
+            columns=columns,
+            content=None,
+        )
+    return _RenderedTable(
+        kind=kind,
+        logical_name=logical_name,
+        relative_path=relative_path,
+        row_count=len(rows),
+        columns=columns,
+        content=_csv_bytes(columns, rows),
+    )
 
 
 def _object_columns(objects: list[PalantirOntologyObject]) -> tuple[str, ...]:
