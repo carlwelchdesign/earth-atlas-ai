@@ -20,6 +20,7 @@ import type {
   PlaceSearchAdapter,
 } from "./explore/catalog";
 import type { BasemapConfig } from "./explore/basemap";
+import type { AnalysisJobClient } from "./explore/analysis";
 
 type LoadState =
   | { status: "loading" }
@@ -33,8 +34,10 @@ export function App({
   initialMode = "analyze",
   catalog,
   places,
+  analysis,
   basemap,
   renderExploreMap = true,
+  analysisPollMs = 750,
 }: {
   loadBundle?: BundleLoader;
   loadPlatformConnection?: () => Promise<PlatformConnectionState>;
@@ -42,17 +45,23 @@ export function App({
   initialMode?: "explore" | "analyze";
   catalog?: CatalogSearchClient;
   places?: PlaceSearchAdapter;
+  analysis?: AnalysisJobClient;
   basemap?: BasemapConfig;
   renderExploreMap?: boolean;
+  analysisPollMs?: number;
 }) {
   const [mode, setMode] = useState(initialMode);
   const [attempt, setAttempt] = useState(0);
   const [state, setState] = useState<LoadState>({ status: "loading" });
+  const [analysisBundle, setAnalysisBundle] = useState<WorkbenchBundle | null>(
+    null,
+  );
   const [platformConnection, setPlatformConnection] =
     useState<PlatformConnectionState>(initialPlatformConnectionState);
 
   useEffect(() => {
     if (mode === "explore") return;
+    if (analysisBundle) return;
     let active = true;
     loadBundle()
       .then((source) => parseWorkbenchBundle(source))
@@ -70,7 +79,7 @@ export function App({
     return () => {
       active = false;
     };
-  }, [loadBundle, attempt, mode]);
+  }, [analysisBundle, loadBundle, attempt, mode]);
 
   useEffect(() => {
     if (mode === "explore") return;
@@ -97,14 +106,24 @@ export function App({
     setAttempt((current) => current + 1);
   }, []);
 
+  const openAnalysisBundle = useCallback((bundle: WorkbenchBundle) => {
+    const validated = parseWorkbenchBundle(bundle);
+    setAnalysisBundle(validated);
+    setState({ status: "ready", bundle: validated });
+    setMode("analyze");
+  }, []);
+
   if (mode === "explore") {
     return (
       <Explore
         onAnalyze={() => setMode("analyze")}
+        onAnalysisReady={openAnalysisBundle}
         catalog={catalog}
         places={places}
+        analysis={analysis}
         basemap={basemap}
         renderMap={renderExploreMap}
+        analysisPollMs={analysisPollMs}
       />
     );
   }

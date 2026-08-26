@@ -38,6 +38,8 @@ Every provider also has an attributable report. A failed provider does not erase
 
 Umbra publishes a static STAC hierarchy rather than an Item Search API. `UmbraCatalogSearchAdapter` performs a bounded traversal, maps provider items to the shared contract, and filters their reported footprints against the request. A global-root result can be a bounded sample; the response reports traversal limits rather than implying exhaustive Umbra coverage.
 
+For the default public host, Explore searches derive only the calendar-month catalog roots intersecting the requested date range. The existing total catalog/item budgets are distributed across those roots and at most four roots are traversed concurrently. This avoids walking unrelated years while preserving the same allowlist, response-size, timeout, metadata-only, and partial-sample boundaries. Explicit custom roots used by smoke tests and fixtures are unchanged.
+
 The adapter suppresses asset-resolution warnings because EAT-017 is metadata-only. The legacy EAT-002 indexer still includes those warnings and its separate public-S3 resolution behavior when exact objects are required.
 
 ### Sentinel-1

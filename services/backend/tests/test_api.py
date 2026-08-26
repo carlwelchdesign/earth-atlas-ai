@@ -1,10 +1,13 @@
-from datetime import UTC, datetime
+import threading
+import time
+from datetime import UTC, datetime, timedelta
 from typing import Literal
 
 import pytest
 from fastapi.testclient import TestClient
 
 from echoatlas import __version__
+from echoatlas.analysis_jobs import AnalysisJobService, AnalysisSelectionManifest
 from echoatlas.api.app import create_app
 from echoatlas.places import PlaceMatch, PlaceSearchService
 from echoatlas.processor.catalog.search import CatalogSearchService
@@ -38,6 +41,20 @@ class PlaceAdapter:
             provider="Test geocoder",
             attribution_url="https://example.test/terms",
         )
+
+
+class AnalysisRunner:
+    def run(
+        self, manifest: AnalysisSelectionManifest, cancelled: threading.Event
+    ) -> dict[str, object]:
+        return {
+            "contractVersion": "1.0.0",
+            "bundleId": "api-bundle",
+            "acquisitions": [
+                {"role": "before", "id": manifest.before.source.item_id},
+                {"role": "after", "id": manifest.after.source.item_id},
+            ],
+        }
 
 
 def _api_request() -> CatalogSearchRequest:
@@ -116,6 +133,10 @@ def test_openapi_describes_health_and_versioned_catalog_search() -> None:
         "/health",
         "/v1/catalog/search",
         "/v1/places/resolve",
+        "/v1/analysis/selections",
+        "/v1/analysis/jobs",
+        "/v1/analysis/jobs/{job_id}",
+        "/v1/analysis/jobs/{job_id}/retry",
     }
 
 
@@ -148,3 +169,52 @@ def test_place_search_endpoint_returns_a_bounded_normalized_aoi() -> None:
         "attribution_url": "https://example.test/terms",
     }
     assert body["bbox"] == pytest.approx([-121.568895, 38.5060606, -121.418895, 38.6560606])
+
+
+def test_analysis_endpoints_compare_before_queueing_and_return_job_states() -> None:
+    before = _api_item().model_copy(
+        update={
+            "acquired_at": NOW,
+            "source": CatalogSourceIdentity(
+                item_id="sentinel-before",
+                collection="sentinel-1-grd",
+                href="https://stac.dataspace.copernicus.eu/items/sentinel-before",
+            ),
+        }
+    )
+    after = _api_item().model_copy(
+        update={
+            "acquired_at": NOW + timedelta(days=12),
+            "source": CatalogSourceIdentity(
+                item_id="sentinel-after",
+                collection="sentinel-1-grd",
+                href="https://stac.dataspace.copernicus.eu/items/sentinel-after",
+            ),
+        }
+    )
+    client = TestClient(create_app(analysis_jobs=AnalysisJobService(AnalysisRunner())))
+
+    selection_response = client.post(
+        "/v1/analysis/selections",
+        json={
+            "contract_version": "1.0.0",
+            "aoi": _api_request().aoi.model_dump(mode="json"),
+            "before": before.model_dump(mode="json"),
+            "after": after.model_dump(mode="json"),
+        },
+    )
+
+    assert selection_response.status_code == 200
+    manifest = selection_response.json()
+    assert manifest["comparability"]["scientific_validity"] == "not_determined"
+    job_response = client.post("/v1/analysis/jobs", json={"manifest": manifest})
+    assert job_response.status_code == 202
+    job_id = job_response.json()["job_id"]
+    deadline = time.monotonic() + 2
+    while time.monotonic() < deadline:
+        body = client.get(f"/v1/analysis/jobs/{job_id}").json()
+        if body["status"] == "succeeded":
+            break
+        time.sleep(0.01)
+    assert body["status"] == "succeeded"
+    assert body["bundle"]["bundleId"] == "api-bundle"

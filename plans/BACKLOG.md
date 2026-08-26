@@ -292,11 +292,13 @@ Prerequisites: `EAT-007`, `EAT-017`, `EAT-018`.
 
 Acceptance:
 
-- [ ] Pair comparability evidence and warnings appear before processing; the product never auto-labels a pair as scientifically valid.
-- [ ] Selection produces an immutable manifest with AOI geometry hash, source identities, timestamps, license/provenance, and processing inputs.
-- [ ] A bounded asynchronous job exposes queued, running, succeeded, failed, and cancelled states with safe retry/cancel behavior.
-- [ ] Success loads the existing versioned bundle in Analyze and preserves a clear return path to Explore.
-- [ ] Deterministic processing remains independent of MapLibre, Palantir, and AI providers.
-- [ ] One Umbra and one Sentinel-1 path are verified where legal test data permits, including no-comparable-pair and processing-failure cases.
+- [x] Pair comparability evidence and warnings appear before processing; the product never auto-labels a pair as scientifically valid.
+- [x] Selection produces an immutable manifest with AOI geometry hash, source identities, timestamps, license/provenance, and processing inputs.
+- [x] A bounded asynchronous job exposes queued, running, succeeded, failed, and cancelled states with safe retry/cancel behavior.
+- [x] Success loads the existing versioned bundle in Analyze and preserves a clear return path to Explore.
+- [x] Deterministic processing remains independent of MapLibre, Palantir, and AI providers.
+- [x] One Umbra and one Sentinel-1 path are verified where legal test data permits, including no-comparable-pair and processing-failure cases.
+
+Implementation checkpoint: Explore now creates a backend-owned, content-hashed selection manifest before a distinct processing action is available. Comparability reports geometry overlap, timing, product, polarization, resolution, orbit, and warnings while permanently reporting scientific validity as not determined. A bounded injected job service implements queued/running/succeeded/failed/cancelled, cooperative cancellation, linked retry, exact manifest validation, and a 32-record cap. The default runner loads only an explicitly configured, at-most-10-MB bundle whose acquisition IDs exactly match the selection; arbitrary catalog pairs fail safely rather than receiving synthetic or unrelated imagery. The runtime-validated success path loads the existing bundle into Analyze and retains Return to Explore. The public Umbra adapter now targets requested calendar-month roots under its existing total budgets, allowing the approved Bingham Canyon pair to appear in the live Explore results. Browser evidence verifies the exact Umbra pair, 25.1-day/99.9%-overlap comparability, real-derived two-up Analyze imagery, the 26-candidate queue, and a mismatched Sentinel-1 processing failure. See `docs/qa/explore-analyze-pipeline.md`.
 
 Non-goals: calibrated change truth, autonomous alerts, paid acquisition ordering, or public operational deployment.
