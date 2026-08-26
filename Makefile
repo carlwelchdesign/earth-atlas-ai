@@ -1,4 +1,4 @@
-.PHONY: setup python-sync web-install format format-check lint typecheck test build secrets check dev-api dev-web clean
+.PHONY: setup python-sync web-install format format-check lint typecheck test build secrets check dev-api dev-web container-build container-up container-up-prepared container-down container-check clean
 
 setup: python-sync web-install
 
@@ -41,6 +41,21 @@ dev-api:
 
 dev-web:
 	npm run dev --workspace @echoatlas/workbench
+
+container-build:
+	docker compose build
+
+container-up:
+	docker compose up --detach --wait
+
+container-up-prepared:
+	docker compose -f compose.yaml -f compose.prepared.yaml up --detach --wait
+
+container-down:
+	docker compose down --remove-orphans
+
+container-check:
+	./scripts/verify-compose.sh
 
 clean:
 	rm -rf apps/workbench/dist apps/workbench/coverage .coverage htmlcov

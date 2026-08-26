@@ -13,6 +13,7 @@ import {
   type AssessmentDialogValue,
 } from "./AssessmentDialog";
 import {
+  BrowserAssessmentStore,
   InMemoryAssessmentStore,
   dispositionLabel,
   type AssessmentDraft,
@@ -61,15 +62,20 @@ export function Workbench({
   const [assessmentDialog, setAssessmentDialog] =
     useState<AssessmentDialogValue | null>(null);
   const [assessmentAnnouncement, setAssessmentAnnouncement] = useState("");
+  const [assessmentLoadError, setAssessmentLoadError] = useState<string | null>(
+    null,
+  );
   const [staleAccepted, setStaleAccepted] = useState(false);
   const compactReadOnly = useMediaQuery("(max-width: 479px)");
   const assessmentInvoker = useRef<HTMLElement | null>(null);
-  const [localAssessmentStore] = useState(
-    () =>
-      new InMemoryAssessmentStore({
-        candidateIds: bundle.candidates.map((candidate) => candidate.id),
-      }),
-  );
+  const [localAssessmentStore] = useState(() => {
+    const candidateIds = bundle.candidates.map((candidate) => candidate.id);
+    try {
+      return new BrowserAssessmentStore({ candidateIds });
+    } catch {
+      return new InMemoryAssessmentStore({ candidateIds });
+    }
+  });
   const activeAssessmentStore = assessmentStore ?? localAssessmentStore;
   const currentAssessments = useMemo(
     () => currentAssessmentMap(assessmentEvents),
@@ -126,6 +132,27 @@ export function Workbench({
     );
     closeAssessmentDialog();
   }
+
+  useEffect(() => {
+    let active = true;
+    if (!activeAssessmentStore.load) return;
+    activeAssessmentStore
+      .load(bundle.bundleId)
+      .then((events) => {
+        if (active) setAssessmentEvents(events);
+      })
+      .catch((error: unknown) => {
+        if (!active) return;
+        setAssessmentLoadError(
+          error instanceof Error
+            ? error.message
+            : "Stored assessment history could not be loaded.",
+        );
+      });
+    return () => {
+      active = false;
+    };
+  }, [activeAssessmentStore, bundle.bundleId]);
 
   function selectCandidate(candidateId: string) {
     setSelectedCandidateId(candidateId);
@@ -205,6 +232,13 @@ export function Workbench({
           kind="warning"
           title="Assessment permission unavailable"
           message={`${bundle.permissions.assessments.reason} Evidence inspection remains available.`}
+        />
+      ) : null}
+      {assessmentLoadError ? (
+        <StateNotice
+          kind="warning"
+          title="Local assessment history unavailable"
+          message={`${assessmentLoadError} The validated imagery and candidate evidence remain available.`}
         />
       ) : null}
       <main className="workbench-grid" aria-label="Analyst workbench">
@@ -1198,7 +1232,10 @@ function currentAssessmentMap(events: AssessmentEvent[]) {
 
 function createAssessmentRequestId() {
   assessmentRequestSequence += 1;
-  return `assessment-request-${assessmentRequestSequence}`;
+  const unique = globalThis.crypto?.randomUUID?.();
+  return unique
+    ? `assessment-request-${unique}`
+    : `assessment-request-${Date.now()}-${assessmentRequestSequence}`;
 }
 
 function formatTimestamp(timestamp: string) {

@@ -164,6 +164,7 @@ export function App({
 
   return (
     <Workbench
+      key={state.bundle.bundleId}
       bundle={state.bundle}
       platformConnection={platformConnection}
       assessmentStore={assessmentStore}
