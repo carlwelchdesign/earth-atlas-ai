@@ -1,165 +1,164 @@
 # EchoAtlas
 
-EchoAtlas is a planned civilian disaster and infrastructure-change SAR intelligence workbench. It will turn public Umbra imagery into deterministic change candidates, evidence, and human-reviewed assessments.
+**A truthful, human-in-the-loop SAR change-candidate workbench.** EchoAtlas lets
+an analyst navigate the globe, inspect real provider catalog availability, review
+a comparable acquisition pair, and examine deterministic change candidates with
+their provenance and limitations intact.
 
-**Current status:** the Bingham Canyon civilian demonstration pair is approved and pinned. The backend can fetch those exact public Umbra objects into a bounded, checksum-verified local cache, produce deterministic AOI-cropped engineering previews on a declared common grid, generate a transparent baseline queue of pending change candidates, and prepare the real satellite-derived comparison for the local workbench. It does not confirm physical change or provide operational intelligence.
+> EchoAtlas produces machine-generated **candidates**, never confirmed change,
+> damage, cause, identity, intent, or operational truth.
 
-## Architecture
+## Explore anywhere; claim only what the data supports
 
-- `services/backend`: Python modular backend with a thin FastAPI boundary and an independent processing domain.
-- `apps/workbench`: React and TypeScript analyst application.
-- `schemas`: versioned analysis-bundle contracts.
-- `fixtures`: pinned source selections and bounded synthetic fixture documentation.
-- `docs/design`: approved or approval-gated product-design specifications and validation evidence.
-- `plans`: canonical product, architecture, governance, and execution plans.
+Search for a place or draw a bounded area on the MapLibre globe. EchoAtlas queries
+normalized Umbra and Sentinel-1 metadata, preserves real acquisition footprints,
+keeps successful results when one provider fails, and offers an accessible list
+for every map action. Global navigation does not imply global imagery coverage or
+scientific suitability.
 
-The portable analysis bundle is the boundary between processing, UI, tests, and optional platform adapters. The local workbench prefers a prepared real-data bundle when one has been staged and otherwise falls back to a clearly labeled synthetic fixture. The Palantir feasibility layer currently produces a network-free import plan and is not a required runtime. A Developer Tier enrollment and EchoAtlas project now exist. The exact tiny synthetic fixture has been uploaded as six raw structured files and four PNG evidence items, and its five non-empty object families plus six non-empty relationship families are indexed in the live Ontology. A separate generated GeoTIFF also verifies bounded TIFF ingestion and preview, while Ontology-backed map tiling remains unverified. No real Umbra imagery has been uploaded to Palantir, and no credentials, API keys, OAuth clients, actions, or applications have been created there.
+![EchoAtlas global place search and provider availability](docs/qa/evidence/eat-018-global-place-search.jpg)
 
-## Prerequisites
+Before analysis, the pair-review step exposes temporal separation, overlap,
+geometry, source identity, licensing, and warnings. The selection handed to the
+backend is immutable.
 
-- Python 3.12 or newer
-- [uv](https://docs.astral.sh/uv/)
-- Node.js 20.19 or newer
-- npm 10 or newer
-- GNU Make or the macOS command-line developer tools
+![EchoAtlas comparability review for a real Umbra pair](docs/qa/evidence/eat019-comparability-review.png)
 
-## Setup
+## Inspect real public Umbra evidence
+
+The approved Bingham Canyon demonstration uses two pinned public Umbra GEC
+acquisitions. The deterministic pipeline downloads checksum-verified inputs,
+crops them to the approved civilian AOI, aligns them on a declared common grid,
+creates display derivatives, and generates a transparent queue of 26 review
+candidates. Source identity, acquisition time, processing parameters, warnings,
+artifact hashes, and CC BY 4.0 attribution stay visible.
+
+![EchoAtlas containerized Analyze workspace with real satellite-derived imagery and candidate evidence](docs/qa/evidence/eat015-container-desktop.png)
+
+An analyst can mark a candidate **Supported**, **Rejected**, or **Needs context**,
+add a note, and later correct the decision. Events are append-only and persist in
+the same browser and origin across reloads and container restarts. This local
+history is owner-review convenience storage, not a multi-user audit service.
+
+## What is actually shipped
+
+| Shipped standalone | Optional prototype | Unavailable roadmap |
+| --- | --- | --- |
+| MapLibre globe and accessible results | Private Palantir-hosted read-only profile | Calibrated SAR benchmark/accuracy claims |
+| Umbra + Sentinel-1 metadata search | Synthetic Ontology and raster feasibility assets | AI summaries or model calls |
+| Comparability review and immutable handoff | Restricted OSDK/OAuth query path | Multi-user auth and durable assessment service |
+| Deterministic local preparation pipeline | Provider-neutral Palantir import package | Public deployment or operational monitoring |
+| Synthetic fallback and real prepared demo |  | Paid tasking or guaranteed global coverage |
+| Browser-local append-only assessments |  | Automatic alerts or autonomous actions |
+| Native and non-root Docker workflows |  |  |
+
+The standalone runtime is canonical and does not require Palantir, OpenAI, or a
+private map key. EAT-012 qualified SAR adjudication remains incomplete, so the AI
+evaluation in EAT-013 remains gated. Public deployment is a separate owner,
+license, sensitivity, security, and operations decision.
+
+## Run the owner-review app with Docker
+
+Requirements: Docker Desktop with Compose v2.
+
+```sh
+docker compose build
+docker compose up --detach --wait
+```
+
+Open <http://127.0.0.1:8080>. The default path loads the clearly labeled
+deterministic synthetic fallback and needs no account or credential.
+
+To mount an already generated public-Umbra prepared bundle read-only:
+
+```sh
+docker compose -f compose.yaml -f compose.prepared.yaml up --detach --wait
+```
+
+See the [standalone demo runbook](docs/operations/standalone-demo.md) for fresh
+setup, prepared-data staging, persistence, health checks, shutdown, and recovery.
+Use the [scripted analyst story](docs/operations/analyst-story.md) for a concise
+walkthrough.
+
+## Native development
+
+Requirements: Python 3.12–3.13, [uv](https://docs.astral.sh/uv/), Node.js 20.19+
+and npm 10+.
 
 ```sh
 make setup
-```
-
-Run every local quality gate:
-
-```sh
 make check
 ```
 
-Start the backend and workbench in separate terminals:
+Start the API and web app in separate terminals:
 
 ```sh
 make dev-api
 make dev-web
 ```
 
-The local health endpoint is `http://127.0.0.1:8000/health`. The Vite development server prints the workbench URL when it starts.
+The API health endpoint is <http://127.0.0.1:8000/health>; Vite prints the web
+URL. See [CONTRIBUTING.md](CONTRIBUTING.md) and the
+[Git/ticket workflow](plans/GIT_WORKFLOW.md) before changing code.
 
-Run a bounded live catalog smoke test:
+## Reproduce the public Umbra demonstration
 
-```sh
-uv run echoatlas-catalog \
-  --max-catalogs 120 \
-  --max-items 100 \
-  --report-output data/umbra-catalog-report.json \
-  --index-output data/umbra-acquisition-index.json
-```
-
-This command only reads small STAC JSON and S3 listing XML documents. Object URLs and declared sizes are indexed, but raster payloads are never requested. See [the catalog indexer documentation](docs/architecture/catalog-indexer.md).
-
-Search a bounded AOI across provider-neutral catalog metadata:
-
-```bash
-uv run echoatlas-search-catalog \
-  --bbox=-112.2,40.45,-112.05,40.6 \
-  --start 2025-06-01T00:00:00Z \
-  --end 2025-08-01T00:00:00Z \
-  --provider sentinel-1 \
-  --page-size 5
-```
-
-The versioned search returns provider-reported acquisition footprints and metadata only. It does not download imagery, claim coverage outside returned footprints, or decide that acquisitions form a valid analysis pair. See [catalog search contract v1](docs/architecture/catalog-search-v1.md).
-
-Download the approved pair into the Git-ignored local cache:
+The exact approved object identities, sizes, ETags, access evidence, and
+CRC64NVME checksums are pinned in
+`fixtures/demo/selection-manifest.v1.json`. The two inputs total about 524 MB and
+stay in the Git-ignored `data/` cache.
 
 ```sh
 uv run echoatlas-acquire \
   --manifest fixtures/demo/selection-manifest.v1.json \
   --data-root data
-```
 
-The pinned inputs total about 524 MB. Downloads are allowlisted, resumable, size-bounded, and verified against the manifest's full-object CRC64NVME checksums before atomic cache promotion. See [the acquisition cache documentation](docs/architecture/acquisition-cache.md).
-
-Produce the aligned working rasters, display previews, thumbnails, and quality/run reports:
-
-```sh
 uv run echoatlas-process-previews \
   --manifest fixtures/demo/selection-manifest.v1.json \
   --data-root data
 ```
 
-The default run uses an EPSG:32612 one-meter grid, bilinear resampling, exact approved-AOI masking, no speckle filter, and independent 2–98% display stretches. These are engineering preview choices, not calibrated SAR normalization or change detection. See [the SAR preview processing documentation](docs/architecture/sar-preview-processing.md).
-
-Generate the deterministic baseline score, mask, overlay, and pending candidate GeoJSON from the verified preview run:
+Use the preview run path printed by that command:
 
 ```sh
 uv run echoatlas-change-candidates \
-  --preview-run data/derived/echoatlas-bingham-canyon-2025-v1/preview-48b949a1b72ac7f8f54d \
+  --preview-run data/derived/echoatlas-bingham-canyon-2025-v1/<preview-run> \
   --data-root data
-```
 
-The score threshold, two-pixel registration tolerance, morphology, connectivity, minimum component size, and candidate-count guard are explicit parameters stored with the output. The default policy is an engineering heuristic for human review, not calibrated confidence. See [the baseline change-candidate documentation](docs/architecture/change-candidate-baseline.md).
-
-Stage the validated real comparison for the local workbench:
-
-```sh
 uv run echoatlas-prepare-workbench-demo \
   --selection-manifest fixtures/demo/selection-manifest.v1.json \
-  --preview-run data/derived/echoatlas-bingham-canyon-2025-v1/preview-48b949a1b72ac7f8f54d \
-  --change-run data/derived/echoatlas-bingham-canyon-2025-v1/changes/change-9c8a27b2a55081fc6b07 \
+  --preview-run data/derived/echoatlas-bingham-canyon-2025-v1/<preview-run> \
+  --change-run data/derived/echoatlas-bingham-canyon-2025-v1/changes/<change-run> \
   --output apps/workbench/public/generated-demo
 ```
 
-The command validates manifest lineage, hashes, sizes, dimensions, the quality report, and all 26 candidate records before atomically staging thumbnails, display evidence, candidate GeoJSON, and a runtime bundle. The destination is Git-ignored. Raw and aligned GeoTIFFs, cache/provider payloads, generated real-data artifacts, and assessment state remain outside version control. The destination must not already exist; remove or archive an earlier generated directory deliberately before rebuilding it.
+The final staging step validates lineage, hashes, dimensions, quality evidence,
+and all candidate records before atomically publishing display files to the local
+workbench. It never commits raw imagery, caches, provider payloads, generated
+real-data artifacts, credentials, or assessments.
 
-Generate and validate the tiny deterministic contract demonstration:
+## Architecture and trust boundary
 
-```sh
-uv run echoatlas-generate-demo-bundle \
-  --output data/fixtures/eat007-valid \
-  --case valid
-uv run echoatlas-validate-bundle \
-  --bundle data/fixtures/eat007-valid
-```
+- `services/backend` — FastAPI orchestration plus deterministic acquisition,
+  raster, catalog, candidate, bundle, and evaluation domains.
+- `apps/workbench` — React/TypeScript Explore and Analyze experience.
+- `schemas` — strict, versioned portable analysis-bundle contracts.
+- `fixtures` — source selections and synthetic contract fixtures, never raw SAR.
+- `deploy` and `compose*.yaml` — pinned, non-root, health-checked local packaging.
+- `plans` — product decisions, tickets, risks, and approval gates.
 
-The generated pixels and metadata are synthetic, CC0-licensed, and contain no Umbra imagery. The validator checks the exact contract version, bounded JSON, safe paths, hashes, sizes, media signatures, partial state, and cross-document references. See [the analysis-bundle v1 documentation](docs/architecture/analysis-bundle-v1.md).
+Provider payloads stop at validated adapters. Deterministic processing does not
+depend on the UI, Palantir, or AI. The portable bundle is the contract among the
+processor, workbench, tests, and optional platform adapters.
 
-Project a validated bundle into the optional, network-free Palantir import contract:
+Start with the [architecture overview](docs/architecture/README.md),
+[dataset card](docs/data/bingham-canyon-dataset-card.md),
+[release evidence](docs/qa/release-evidence-v1.md), and
+[planning package](plans/README.md).
 
-```sh
-uv run echoatlas-plan-palantir-import \
-  --bundle data/fixtures/eat007-valid \
-  --output data/platform/palantir-import-plan.json
-```
+## License and attribution
 
-This writes a local JSON plan only. It performs no authentication or remote writes. See the [Palantir feasibility spike](docs/platform/palantir-feasibility.md) for the current mapping, authenticated plan/application inventory, and remaining live-validation gates.
-
-Normalize a validated bundle into deterministic CSV tables suitable for the next
-Palantir dataset-import checkpoint:
-
-```sh
-uv run echoatlas-package-palantir-import \
-  --bundle data/fixtures/eat007-valid \
-  --output data/platform/palantir-import-package
-```
-
-The destination must not already exist. Package version 1.3.0 describes all six
-object families, the aggregate relationship table, one two-column join table per
-declared link type, and media references. CSV files are emitted only for tables
-that contain rows. Zero-row families are marked `upload_ready: false` instead of
-producing a header-only file that a target could misinterpret as data. The manifest
-contains row counts, columns, and SHA-256 hashes. Nested values use canonical JSON
-text inside CSV cells. Recognized object timestamps retain their original RFC3339
-columns and add UTC epoch-millisecond companion columns for an explicit target-side
-timestamp conversion. Values with sub-millisecond precision fail packaging instead
-of being silently truncated. The command still performs no authentication or
-remote writes and does not create Ontology resources.
-
-Review the approval-gated [analyst workbench interface specification](docs/design/workbench-interface-v1.md) and [standalone prototype](prototypes/eat-des-001/README.md). The prototype is separate from production React and uses only synthetic design material.
-
-## Delivery
-
-Read [the planning package](plans/README.md), [contribution guide](CONTRIBUTING.md), and [Git workflow](plans/GIT_WORKFLOW.md) before implementation. Every change maps to one Asana `EAT-*` ticket and a dedicated branch.
-
-## Licensing and data
-
-Source code is available under the [MIT License](LICENSE). Imagery, metadata, basemaps, event context, and generated demonstration artifacts retain their own licenses and attribution requirements; see [third-party data](THIRD_PARTY_DATA.md).
+Source code is MIT licensed. Umbra imagery and qualifying derivatives remain
+CC BY 4.0. Basemaps, catalog metadata, and other third-party material retain their
+own terms. See [THIRD_PARTY_DATA.md](THIRD_PARTY_DATA.md); the MIT license does not
+grant rights to third-party data.

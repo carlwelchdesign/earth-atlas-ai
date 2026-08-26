@@ -20,3 +20,14 @@ See [Acquisition cache](acquisition-cache.md) for the pinned-object download bou
 See [Baseline change candidates](change-candidate-baseline.md) for the explicit engineering score, registration tolerance, cleanup, vectorization, candidate contract, and interpretation boundary.
 
 See [Analysis bundle v1](analysis-bundle-v1.md) for the provider-neutral schema, runtime trust boundary, compatibility policy, migration rules, and synthetic fixture evidence.
+
+## Owner-review deployment
+
+EAT-015 packages this modular monolith as two non-root containers: the FastAPI
+backend and a static nginx workbench that proxies `/v1` and `/health` to the
+backend on the Compose network. The default stack uses the synthetic fallback;
+an optional overlay mounts a prepared, validated real-derived bundle read-only.
+Both paths preserve native development, require neither Palantir nor an AI
+provider, and bind host ports only to loopback. Browser-local append-only
+assessment history is deliberately separate from deterministic processing and is
+not represented as durable multi-user audit storage.

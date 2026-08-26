@@ -439,6 +439,32 @@ describe("App", () => {
     expect(screen.getAllByText("Rejected")).toHaveLength(3);
   });
 
+  it("restores local assessment history after the workbench remounts", async () => {
+    const first = render(<App loadBundle={load()} />);
+    fireEvent.click(
+      await screen.findByRole("button", { name: /C-001.*13,000 m²/ }),
+    );
+    fireEvent.click(screen.getByRole("button", { name: "Record assessment" }));
+    fireEvent.change(screen.getByLabelText(/Analyst note/), {
+      target: { value: "Persist this owner-review decision." },
+    });
+    fireEvent.click(screen.getByRole("button", { name: "Append assessment" }));
+    await screen.findByRole("button", { name: "Correct assessment" });
+    first.unmount();
+
+    render(<App loadBundle={load()} />);
+    fireEvent.click(
+      await screen.findByRole("button", { name: /C-001.*13,000 m²/ }),
+    );
+    expect(
+      await screen.findByRole("button", { name: "Correct assessment" }),
+    ).toBeInTheDocument();
+    fireEvent.click(screen.getByRole("tab", { name: "History" }));
+    expect(
+      screen.getByText("Persist this owner-review decision."),
+    ).toBeInTheDocument();
+  });
+
   it("preserves the assessment draft after a failed save and retries idempotently", async () => {
     const delegate = new InMemoryAssessmentStore({
       candidateIds: demoBundle.candidates.map((candidate) => candidate.id),

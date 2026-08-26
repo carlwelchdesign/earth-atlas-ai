@@ -1,0 +1,17 @@
+services:
+  backend:
+    environment:
+      ECHOATLAS_PREPARED_BUNDLE_PATH: /app/prepared-demo/bundle.json
+    volumes:
+      - type: bind
+        source: ${ECHOATLAS_PREPARED_DEMO_DIR:-./apps/workbench/public/generated-demo}
+        target: /app/prepared-demo
+        read_only: true
+
+  workbench:
+    volumes:
+      - type: bind
+        source: ${ECHOATLAS_PREPARED_DEMO_DIR:-./apps/workbench/public/generated-demo}
+        target: /usr/share/nginx/html/generated-demo
+        read_only: true
+

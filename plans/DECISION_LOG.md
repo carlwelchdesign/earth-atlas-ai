@@ -103,3 +103,11 @@
 - Decision: close EAT-014 with an **adjust** result. Foundry may be used as an optional downstream Ontology, media, Map, restricted application, and private-hosting layer. The provider-neutral bundle and standalone deterministic runtime remain canonical; processing policy, assessments, and provider access do not move exclusively into Foundry.
 - Why: live evidence proves the synthetic object/link/raster path, read-only OSDK application, and bounded real-derived static profile, but not real Media Set/Ontology-backed Umbra imagery, cleanup, exact tier ceilings/duration, public scale, or cost. Keeping the adapter optional captures demonstrated value without converting untested platform behavior into product dependencies.
 - Revisit when: a deployment has an approved Palantir operating model, real-imagery scale and licensing evidence, cleanup/retention procedures, known quotas and cost, and a reason the standalone bundle boundary is insufficient.
+
+## D-014 — Package the AI-disabled standalone before external SAR adjudication
+
+- Date: 2026-08-25
+- Status: accepted for owner-review packaging; public release remains blocked.
+- Decision: EAT-015 may build and verify the reproducible standalone package while EAT-012 awaits qualified independent SAR adjudication and EAT-013 remains gated. The shipped package keeps AI disabled and labels benchmark/AI work as unavailable roadmap.
+- Why: containerization, runbooks, security review, responsive evidence, and truthful portfolio packaging are independently verifiable engineering work. Waiting to package would not accelerate the external review, while pretending the review or AI exists would violate the product boundary.
+- Revisit when: EAT-012 is adjudicated and EAT-013 either passes its governance thresholds or is explicitly removed. Only then may benchmark or AI capabilities move from roadmap to shipped documentation.

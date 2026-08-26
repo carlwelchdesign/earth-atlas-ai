@@ -96,7 +96,7 @@ Unsupported questions return an explicit insufficiency response. Deterministic c
 - latency and cost recorded separately from answer quality;
 - user edits/rejections retained locally as evaluation evidence, with no silent prompt training or external upload.
 
-AI remains disabled if the evaluation threshold is not met or a provider key is absent. The deterministic workbench must remain fully usable.
+AI remains disabled if the evaluation threshold is not met or a provider key is absent. The deterministic workbench must remain fully usable. The EAT-015 owner-review package deliberately ships with AI disabled because EAT-012 independent SAR adjudication is incomplete and EAT-013 has not begun; no model key or model call is part of the release path.
 
 ## Trust, rights, and public-release gates
 
