@@ -59,21 +59,20 @@ A bounded live request resolved `Sacramento, California` through the local-devel
 
 With Umbra intentionally deselected for a fast live check, the local API returned 15 actual Sentinel-1 acquisition records for the approved Bingham Canyon AOI and 2025-06-01 through 2025-08-01 range. The UI displayed `Sentinel-1 complete · 15 records`, source links, licenses, metadata cards, and the corresponding provider footprints. These are provider-reported availability records, not imagery pixels or scientifically approved pairs.
 
-## Provisional performance budget
+## Approved performance budget
 
-Pending owner agreement, use these EAT-018 limits:
+Carl approved these EAT-018 limits on 2026-08-25:
 
 - MapLibre lazy chunk: at most 300 kB gzip;
 - total first Explore JavaScript, including MapLibre: at most 450 kB gzip;
 - application CSS: at most 25 kB gzip; and
 - no raster acquisition download during catalog search.
 
-Current output is within these provisional limits. Basemap tile transfer remains external and must receive a production provider, privacy, caching, attribution, and terms decision before deployment.
+Current output is within these limits. Basemap tile transfer remains external and must receive a public/commercial provider, privacy, caching, attribution, quota, and terms decision before a public or commercial release.
 
-## Remaining before EAT-018 completion
+## External configuration and later release gates
 
-- owner agreement on the provisional performance budget;
-- MapTiler account/key activation and origin/API restrictions before private R&D hosting; and
-- public/commercial provider, SLA, privacy, caching, quota, and spending approval as a separate release gate.
+- MapTiler account/key activation and origin/API restrictions are required before private R&D hosting; and
+- public/commercial provider, SLA, privacy, caching, quota, and spending approval remain a separate release gate.
 
 Pointer rectangle drag handles are intentionally deferred: exact-coordinate editing plus cancelable two-corner redraw satisfy the approved accessible editing boundary without making a pointer-only interaction mandatory. The browser accessibility-tree and focus-management pass is complete; a signed assistive-technology study remains a release-quality enhancement rather than an EAT-018 implementation claim.
