@@ -36,6 +36,7 @@ interface WorkbenchProps {
   bundle: WorkbenchBundle;
   platformConnection?: PlatformConnectionState;
   assessmentStore?: AssessmentStore;
+  onExplore?: () => void;
 }
 
 const zoomLevels = [1, 1.2, 1.4] as const;
@@ -45,6 +46,7 @@ export function Workbench({
   bundle,
   platformConnection = { status: "standalone" },
   assessmentStore,
+  onExplore,
 }: WorkbenchProps) {
   const [selectedCandidateId, setSelectedCandidateId] = useState<string | null>(
     null,
@@ -159,6 +161,7 @@ export function Workbench({
         bundle={bundle}
         status={status}
         platformConnection={platformConnection}
+        onExplore={onExplore}
       />
       <QualityBanner bundle={bundle} status={status} />
       {stale ? (
@@ -268,12 +271,14 @@ interface MissionHeaderProps {
   bundle: WorkbenchBundle;
   status: "success" | "degraded" | "missing" | "stale";
   platformConnection: PlatformConnectionState;
+  onExplore?: () => void;
 }
 
 function MissionHeader({
   bundle,
   status,
   platformConnection,
+  onExplore,
 }: MissionHeaderProps) {
   const before = acquisitionByRole(bundle, "before");
   const after = acquisitionByRole(bundle, "after");
@@ -317,6 +322,11 @@ function MissionHeader({
         </div>
       </dl>
       <div className="mission-status">
+        {onExplore ? (
+          <button className="mode-switch-button" onClick={onExplore}>
+            Return to Explore
+          </button>
+        ) : null}
         <span className={`status-pill status-${status}`}>
           <span aria-hidden="true">{labels[status].icon}</span>
           {labels[status].text}

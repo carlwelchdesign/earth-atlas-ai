@@ -14,6 +14,11 @@ import {
   type PlatformConnectionState,
 } from "./workbench/palantir";
 import { StateNotice, Workbench } from "./workbench/Workbench";
+import { Explore } from "./explore/Explore";
+import type {
+  CatalogSearchClient,
+  PlaceSearchAdapter,
+} from "./explore/catalog";
 
 type LoadState =
   | { status: "loading" }
@@ -24,17 +29,27 @@ export function App({
   loadBundle = loadWorkbenchBundle,
   loadPlatformConnection = loadPalantirConnectionState,
   assessmentStore,
+  initialMode = "analyze",
+  catalog,
+  places,
+  renderExploreMap = true,
 }: {
   loadBundle?: BundleLoader;
   loadPlatformConnection?: () => Promise<PlatformConnectionState>;
   assessmentStore?: AssessmentStore;
+  initialMode?: "explore" | "analyze";
+  catalog?: CatalogSearchClient;
+  places?: PlaceSearchAdapter;
+  renderExploreMap?: boolean;
 }) {
+  const [mode, setMode] = useState(initialMode);
   const [attempt, setAttempt] = useState(0);
   const [state, setState] = useState<LoadState>({ status: "loading" });
   const [platformConnection, setPlatformConnection] =
     useState<PlatformConnectionState>(initialPlatformConnectionState);
 
   useEffect(() => {
+    if (mode === "explore") return;
     let active = true;
     loadBundle()
       .then((source) => parseWorkbenchBundle(source))
@@ -52,9 +67,10 @@ export function App({
     return () => {
       active = false;
     };
-  }, [loadBundle, attempt]);
+  }, [loadBundle, attempt, mode]);
 
   useEffect(() => {
+    if (mode === "explore") return;
     let active = true;
     loadPlatformConnection()
       .then((connection) => {
@@ -71,12 +87,23 @@ export function App({
     return () => {
       active = false;
     };
-  }, [loadPlatformConnection]);
+  }, [loadPlatformConnection, mode]);
 
   const retry = useCallback(() => {
     setState({ status: "loading" });
     setAttempt((current) => current + 1);
   }, []);
+
+  if (mode === "explore") {
+    return (
+      <Explore
+        onAnalyze={() => setMode("analyze")}
+        catalog={catalog}
+        places={places}
+        renderMap={renderExploreMap}
+      />
+    );
+  }
 
   if (state.status === "loading") {
     return (
@@ -117,6 +144,7 @@ export function App({
       bundle={state.bundle}
       platformConnection={platformConnection}
       assessmentStore={assessmentStore}
+      onExplore={() => setMode("explore")}
     />
   );
 }

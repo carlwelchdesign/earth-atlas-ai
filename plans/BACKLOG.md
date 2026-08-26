@@ -273,14 +273,16 @@ Prerequisites: `EAT-DES-002`, `EAT-017`.
 
 Acceptance:
 
-- [ ] MapLibre GL JS is isolated behind an Explore route/mode and does not replace the Analyze workbench.
+- [x] MapLibre GL JS is isolated behind an Explore route/mode and does not replace the Analyze workbench.
 - [ ] Place/coordinate search, AOI draw/edit/reset, acquisition footprints, filters, selected-acquisition details, legend, attribution, and coverage disclaimers work.
-- [ ] Basemap, footprint GeoJSON, geocoding, and raster sources use explicit replaceable adapters; the renderer owns no provider or processing policy.
+- [x] Basemap, footprint GeoJSON, geocoding, and raster sources use explicit replaceable adapters; the renderer owns no provider or processing policy.
 - [ ] A synchronized results list, keyboard controls, focus management, reduced-motion behavior, and responsive layouts pass accessibility review.
 - [ ] Loading, no-coverage, partial-provider, rate-limit, offline, invalid-AOI, and stale-result behavior is verified.
 - [ ] Behavior tests, an agreed performance budget, and desktop/mobile visual evidence pass.
 
 Non-goals: a real-time global mosaic, automatic pair approval, assessment changes, or proprietary map lock-in.
+
+Implementation checkpoint: the production vertical slice is active on `feature/eat-018-maplibre-explore`. MapLibre 6.6.0 renders an attributed development basemap, validated AOI, and normalized provider footprints behind an isolated Explore mode while Analyze remains intact. The EAT-017 client requests providers independently with a bounded timeout, preserves partial success, classifies permission/rate-limit/offline failures, and exposes provider reports instead of collapsing failures into zero results. Exact and two-corner pointer AOI editing, provider/date/product/polarization/resolution filters, map/list selection, source/license metadata, draft pair selection, and a focus-contained metadata-review dialog have automated coverage. A live local Bingham Canyon check returned 15 actual Sentinel-1 metadata records with matching footprints and no browser errors at desktop/mobile widths. Durable desktop, mobile, and 200%-responsive-equivalent screenshots are recorded. This is not ticket completion: a production geocoder/basemap decision, manual browser-zoom/assistive-technology evidence, optional pointer drag handles, and owner agreement on the provisional performance budget remain open. See `docs/qa/explore-interface-v1.md`.
 
 ### EAT-019 — Connect Explore selection to the Analyze pipeline
 
