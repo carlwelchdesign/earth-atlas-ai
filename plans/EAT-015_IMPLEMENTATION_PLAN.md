@@ -1,7 +1,7 @@
 # EAT-015 implementation plan
 
-Status: implementation and local verification complete on
-`feature/eat-015-release-package`; pull-request/CI delivery pending.
+Status: complete in [PR #48](https://github.com/carlwelchdesign/earth-atlas-ai/pull/48),
+merged as `cbaf17f36713d923b91eef7de3556fa81e247bf8` after green CI.
 
 ## Outcome
 
