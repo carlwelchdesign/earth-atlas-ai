@@ -1,10 +1,12 @@
 from datetime import UTC, datetime
 from typing import Literal
 
+import pytest
 from fastapi.testclient import TestClient
 
 from echoatlas import __version__
 from echoatlas.api.app import create_app
+from echoatlas.places import NominatimPlace, PlaceSearchService
 from echoatlas.processor.catalog.search import CatalogSearchService
 from echoatlas.processor.catalog.search_models import (
     CatalogLicense,
@@ -24,6 +26,16 @@ class ApiAdapter:
 
     def search(self, request: CatalogSearchRequest, *, limit: int) -> ProviderSearchPage:
         return ProviderSearchPage(items=(_api_item(),))
+
+
+class PlaceAdapter:
+    def search(self, query: str) -> NominatimPlace | None:
+        assert query == "Sacramento"
+        return NominatimPlace(
+            label="Sacramento, California, United States",
+            latitude=38.5810606,
+            longitude=-121.493895,
+        )
 
 
 def _api_request() -> CatalogSearchRequest:
@@ -98,7 +110,11 @@ def test_openapi_describes_health_and_versioned_catalog_search() -> None:
 
     assert response.status_code == 200
     assert response.json()["info"]["title"] == "EchoAtlas API"
-    assert set(response.json()["paths"]) == {"/health", "/v1/catalog/search"}
+    assert set(response.json()["paths"]) == {
+        "/health",
+        "/v1/catalog/search",
+        "/v1/places/resolve",
+    }
 
 
 def test_catalog_search_endpoint_returns_normalized_provider_results() -> None:
@@ -114,3 +130,19 @@ def test_catalog_search_endpoint_returns_normalized_provider_results() -> None:
     assert response.json()["contract_version"] == "1.0.0"
     assert response.json()["results"][0]["source"]["item_id"] == "api-item"
     assert "source_document" not in response.text
+
+
+def test_place_search_endpoint_returns_a_bounded_normalized_aoi() -> None:
+    response = TestClient(create_app(place_search=PlaceSearchService(PlaceAdapter()))).post(
+        "/v1/places/resolve", json={"query": "Sacramento"}
+    )
+
+    assert response.status_code == 200
+    body = response.json()
+    assert body | {"bbox": None} == {
+        "label": "Sacramento, California, United States",
+        "bbox": None,
+        "provider": "OpenStreetMap Nominatim",
+        "attribution_url": "https://www.openstreetmap.org/copyright",
+    }
+    assert body["bbox"] == pytest.approx([-121.568895, 38.5060606, -121.418895, 38.6560606])

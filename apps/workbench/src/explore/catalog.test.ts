@@ -1,6 +1,10 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 
-import { CatalogClientError, HttpCatalogSearchClient } from "./catalog";
+import {
+  CatalogClientError,
+  HttpCatalogSearchClient,
+  HttpPlaceSearchAdapter,
+} from "./catalog";
 import {
   BINGHAM_CANYON_BBOX,
   polygonFromBbox,
@@ -128,5 +132,82 @@ describe("HttpCatalogSearchClient", () => {
     );
     await vi.advanceTimersByTimeAsync(25);
     await rejection;
+  });
+});
+
+describe("HttpPlaceSearchAdapter", () => {
+  it("resolves coordinates locally without disclosing them to a provider", async () => {
+    const fetchMock = vi.fn();
+    vi.stubGlobal("fetch", fetchMock);
+
+    const result = await new HttpPlaceSearchAdapter().resolve(
+      "38.5811, -121.4939",
+    );
+    expect(result).toMatchObject({
+      label: "38.5811, -121.4939",
+      provider: "Local coordinate resolver",
+      attributionUrl: null,
+    });
+    expect(result.bbox).toEqual([
+      expect.closeTo(-121.5689),
+      expect.closeTo(38.5061),
+      expect.closeTo(-121.4189),
+      expect.closeTo(38.6561),
+    ]);
+    expect(fetchMock).not.toHaveBeenCalled();
+  });
+
+  it("normalizes a bounded server-side place result", async () => {
+    const fetchMock = vi
+      .fn<(input: RequestInfo | URL, init?: RequestInit) => Promise<Response>>()
+      .mockResolvedValue(
+        new Response(
+          JSON.stringify({
+            label: "Sacramento, California, United States",
+            bbox: [-121.568895, 38.5060606, -121.418895, 38.6560606],
+            provider: "OpenStreetMap Nominatim",
+            attribution_url: "https://www.openstreetmap.org/copyright",
+          }),
+          { status: 200, headers: { "content-type": "application/json" } },
+        ),
+      );
+    vi.stubGlobal("fetch", fetchMock);
+
+    await expect(
+      new HttpPlaceSearchAdapter("/places").resolve("Sacramento"),
+    ).resolves.toEqual({
+      label: "Sacramento, California, United States",
+      bbox: [-121.568895, 38.5060606, -121.418895, 38.6560606],
+      provider: "OpenStreetMap Nominatim",
+      attributionUrl: "https://www.openstreetmap.org/copyright",
+    });
+    expect(fetchMock).toHaveBeenCalledOnce();
+    expect(fetchMock.mock.calls[0]?.[0]).toBe("/places");
+    expect(fetchMock.mock.calls[0]?.[1]?.method).toBe("POST");
+    expect(fetchMock.mock.calls[0]?.[1]?.body).toBe(
+      JSON.stringify({ query: "Sacramento" }),
+    );
+    expect(fetchMock.mock.calls[0]?.[1]?.signal).toBeInstanceOf(AbortSignal);
+  });
+
+  it("rejects invalid untrusted place data", async () => {
+    vi.stubGlobal(
+      "fetch",
+      vi.fn().mockResolvedValue(
+        new Response(
+          JSON.stringify({
+            label: "Too broad",
+            bbox: [-120, 30, -110, 40],
+            provider: "Untrusted",
+            attribution_url: null,
+          }),
+          { status: 200, headers: { "content-type": "application/json" } },
+        ),
+      ),
+    );
+
+    await expect(
+      new HttpPlaceSearchAdapter().resolve("Too broad"),
+    ).rejects.toThrow("25-square-degree limit");
   });
 });

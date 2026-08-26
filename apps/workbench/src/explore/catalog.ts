@@ -1,4 +1,9 @@
-import type { CatalogSearchRequest, CatalogSearchResponse } from "./model";
+import {
+  validateBbox,
+  type BBox,
+  type CatalogSearchRequest,
+  type CatalogSearchResponse,
+} from "./model";
 
 export interface CatalogSearchClient {
   search: (
@@ -85,9 +90,78 @@ export class HttpCatalogSearchClient implements CatalogSearchClient {
 }
 
 export interface PlaceSearchAdapter {
-  resolve(
-    query: string,
-  ): Promise<{ label: string; bbox: [number, number, number, number] }>;
+  resolve(query: string): Promise<PlaceSearchResult>;
+}
+
+export interface PlaceSearchResult {
+  label: string;
+  bbox: BBox;
+  provider: string;
+  attributionUrl: string | null;
+}
+
+export class HttpPlaceSearchAdapter implements PlaceSearchAdapter {
+  constructor(
+    private readonly endpoint = "/v1/places/resolve",
+    private readonly timeoutMs = 10_000,
+  ) {}
+
+  async resolve(query: string): Promise<PlaceSearchResult> {
+    const coordinateResult = resolveCoordinates(query);
+    if (coordinateResult) return coordinateResult;
+    const controller = new AbortController();
+    const timeoutId = window.setTimeout(
+      () => controller.abort(),
+      this.timeoutMs,
+    );
+    try {
+      const response = await fetch(this.endpoint, {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ query: query.trim() }),
+        signal: controller.signal,
+      });
+      if (!response.ok) {
+        const body: unknown = await response.json().catch(() => null);
+        const detail =
+          typeof body === "object" && body !== null && "detail" in body
+            ? String(body.detail)
+            : "Place search did not complete.";
+        throw new Error(detail);
+      }
+      const body: unknown = await response.json();
+      if (typeof body !== "object" || body === null) {
+        throw new Error("Place search returned invalid data.");
+      }
+      const label = "label" in body ? body.label : null;
+      const bbox = "bbox" in body ? body.bbox : null;
+      const provider = "provider" in body ? body.provider : null;
+      const attributionUrl =
+        "attribution_url" in body ? body.attribution_url : null;
+      if (
+        typeof label !== "string" ||
+        !Array.isArray(bbox) ||
+        !bbox.every((value) => typeof value === "number") ||
+        typeof provider !== "string" ||
+        (attributionUrl !== null && typeof attributionUrl !== "string")
+      ) {
+        throw new Error("Place search returned invalid data.");
+      }
+      return {
+        label,
+        bbox: validateBbox(bbox),
+        provider,
+        attributionUrl,
+      };
+    } catch (error) {
+      if (error instanceof DOMException && error.name === "AbortError") {
+        throw new Error("Place search timed out. Try again.", { cause: error });
+      }
+      throw error;
+    } finally {
+      window.clearTimeout(timeoutId);
+    }
+  }
 }
 
 export class BoundedPlaceSearchAdapter implements PlaceSearchAdapter {
@@ -102,26 +176,40 @@ export class BoundedPlaceSearchAdapter implements PlaceSearchAdapter {
           number,
           number,
         ],
+        provider: "Local test resolver",
+        attributionUrl: null,
       });
     }
-    const coordinates = query.split(",").map((part) => Number(part.trim()));
-    if (coordinates.length === 2 && coordinates.every(Number.isFinite)) {
-      const [latitude, longitude] = coordinates;
-      const offset = 0.075;
-      return Promise.resolve({
-        label: `${latitude.toFixed(4)}, ${longitude.toFixed(4)}`,
-        bbox: [
-          longitude - offset,
-          latitude - offset,
-          longitude + offset,
-          latitude + offset,
-        ] as [number, number, number, number],
-      });
-    }
+    const coordinateResult = resolveCoordinates(query);
+    if (coordinateResult) return Promise.resolve(coordinateResult);
     return Promise.reject(
       new Error(
         "Place lookup is not configured yet. Enter latitude, longitude or Bingham Canyon, Utah.",
       ),
     );
   }
+}
+
+function resolveCoordinates(query: string): PlaceSearchResult | null {
+  const coordinates = query.split(",").map((part) => Number(part.trim()));
+  if (coordinates.length !== 2 || !coordinates.every(Number.isFinite)) {
+    return null;
+  }
+  const [latitude, longitude] = coordinates;
+  if (latitude < -90 || latitude > 90 || longitude < -180 || longitude > 180) {
+    throw new Error("Latitude must be -90 to 90 and longitude -180 to 180.");
+  }
+  const offset = 0.075;
+  const rounded = (value: number) => Number(value.toFixed(6));
+  return {
+    label: `${latitude.toFixed(4)}, ${longitude.toFixed(4)}`,
+    bbox: validateBbox([
+      rounded(Math.max(-180, longitude - offset)),
+      rounded(Math.max(-90, latitude - offset)),
+      rounded(Math.min(180, longitude + offset)),
+      rounded(Math.min(90, latitude + offset)),
+    ]),
+    provider: "Local coordinate resolver",
+    attributionUrl: null,
+  };
 }

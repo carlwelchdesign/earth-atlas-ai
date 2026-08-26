@@ -1,8 +1,15 @@
-import { fireEvent, render, screen, within } from "@testing-library/react";
+import {
+  fireEvent,
+  render,
+  screen,
+  waitFor,
+  within,
+} from "@testing-library/react";
+import axe from "axe-core";
 import { describe, expect, it, vi } from "vitest";
 
 import { App } from "../App";
-import type { CatalogSearchClient } from "./catalog";
+import type { CatalogSearchClient, PlaceSearchAdapter } from "./catalog";
 import {
   polygonFromBbox,
   type CatalogItem,
@@ -105,6 +112,17 @@ function client(result = response()): CatalogSearchClient {
 }
 
 describe("Explore", () => {
+  it("has no automated accessibility violations in the list-equivalent path", async () => {
+    render(
+      <App initialMode="explore" catalog={client()} renderExploreMap={false} />,
+    );
+
+    const results = await axe.run(document.body, {
+      rules: { "color-contrast": { enabled: false } },
+    });
+    expect(results.violations).toEqual([]);
+  });
+
   it("keeps the map supplementary and searches the provider-neutral catalog", async () => {
     const catalog = client();
     render(
@@ -113,6 +131,9 @@ describe("Explore", () => {
 
     expect(
       screen.getByText("The globe is navigation—not imagery coverage."),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByText(/Place names go to OpenStreetMap Nominatim/),
     ).toBeInTheDocument();
     fireEvent.click(
       screen.getByRole("button", { name: "Search reported acquisitions" }),
@@ -289,21 +310,65 @@ describe("Explore", () => {
     expect(catalog.search).not.toHaveBeenCalled();
   });
 
-  it("offers a pointer AOI mode with an Escape exit and exact-coordinate fallback", () => {
+  it("offers a pointer AOI mode with an Escape exit and exact-coordinate fallback", async () => {
     render(
       <App initialMode="explore" catalog={client()} renderExploreMap={false} />,
     );
-    fireEvent.click(screen.getByRole("button", { name: "Draw AOI on map" }));
+    const drawButton = screen.getByRole("button", {
+      name: "Draw AOI on map",
+    });
+    fireEvent.click(drawButton);
     expect(screen.getByRole("status")).toHaveTextContent(
-      "Select two opposite corners",
+      "Select the first corner",
     );
+    expect(drawButton).toHaveAttribute("aria-pressed", "true");
     expect(
       screen.getByLabelText("West, south, east, north"),
     ).toBeInTheDocument();
 
     fireEvent.keyDown(window, { key: "Escape" });
     expect(
-      screen.queryByText("Select two opposite corners"),
+      screen.queryByText(/Select the first corner/),
     ).not.toBeInTheDocument();
+    expect(drawButton).toHaveAttribute("aria-pressed", "false");
+    await waitFor(() => expect(drawButton).toHaveFocus());
+  });
+
+  it("resolves an explicit place submission and exposes geocoder attribution", async () => {
+    const places: PlaceSearchAdapter = {
+      resolve: vi.fn().mockResolvedValue({
+        label: "Sacramento, California, United States",
+        bbox: [-121.568895, 38.5060606, -121.418895, 38.6560606],
+        provider: "OpenStreetMap Nominatim",
+        attributionUrl: "https://www.openstreetmap.org/copyright",
+      }),
+    };
+    render(
+      <App
+        initialMode="explore"
+        catalog={client()}
+        places={places}
+        renderExploreMap={false}
+      />,
+    );
+    fireEvent.change(screen.getByLabelText("Place or latitude, longitude"), {
+      target: { value: "Sacramento" },
+    });
+    fireEvent.click(screen.getByRole("button", { name: "Go" }));
+
+    expect(
+      await screen.findByRole("heading", {
+        name: "Sacramento, California, United States",
+      }),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByText("Current AOI source: OpenStreetMap Nominatim", {
+        exact: false,
+      }),
+    ).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "source terms" })).toHaveAttribute(
+      "href",
+      "https://www.openstreetmap.org/copyright",
+    );
   });
 });

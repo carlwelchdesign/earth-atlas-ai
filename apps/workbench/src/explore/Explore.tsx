@@ -2,8 +2,8 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { KeyboardEvent, RefObject } from "react";
 
 import {
-  BoundedPlaceSearchAdapter,
   CatalogClientError,
+  HttpPlaceSearchAdapter,
   HttpCatalogSearchClient,
   type CatalogSearchClient,
   type PlaceSearchAdapter,
@@ -28,7 +28,7 @@ type Pair = { before: CatalogItem | null; after: CatalogItem | null };
 export function Explore({
   onAnalyze,
   catalog = new HttpCatalogSearchClient(),
-  places = new BoundedPlaceSearchAdapter(),
+  places = new HttpPlaceSearchAdapter(),
   renderMap = true,
 }: {
   onAnalyze: () => void;
@@ -38,6 +38,11 @@ export function Explore({
 }) {
   const [query, setQuery] = useState("Bingham Canyon, Utah");
   const [placeLabel, setPlaceLabel] = useState("Bingham Canyon, Utah");
+  const [placeSource, setPlaceSource] = useState<{
+    provider: string;
+    attributionUrl: string | null;
+  }>({ provider: "Preset AOI", attributionUrl: null });
+  const [placeLoading, setPlaceLoading] = useState(false);
   const [bbox, setBbox] = useState<BBox>(BINGHAM_CANYON_BBOX);
   const [bboxDraft, setBboxDraft] = useState(BINGHAM_CANYON_BBOX.join(", "));
   const [providers, setProviders] = useState<ProviderId[]>([
@@ -58,8 +63,13 @@ export function Explore({
   const [pair, setPair] = useState<Pair>({ before: null, after: null });
   const [reviewOpen, setReviewOpen] = useState(false);
   const [editingAoi, setEditingAoi] = useState(false);
+  const [drawingStep, setDrawingStep] = useState<
+    "awaiting-first" | "awaiting-second"
+  >("awaiting-first");
   const controller = useRef<AbortController | null>(null);
   const reviewButton = useRef<HTMLButtonElement>(null);
+  const drawButton = useRef<HTMLButtonElement>(null);
+  const bboxInput = useRef<HTMLTextAreaElement>(null);
 
   const selected =
     response?.results.find((item) => itemKey(item) === selectedKey) ?? null;
@@ -75,17 +85,25 @@ export function Explore({
   );
 
   const resolvePlace = async () => {
+    setPlaceLoading(true);
     try {
       const place = await places.resolve(query);
+      const nextBbox = validateBbox(place.bbox);
       setPlaceLabel(place.label);
-      setBbox(place.bbox);
-      setBboxDraft(place.bbox.join(", "));
+      setPlaceSource({
+        provider: place.provider,
+        attributionUrl: place.attributionUrl,
+      });
+      setBbox(nextBbox);
+      setBboxDraft(nextBbox.join(", "));
       if (response) setStatus("stale");
       setError(null);
     } catch (caught) {
       setError(
         caught instanceof Error ? caught.message : "Place lookup failed.",
       );
+    } finally {
+      setPlaceLoading(false);
     }
   };
 
@@ -112,8 +130,10 @@ export function Explore({
       setBboxDraft(validated.map((value) => value.toFixed(5)).join(", "));
       setPlaceLabel("Map-drawn WGS84 AOI");
       setEditingAoi(false);
+      setDrawingStep("awaiting-first");
       setStatus((current) => (current === "ready" ? "stale" : current));
       setError(null);
+      queueMicrotask(() => bboxInput.current?.focus());
     } catch (caught) {
       setError(
         caught instanceof Error ? caught.message : "The drawn AOI is invalid.",
@@ -121,14 +141,20 @@ export function Explore({
     }
   }, []);
 
+  const cancelDrawing = useCallback(() => {
+    setEditingAoi(false);
+    setDrawingStep("awaiting-first");
+    queueMicrotask(() => drawButton.current?.focus());
+  }, []);
+
   useEffect(() => {
     if (!editingAoi) return;
     const cancel = (event: globalThis.KeyboardEvent) => {
-      if (event.key === "Escape") setEditingAoi(false);
+      if (event.key === "Escape") cancelDrawing();
     };
     window.addEventListener("keydown", cancel);
     return () => window.removeEventListener("keydown", cancel);
-  }, [editingAoi]);
+  }, [cancelDrawing, editingAoi]);
 
   const search = async () => {
     if (providers.length === 0) {
@@ -324,9 +350,37 @@ export function Explore({
               value={query}
               onChange={(event) => setQuery(event.target.value)}
             />
-            <button type="submit">Go</button>
+            <button type="submit" disabled={placeLoading}>
+              {placeLoading ? "Finding…" : "Go"}
+            </button>
           </div>
-          <small>Local bounded resolver · replaceable geocoder adapter</small>
+          <small>
+            Place names go to OpenStreetMap Nominatim only when you press Go;
+            coordinates resolve locally.{" "}
+            <a
+              href="https://www.openstreetmap.org/copyright"
+              target="_blank"
+              rel="noreferrer"
+            >
+              Attribution
+            </a>
+            .
+          </small>
+          <small>
+            Current AOI source: {placeSource.provider}
+            {placeSource.attributionUrl ? (
+              <>
+                {" · "}
+                <a
+                  href={placeSource.attributionUrl}
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  source terms
+                </a>
+              </>
+            ) : null}
+          </small>
         </form>
       </section>
 
@@ -381,16 +435,32 @@ export function Explore({
             <label htmlFor="bbox">West, south, east, north</label>
             <textarea
               id="bbox"
+              ref={bboxInput}
               value={bboxDraft}
               onChange={(event) => setBboxDraft(event.target.value)}
             />
             <button onClick={applyBbox}>Apply exact AOI</button>
-            <button onClick={() => setEditingAoi(true)}>Draw AOI on map</button>
+            <button
+              ref={drawButton}
+              aria-pressed={editingAoi}
+              onClick={() => {
+                setDrawingStep("awaiting-first");
+                setEditingAoi(true);
+              }}
+            >
+              Draw AOI on map
+            </button>
             <button
               onClick={() => {
                 setBbox(BINGHAM_CANYON_BBOX);
                 setBboxDraft(BINGHAM_CANYON_BBOX.join(", "));
                 setPlaceLabel("Bingham Canyon, Utah");
+                setPlaceSource({
+                  provider: "Preset AOI",
+                  attributionUrl: null,
+                });
+                if (response) setStatus("stale");
+                setError(null);
               }}
             >
               Reset
@@ -513,6 +583,7 @@ export function Explore({
                 onSelect={select}
                 editing={editingAoi}
                 onDraw={acceptDrawnBbox}
+                onDrawingStepChange={setDrawingStep}
               />
             ) : (
               <div className="map-test-surface">
@@ -528,12 +599,12 @@ export function Explore({
               <div className="draw-help" role="status">
                 <strong>Draw AOI</strong>
                 <p>
-                  Select two opposite corners. Escape cancels. Exact coordinates
-                  remain available.
+                  {drawingStep === "awaiting-first"
+                    ? "Select the first corner, then its opposite corner."
+                    : "First corner set. Select the opposite corner."}{" "}
+                  Escape cancels. Exact coordinates remain available.
                 </p>
-                <button onClick={() => setEditingAoi(false)}>
-                  Cancel drawing
-                </button>
+                <button onClick={cancelDrawing}>Cancel drawing</button>
               </div>
             )}
           </div>

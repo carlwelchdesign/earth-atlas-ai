@@ -53,6 +53,7 @@ export function MapSurface({
   onSelect,
   editing = false,
   onDraw,
+  onDrawingStepChange,
   basemap = demoBasemap,
 }: {
   bbox: BBox;
@@ -61,6 +62,7 @@ export function MapSurface({
   onSelect: (key: string) => void;
   editing?: boolean;
   onDraw?: (bbox: BBox) => void;
+  onDrawingStepChange?: (step: "awaiting-first" | "awaiting-second") => void;
   basemap?: BasemapConfig;
 }) {
   const container = useRef<HTMLDivElement>(null);
@@ -69,6 +71,7 @@ export function MapSurface({
   const selectedKeyRef = useRef(selectedKey);
   const editingRef = useRef(editing);
   const onDrawRef = useRef(onDraw);
+  const onDrawingStepChangeRef = useRef(onDrawingStepChange);
   const drawStart = useRef<[number, number] | null>(null);
 
   useEffect(() => {
@@ -163,6 +166,7 @@ export function MapSurface({
           const point: [number, number] = [event.lngLat.lng, event.lngLat.lat];
           if (drawStart.current === null) {
             drawStart.current = point;
+            onDrawingStepChangeRef.current?.("awaiting-second");
             return;
           }
           const [firstLongitude, firstLatitude] = drawStart.current;
@@ -192,6 +196,7 @@ export function MapSurface({
     selectedKeyRef.current = selectedKey;
     editingRef.current = editing;
     onDrawRef.current = onDraw;
+    onDrawingStepChangeRef.current = onDrawingStepChange;
     if (!editing) drawStart.current = null;
     const instance = map.current;
     if (!instance?.isStyleLoaded()) return;
@@ -205,7 +210,7 @@ export function MapSurface({
         3,
       ]);
     }
-  }, [editing, items, onDraw, selectedKey]);
+  }, [editing, items, onDraw, onDrawingStepChange, selectedKey]);
 
   return (
     <div

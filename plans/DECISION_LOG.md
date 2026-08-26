@@ -79,3 +79,11 @@
 - Decision: add a post-MVP Explore mode built on MapLibre GL JS plus an equivalent accessible results list. Provider-neutral Umbra and Sentinel-1 catalog adapters report actual acquisition footprints and metadata; an explicit pair selection then enters the existing deterministic Analyze workflow.
 - Why: users need a spatial way to discover where data exists, but the rendering engine must not be confused with imagery coverage, provider policy, pair suitability, or analysis science. Sentinel-1 supplies a broad free foundation while Umbra remains the higher-resolution layer where its open catalog has coverage.
 - Revisit when: measured performance, accessibility, provider terms, geocoder privacy, or deployment constraints require a different renderer or catalog provider; the provider-neutral contracts and truthful coverage boundary remain.
+
+## D-011 — Use public OSM services only as bounded development adapters
+
+- Date: 2026-08-25
+- Status: accepted for local and owner-review use; production provider remains undecided.
+- Decision: MapLibre uses a replaceable OpenStreetMap raster-tile configuration for interactive development viewing. Explicit, user-submitted place queries use a server-side Nominatim adapter with a fixed HTTPS host allowlist, identifiable User-Agent, maximum one upstream request per 1.1 seconds, bounded response size and timeout, in-memory query cache, no autocomplete/bulk search, and a small fixed AOI around the selected place. Latitude/longitude queries resolve locally and are not disclosed to the geocoder.
+- Why: this makes global navigation and typed place discovery testable without hard-coding provider behavior into the renderer or promising production capacity from community-funded services. It follows the current [Nominatim usage policy](https://operations.osmfoundation.org/policies/nominatim/) and [tile usage policy](https://operations.osmfoundation.org/policies/tiles/) for moderate interactive development use while keeping switching possible without domain changes.
+- Revisit when: selecting a production deployment, adding meaningful traffic, storing durable geocoder results, requiring an SLA/offline use, or changing privacy terms. Public OSM services are best-effort and may withdraw access; production requires an explicit provider/self-hosting, caching, attribution, privacy, and cost decision.
