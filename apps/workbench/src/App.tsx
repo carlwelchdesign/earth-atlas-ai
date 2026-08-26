@@ -19,6 +19,7 @@ import type {
   CatalogSearchClient,
   PlaceSearchAdapter,
 } from "./explore/catalog";
+import type { BasemapConfig } from "./explore/basemap";
 
 type LoadState =
   | { status: "loading" }
@@ -32,6 +33,7 @@ export function App({
   initialMode = "analyze",
   catalog,
   places,
+  basemap,
   renderExploreMap = true,
 }: {
   loadBundle?: BundleLoader;
@@ -40,6 +42,7 @@ export function App({
   initialMode?: "explore" | "analyze";
   catalog?: CatalogSearchClient;
   places?: PlaceSearchAdapter;
+  basemap?: BasemapConfig;
   renderExploreMap?: boolean;
 }) {
   const [mode, setMode] = useState(initialMode);
@@ -100,6 +103,7 @@ export function App({
         onAnalyze={() => setMode("analyze")}
         catalog={catalog}
         places={places}
+        basemap={basemap}
         renderMap={renderExploreMap}
       />
     );

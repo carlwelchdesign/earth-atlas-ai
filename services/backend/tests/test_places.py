@@ -7,19 +7,21 @@ from urllib.request import Request
 import pytest
 
 from echoatlas.places import (
-    NominatimPlace,
+    MapTilerPlaceProvider,
     NominatimPlaceProvider,
+    PlaceMatch,
     PlaceSearchError,
     PlaceSearchService,
+    build_default_place_search_service,
 )
 
 
 class FakeProvider:
-    def __init__(self, result: NominatimPlace | None) -> None:
+    def __init__(self, result: PlaceMatch | None) -> None:
         self.result = result
         self.queries: list[str] = []
 
-    def search(self, query: str) -> NominatimPlace | None:
+    def search(self, query: str) -> PlaceMatch | None:
         self.queries.append(query)
         return self.result
 
@@ -62,10 +64,12 @@ def test_nominatim_provider_identifies_app_and_normalizes_first_result() -> None
 
     result = NominatimPlaceProvider(opener=opener).search("Sacramento, California")
 
-    assert result == NominatimPlace(
+    assert result == PlaceMatch(
         label="Sacramento, California, United States",
         latitude=38.5810606,
         longitude=-121.493895,
+        provider="OpenStreetMap Nominatim",
+        attribution_url="https://www.openstreetmap.org/copyright",
     )
     assert "q=Sacramento%2C+California" in requests[0].full_url
     assert requests[0].get_header("User-agent").startswith("EchoAtlas/0.1")
@@ -76,9 +80,58 @@ def test_nominatim_provider_rejects_non_allowlisted_configuration() -> None:
         NominatimPlaceProvider(search_url="https://example.test/search")
 
 
+def test_maptiler_provider_normalizes_first_feature_without_autocomplete() -> None:
+    requests: list[Request] = []
+
+    def opener(request: Request, *, timeout: float) -> FakeResponse:
+        requests.append(request)
+        assert timeout == 10
+        payload = json.dumps(
+            {
+                "type": "FeatureCollection",
+                "features": [
+                    {
+                        "type": "Feature",
+                        "place_name": "Sacramento, California, United States",
+                        "geometry": {
+                            "type": "Point",
+                            "coordinates": [-121.493895, 38.5810606],
+                        },
+                        "properties": {},
+                    }
+                ],
+            }
+        ).encode()
+        return FakeResponse(payload, request.full_url)
+
+    result = MapTilerPlaceProvider("test-key", opener=opener).search("Sacramento")
+
+    assert result == PlaceMatch(
+        label="Sacramento, California, United States",
+        latitude=38.5810606,
+        longitude=-121.493895,
+        provider="MapTiler Geocoding",
+        attribution_url="https://www.maptiler.com/copyright/",
+    )
+    assert "/Sacramento.json?" in requests[0].full_url
+    assert "limit=1" in requests[0].full_url
+    assert "autocomplete=false" in requests[0].full_url
+
+
+def test_maptiler_provider_rejects_non_allowlisted_configuration() -> None:
+    with pytest.raises(ValueError, match="allowlisted"):
+        MapTilerPlaceProvider("test-key", geocoding_root="https://example.test")
+
+
 def test_place_service_bounds_aoi_rate_limits_and_caches() -> None:
     provider = FakeProvider(
-        NominatimPlace(label="Near the dateline", latitude=89.98, longitude=179.98)
+        PlaceMatch(
+            label="Near the dateline",
+            latitude=89.98,
+            longitude=179.98,
+            provider="Test provider",
+            attribution_url="https://example.test/terms",
+        )
     )
     readings: Iterator[float] = iter((0.0, 0.0, 0.5, 1.6))
     sleeps: list[float] = []
@@ -94,6 +147,7 @@ def test_place_service_bounds_aoi_rate_limits_and_caches() -> None:
 
     assert first.bbox == pytest.approx((179.905, 89.905, 180.0, 90.0))
     assert second.label == "Near the dateline"
+    assert first.provider == "Test provider"
     assert cached is first
     assert provider.queries == ["Near the dateline", "Another place"]
     assert sleeps == pytest.approx([0.6])
@@ -110,3 +164,11 @@ def test_place_service_rejects_unbounded_query_lengths(query: str) -> None:
 def test_place_service_distinguishes_no_match() -> None:
     with pytest.raises(PlaceSearchError, match="No place match"):
         PlaceSearchService(FakeProvider(None)).resolve("Imaginary place")
+
+
+def test_default_service_prefers_maptiler_only_when_a_key_is_configured() -> None:
+    configured = build_default_place_search_service({"ECHOATLAS_MAPTILER_API_KEY": "test-key"})
+    fallback = build_default_place_search_service({})
+
+    assert isinstance(configured._provider, MapTilerPlaceProvider)
+    assert isinstance(fallback._provider, NominatimPlaceProvider)

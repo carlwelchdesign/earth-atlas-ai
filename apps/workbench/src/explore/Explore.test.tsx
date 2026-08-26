@@ -9,6 +9,7 @@ import axe from "axe-core";
 import { describe, expect, it, vi } from "vitest";
 
 import { App } from "../App";
+import { selectBasemap } from "./basemap";
 import type { CatalogSearchClient, PlaceSearchAdapter } from "./catalog";
 import {
   polygonFromBbox,
@@ -112,6 +113,23 @@ function client(result = response()): CatalogSearchClient {
 }
 
 describe("Explore", () => {
+  it("labels the configured private R&D map and geocoder before submission", () => {
+    render(
+      <App
+        initialMode="explore"
+        basemap={selectBasemap("test-key")}
+        renderExploreMap={false}
+      />,
+    );
+
+    expect(
+      screen.getByText(/Place names go to MapTiler Geocoding/),
+    ).toBeInTheDocument();
+    expect(screen.getByText(/Basemap: MapTiler Dataviz/)).toHaveTextContent(
+      "private R&D deployment",
+    );
+  });
+
   it("has no automated accessibility violations in the list-equivalent path", async () => {
     render(
       <App initialMode="explore" catalog={client()} renderExploreMap={false} />,
@@ -121,6 +139,23 @@ describe("Explore", () => {
       rules: { "color-contrast": { enabled: false } },
     });
     expect(results.violations).toEqual([]);
+  });
+
+  it("keeps the non-map results before the map in semantic reading order", () => {
+    render(
+      <App initialMode="explore" catalog={client()} renderExploreMap={false} />,
+    );
+
+    const results = screen
+      .getByRole("heading", { name: "0 reported acquisitions" })
+      .closest("section");
+    const map = screen
+      .getByRole("heading", { name: "Map and reported footprints" })
+      .closest("section");
+
+    expect(results?.compareDocumentPosition(map as Node) ?? 0).toEqual(
+      Node.DOCUMENT_POSITION_FOLLOWING,
+    );
   });
 
   it("keeps the map supplementary and searches the provider-neutral catalog", async () => {

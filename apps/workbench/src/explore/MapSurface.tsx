@@ -1,39 +1,9 @@
 import { useEffect, useRef } from "react";
-import type {
-  GeoJSONSource,
-  Map as MapLibreMap,
-  StyleSpecification,
-} from "maplibre-gl";
+import type { GeoJSONSource, Map as MapLibreMap } from "maplibre-gl";
 
+import { defaultBasemap, type BasemapConfig } from "./basemap";
 import type { BBox, CatalogItem } from "./model";
 import { itemKey, polygonFromBbox } from "./model";
-
-export interface BasemapConfig {
-  style: string | StyleSpecification;
-  attribution: string;
-}
-
-const demoBasemap: BasemapConfig = {
-  style: {
-    version: 8,
-    sources: {
-      "osm-development": {
-        type: "raster",
-        tiles: ["https://tile.openstreetmap.org/{z}/{x}/{y}.png"],
-        tileSize: 256,
-        attribution: "© OpenStreetMap contributors",
-      },
-    },
-    layers: [
-      {
-        id: "osm-development",
-        type: "raster",
-        source: "osm-development",
-      },
-    ],
-  },
-  attribution: "Development basemap · © OpenStreetMap contributors",
-};
 
 function featureCollection(items: CatalogItem[]) {
   return {
@@ -54,7 +24,7 @@ export function MapSurface({
   editing = false,
   onDraw,
   onDrawingStepChange,
-  basemap = demoBasemap,
+  basemap = defaultBasemap(),
 }: {
   bbox: BBox;
   items: CatalogItem[];

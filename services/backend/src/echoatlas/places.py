@@ -3,19 +3,22 @@
 from __future__ import annotations
 
 import json
+import os
 import threading
 import time
-from collections.abc import Callable
+from collections.abc import Callable, Mapping
 from dataclasses import dataclass
 from typing import Any, Protocol, cast
 from urllib.error import HTTPError, URLError
-from urllib.parse import urlencode, urlparse
+from urllib.parse import quote, urlencode, urlparse
 from urllib.request import Request, urlopen
 
 from pydantic import BaseModel, ConfigDict, Field
 
 NOMINATIM_SEARCH_URL = "https://nominatim.openstreetmap.org/search"
 NOMINATIM_HOST = "nominatim.openstreetmap.org"
+MAPTILER_GEOCODING_ROOT = "https://api.maptiler.com/geocoding"
+MAPTILER_HOST = "api.maptiler.com"
 DEFAULT_AOI_OFFSET_DEGREES = 0.075
 
 
@@ -28,8 +31,8 @@ class PlaceSearchResponse(BaseModel):
 
     label: str = Field(min_length=1, max_length=300)
     bbox: tuple[float, float, float, float]
-    provider: str = "OpenStreetMap Nominatim"
-    attribution_url: str = "https://www.openstreetmap.org/copyright"
+    provider: str = Field(min_length=1, max_length=120)
+    attribution_url: str = Field(min_length=1, max_length=500)
 
 
 class PlaceSearchRequest(BaseModel):
@@ -39,14 +42,16 @@ class PlaceSearchRequest(BaseModel):
 
 
 @dataclass(frozen=True)
-class NominatimPlace:
+class PlaceMatch:
     label: str
     latitude: float
     longitude: float
+    provider: str
+    attribution_url: str
 
 
 class PlaceProvider(Protocol):
-    def search(self, query: str) -> NominatimPlace | None: ...
+    def search(self, query: str) -> PlaceMatch | None: ...
 
 
 class NominatimPlaceProvider:
@@ -68,7 +73,7 @@ class NominatimPlaceProvider:
         self._max_response_bytes = max_response_bytes
         self._opener = opener
 
-    def search(self, query: str) -> NominatimPlace | None:
+    def search(self, query: str) -> PlaceMatch | None:
         url = f"{self._search_url}?{urlencode({'q': query, 'format': 'jsonv2', 'limit': 1})}"
         request = Request(
             url,
@@ -80,25 +85,13 @@ class NominatimPlaceProvider:
                 ),
             },
         )
-        try:
-            with self._opener(request, timeout=self._timeout_seconds) as response:
-                final_url = response.geturl()
-                if urlparse(final_url).hostname != NOMINATIM_HOST:
-                    raise PlaceSearchError("Place-search redirect left the host allowlist.")
-                length = response.headers.get("Content-Length")
-                if length is not None and int(length) > self._max_response_bytes:
-                    raise PlaceSearchError("Place-search response exceeded the size limit.")
-                payload = cast(bytes, response.read(self._max_response_bytes + 1))
-        except PlaceSearchError:
-            raise
-        except (HTTPError, URLError, OSError, TimeoutError, ValueError) as error:
-            raise PlaceSearchError("The configured place-search service is unavailable.") from error
-        if len(payload) > self._max_response_bytes:
-            raise PlaceSearchError("Place-search response exceeded the size limit.")
-        try:
-            document: Any = json.loads(payload)
-        except (json.JSONDecodeError, UnicodeDecodeError) as error:
-            raise PlaceSearchError("The place-search service returned invalid data.") from error
+        document = _read_json_response(
+            request,
+            expected_host=NOMINATIM_HOST,
+            timeout_seconds=self._timeout_seconds,
+            max_response_bytes=self._max_response_bytes,
+            opener=self._opener,
+        )
         if not isinstance(document, list):
             raise PlaceSearchError("The place-search service returned invalid data.")
         if not document:
@@ -116,7 +109,99 @@ class NominatimPlaceProvider:
             raise PlaceSearchError("The place-search service returned invalid data.")
         if not -90 <= latitude <= 90 or not -180 <= longitude <= 180:
             raise PlaceSearchError("The place-search service returned invalid coordinates.")
-        return NominatimPlace(label=label.strip(), latitude=latitude, longitude=longitude)
+        return PlaceMatch(
+            label=label.strip(),
+            latitude=latitude,
+            longitude=longitude,
+            provider="OpenStreetMap Nominatim",
+            attribution_url="https://www.openstreetmap.org/copyright",
+        )
+
+
+class MapTilerPlaceProvider:
+    """Allowlisted MapTiler geocoder for private R&D deployments."""
+
+    def __init__(
+        self,
+        api_key: str,
+        *,
+        geocoding_root: str = MAPTILER_GEOCODING_ROOT,
+        timeout_seconds: float = 10,
+        max_response_bytes: int = 256_000,
+        opener: Callable[..., Any] = urlopen,
+    ) -> None:
+        if not api_key.strip():
+            raise ValueError("MapTiler API key must not be empty")
+        parsed = urlparse(geocoding_root)
+        if parsed.scheme != "https" or parsed.hostname != MAPTILER_HOST:
+            raise ValueError("MapTiler geocoding URL must use the allowlisted HTTPS host")
+        self._api_key = api_key.strip()
+        self._geocoding_root = geocoding_root.rstrip("/")
+        self._timeout_seconds = timeout_seconds
+        self._max_response_bytes = max_response_bytes
+        self._opener = opener
+
+    def search(self, query: str) -> PlaceMatch | None:
+        path_query = quote(query, safe="")
+        url = (
+            f"{self._geocoding_root}/{path_query}.json?"
+            f"{urlencode({'key': self._api_key, 'limit': 1, 'autocomplete': 'false'})}"
+        )
+        request = Request(
+            url,
+            headers={
+                "Accept": "application/json",
+                "User-Agent": (
+                    "EchoAtlas/0.1 place-search "
+                    "(+https://github.com/carlwelchdesign/earth-atlas-ai)"
+                ),
+            },
+        )
+        document = _read_json_response(
+            request,
+            expected_host=MAPTILER_HOST,
+            timeout_seconds=self._timeout_seconds,
+            max_response_bytes=self._max_response_bytes,
+            opener=self._opener,
+        )
+        if not isinstance(document, dict):
+            raise PlaceSearchError("The place-search service returned invalid data.")
+        features = document.get("features")
+        if not isinstance(features, list):
+            raise PlaceSearchError("The place-search service returned invalid data.")
+        if not features:
+            return None
+        first = features[0]
+        if not isinstance(first, dict):
+            raise PlaceSearchError("The place-search service returned invalid data.")
+        geometry = first.get("geometry")
+        properties = first.get("properties")
+        if not isinstance(geometry, dict) or not isinstance(properties, dict):
+            raise PlaceSearchError("The place-search service returned invalid data.")
+        coordinates = geometry.get("coordinates")
+        if (
+            geometry.get("type") != "Point"
+            or not isinstance(coordinates, list)
+            or len(coordinates) < 2
+        ):
+            raise PlaceSearchError("The place-search service returned invalid data.")
+        label = first.get("place_name") or first.get("text") or properties.get("name")
+        try:
+            longitude = float(coordinates[0])
+            latitude = float(coordinates[1])
+        except (TypeError, ValueError) as error:
+            raise PlaceSearchError("The place-search service returned invalid data.") from error
+        if not isinstance(label, str) or not label.strip():
+            raise PlaceSearchError("The place-search service returned invalid data.")
+        if not -90 <= latitude <= 90 or not -180 <= longitude <= 180:
+            raise PlaceSearchError("The place-search service returned invalid coordinates.")
+        return PlaceMatch(
+            label=label.strip(),
+            latitude=latitude,
+            longitude=longitude,
+            provider="MapTiler Geocoding",
+            attribution_url="https://www.maptiler.com/copyright/",
+        )
 
 
 class PlaceSearchService:
@@ -161,6 +246,8 @@ class PlaceSearchService:
             response = PlaceSearchResponse(
                 label=place.label,
                 bbox=_bounded_aoi(place.latitude, place.longitude),
+                provider=place.provider,
+                attribution_url=place.attribution_url,
             )
             if len(self._cache) >= self._max_cache_entries:
                 self._cache.pop(next(iter(self._cache)))
@@ -178,5 +265,41 @@ def _bounded_aoi(latitude: float, longitude: float) -> tuple[float, float, float
     )
 
 
-def build_default_place_search_service() -> PlaceSearchService:
-    return PlaceSearchService(NominatimPlaceProvider())
+def _read_json_response(
+    request: Request,
+    *,
+    expected_host: str,
+    timeout_seconds: float,
+    max_response_bytes: int,
+    opener: Callable[..., Any],
+) -> Any:
+    try:
+        with opener(request, timeout=timeout_seconds) as response:
+            final_url = response.geturl()
+            if urlparse(final_url).hostname != expected_host:
+                raise PlaceSearchError("Place-search redirect left the host allowlist.")
+            length = response.headers.get("Content-Length")
+            if length is not None and int(length) > max_response_bytes:
+                raise PlaceSearchError("Place-search response exceeded the size limit.")
+            payload = cast(bytes, response.read(max_response_bytes + 1))
+    except PlaceSearchError:
+        raise
+    except (HTTPError, URLError, OSError, TimeoutError, ValueError) as error:
+        raise PlaceSearchError("The configured place-search service is unavailable.") from error
+    if len(payload) > max_response_bytes:
+        raise PlaceSearchError("Place-search response exceeded the size limit.")
+    try:
+        return json.loads(payload)
+    except (json.JSONDecodeError, UnicodeDecodeError) as error:
+        raise PlaceSearchError("The place-search service returned invalid data.") from error
+
+
+def build_default_place_search_service(
+    environ: Mapping[str, str] | None = None,
+) -> PlaceSearchService:
+    environment = os.environ if environ is None else environ
+    maptiler_key = environment.get("ECHOATLAS_MAPTILER_API_KEY", "").strip()
+    provider: PlaceProvider = (
+        MapTilerPlaceProvider(maptiler_key) if maptiler_key else NominatimPlaceProvider()
+    )
+    return PlaceSearchService(provider)

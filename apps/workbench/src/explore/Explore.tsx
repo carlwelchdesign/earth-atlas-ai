@@ -8,6 +8,7 @@ import {
   type CatalogSearchClient,
   type PlaceSearchAdapter,
 } from "./catalog";
+import { defaultBasemap, type BasemapConfig } from "./basemap";
 import { MapSurface } from "./MapSurface";
 import {
   BINGHAM_CANYON_BBOX,
@@ -29,11 +30,13 @@ export function Explore({
   onAnalyze,
   catalog = new HttpCatalogSearchClient(),
   places = new HttpPlaceSearchAdapter(),
+  basemap = defaultBasemap(),
   renderMap = true,
 }: {
   onAnalyze: () => void;
   catalog?: CatalogSearchClient;
   places?: PlaceSearchAdapter;
+  basemap?: BasemapConfig;
   renderMap?: boolean;
 }) {
   const [query, setQuery] = useState("Bingham Canyon, Utah");
@@ -73,6 +76,16 @@ export function Explore({
 
   const selected =
     response?.results.find((item) => itemKey(item) === selectedKey) ?? null;
+  const configuredPlaceProvider =
+    basemap.deployment === "private-r-and-d"
+      ? {
+          label: "MapTiler Geocoding",
+          attributionUrl: "https://www.maptiler.com/copyright/",
+        }
+      : {
+          label: "OpenStreetMap Nominatim",
+          attributionUrl: "https://www.openstreetmap.org/copyright",
+        };
   const resultSummary = useMemo(
     () =>
       response?.providers
@@ -355,10 +368,10 @@ export function Explore({
             </button>
           </div>
           <small>
-            Place names go to OpenStreetMap Nominatim only when you press Go;
-            coordinates resolve locally.{" "}
+            Place names go to {configuredPlaceProvider.label} only when you
+            press Go; coordinates resolve locally.{" "}
             <a
-              href="https://www.openstreetmap.org/copyright"
+              href={configuredPlaceProvider.attributionUrl}
               target="_blank"
               rel="noreferrer"
             >
@@ -563,57 +576,6 @@ export function Explore({
           </p>
         </aside>
 
-        <section className="explore-map panel" aria-labelledby="map-title">
-          <div className="panel-heading">
-            <div>
-              <p className="overline">Navigation surface</p>
-              <h2 id="map-title">Map and reported footprints</h2>
-            </div>
-          </div>
-          <div
-            className="explore-map-stage"
-            role="region"
-            aria-label={`Map centered on ${placeLabel}. Every acquisition remains available in the results list.`}
-          >
-            {renderMap ? (
-              <MapSurface
-                bbox={bbox}
-                items={response?.results ?? []}
-                selectedKey={selectedKey}
-                onSelect={select}
-                editing={editingAoi}
-                onDraw={acceptDrawnBbox}
-                onDrawingStepChange={setDrawingStep}
-              />
-            ) : (
-              <div className="map-test-surface">
-                Map renderer omitted in test
-              </div>
-            )}
-            <div className="explore-legend">
-              <span className="legend-sentinel">Sentinel-1</span>
-              <span className="legend-umbra">Umbra</span>
-              <span>Search AOI</span>
-            </div>
-            {editingAoi && (
-              <div className="draw-help" role="status">
-                <strong>Draw AOI</strong>
-                <p>
-                  {drawingStep === "awaiting-first"
-                    ? "Select the first corner, then its opposite corner."
-                    : "First corner set. Select the opposite corner."}{" "}
-                  Escape cancels. Exact coordinates remain available.
-                </p>
-                <button onClick={cancelDrawing}>Cancel drawing</button>
-              </div>
-            )}
-          </div>
-          <footer>
-            Basemap: OpenStreetMap development tiles · Renderer: MapLibre ·
-            Footprints: provider-reported metadata
-          </footer>
-        </section>
-
         <section
           className="explore-results panel"
           id="acquisition-results"
@@ -731,6 +693,64 @@ export function Explore({
               );
             })}
           </ol>
+        </section>
+
+        <section className="explore-map panel" aria-labelledby="map-title">
+          <div className="panel-heading">
+            <div>
+              <p className="overline">Navigation surface</p>
+              <h2 id="map-title">Map and reported footprints</h2>
+            </div>
+          </div>
+          <div
+            className="explore-map-stage"
+            role="region"
+            aria-label={`Map centered on ${placeLabel}. Every acquisition remains available in the results list.`}
+          >
+            {renderMap ? (
+              <MapSurface
+                bbox={bbox}
+                items={response?.results ?? []}
+                selectedKey={selectedKey}
+                onSelect={select}
+                editing={editingAoi}
+                onDraw={acceptDrawnBbox}
+                onDrawingStepChange={setDrawingStep}
+                basemap={basemap}
+              />
+            ) : (
+              <div className="map-test-surface">
+                Map renderer omitted in test
+              </div>
+            )}
+            <div className="explore-legend">
+              <span className="legend-sentinel">Sentinel-1</span>
+              <span className="legend-umbra">Umbra</span>
+              <span>Search AOI</span>
+            </div>
+            {editingAoi && (
+              <div className="draw-help" role="status">
+                <strong>Draw AOI</strong>
+                <p>
+                  {drawingStep === "awaiting-first"
+                    ? "Select the first corner, then its opposite corner."
+                    : "First corner set. Select the opposite corner."}{" "}
+                  Escape cancels. Exact coordinates remain available.
+                </p>
+                <button onClick={cancelDrawing}>Cancel drawing</button>
+              </div>
+            )}
+          </div>
+          <footer>
+            Basemap: {basemap.label} ·{" "}
+            {basemap.deployment === "development"
+              ? "local development fallback"
+              : "private R&D deployment"}{" "}
+            · Renderer: MapLibre · Footprints: provider-reported metadata ·{" "}
+            <a href={basemap.attributionUrl} target="_blank" rel="noreferrer">
+              attribution
+            </a>
+          </footer>
         </section>
 
         <aside className="pair-tray panel" aria-labelledby="pair-title">

@@ -6,7 +6,7 @@ from fastapi.testclient import TestClient
 
 from echoatlas import __version__
 from echoatlas.api.app import create_app
-from echoatlas.places import NominatimPlace, PlaceSearchService
+from echoatlas.places import PlaceMatch, PlaceSearchService
 from echoatlas.processor.catalog.search import CatalogSearchService
 from echoatlas.processor.catalog.search_models import (
     CatalogLicense,
@@ -29,12 +29,14 @@ class ApiAdapter:
 
 
 class PlaceAdapter:
-    def search(self, query: str) -> NominatimPlace | None:
+    def search(self, query: str) -> PlaceMatch | None:
         assert query == "Sacramento"
-        return NominatimPlace(
+        return PlaceMatch(
             label="Sacramento, California, United States",
             latitude=38.5810606,
             longitude=-121.493895,
+            provider="Test geocoder",
+            attribution_url="https://example.test/terms",
         )
 
 
@@ -142,7 +144,7 @@ def test_place_search_endpoint_returns_a_bounded_normalized_aoi() -> None:
     assert body | {"bbox": None} == {
         "label": "Sacramento, California, United States",
         "bbox": None,
-        "provider": "OpenStreetMap Nominatim",
-        "attribution_url": "https://www.openstreetmap.org/copyright",
+        "provider": "Test geocoder",
+        "attribution_url": "https://example.test/terms",
     }
     assert body["bbox"] == pytest.approx([-121.568895, 38.5060606, -121.418895, 38.6560606])
