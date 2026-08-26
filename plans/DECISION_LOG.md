@@ -95,3 +95,11 @@
 - Decision: use environment-selected MapTiler Cloud adapters for the hosted private R&D basemap and explicit place-name geocoding. `VITE_MAPTILER_API_KEY` selects the MapTiler Dataviz style in MapLibre; `ECHOATLAS_MAPTILER_API_KEY` selects the server-side allowlisted geocoder. No key is committed. Missing keys visibly select the public OSM local-development fallback. Coordinate queries remain local.
 - Why: MapTiler supports MapLibre, global maps, and geocoding behind one replaceable API. Its current Free plan requires no billing information and permits non-commercial use plus commercial-product R&D, which matches EchoAtlas's current private research status. It pauses at quota and has no production SLA, so it is not a silent public/commercial deployment decision.
 - Revisit when: creating or restricting the MapTiler keys, deploying beyond private R&D, approaching quota, requiring an SLA/offline service, or approving spending. Public/commercial launch requires a suitable paid plan, another adapter, or a documented self-hosted stack. See `docs/architecture/explore-map-provider.md`.
+
+## D-013 — Keep Palantir optional after an adjust feasibility result
+
+- Date: 2026-08-25
+- Status: accepted
+- Decision: close EAT-014 with an **adjust** result. Foundry may be used as an optional downstream Ontology, media, Map, restricted application, and private-hosting layer. The provider-neutral bundle and standalone deterministic runtime remain canonical; processing policy, assessments, and provider access do not move exclusively into Foundry.
+- Why: live evidence proves the synthetic object/link/raster path, read-only OSDK application, and bounded real-derived static profile, but not real Media Set/Ontology-backed Umbra imagery, cleanup, exact tier ceilings/duration, public scale, or cost. Keeping the adapter optional captures demonstrated value without converting untested platform behavior into product dependencies.
+- Revisit when: a deployment has an approved Palantir operating model, real-imagery scale and licensing evidence, cleanup/retention procedures, known quotas and cost, and a reason the standalone bundle boundary is insufficient.
