@@ -5,6 +5,14 @@ import { defineConfig } from "vite";
 
 export default defineConfig({
   plugins: [react()],
+  optimizeDeps: {
+    exclude: ["maplibre-gl"],
+  },
+  server: {
+    proxy: {
+      "/v1": process.env.ECHOATLAS_API_ORIGIN ?? "http://127.0.0.1:8000",
+    },
+  },
   test: {
     coverage: {
       provider: "v8",

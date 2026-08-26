@@ -53,6 +53,23 @@ describe("App", () => {
     ).toBeEnabled();
   });
 
+  it("keeps Explore and Analyze as reversible peer modes", async () => {
+    render(<App loadBundle={load()} />);
+    await screen.findByRole("heading", { name: demoBundle.mission.title });
+
+    fireEvent.click(screen.getByRole("button", { name: "Return to Explore" }));
+    expect(
+      screen.getByRole("heading", {
+        name: "Explore provider-reported SAR availability",
+      }),
+    ).toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole("button", { name: /Analyze/ }));
+    expect(
+      await screen.findByRole("heading", { name: demoBundle.mission.title }),
+    ).toBeInTheDocument();
+  });
+
   it("reports a bounded read-only Foundry connection without relabeling the bundle", async () => {
     render(
       <App

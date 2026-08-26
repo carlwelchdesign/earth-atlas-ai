@@ -273,14 +273,16 @@ Prerequisites: `EAT-DES-002`, `EAT-017`.
 
 Acceptance:
 
-- [ ] MapLibre GL JS is isolated behind an Explore route/mode and does not replace the Analyze workbench.
-- [ ] Place/coordinate search, AOI draw/edit/reset, acquisition footprints, filters, selected-acquisition details, legend, attribution, and coverage disclaimers work.
-- [ ] Basemap, footprint GeoJSON, geocoding, and raster sources use explicit replaceable adapters; the renderer owns no provider or processing policy.
-- [ ] A synchronized results list, keyboard controls, focus management, reduced-motion behavior, and responsive layouts pass accessibility review.
-- [ ] Loading, no-coverage, partial-provider, rate-limit, offline, invalid-AOI, and stale-result behavior is verified.
-- [ ] Behavior tests, an agreed performance budget, and desktop/mobile visual evidence pass.
+- [x] MapLibre GL JS is isolated behind an Explore route/mode and does not replace the Analyze workbench.
+- [x] Place/coordinate search, AOI draw/edit/reset, acquisition footprints, filters, selected-acquisition details, legend, attribution, and coverage disclaimers work.
+- [x] Basemap, footprint GeoJSON, geocoding, and raster sources use explicit replaceable adapters; the renderer owns no provider or processing policy.
+- [x] A synchronized results list, keyboard controls, focus management, reduced-motion behavior, and responsive layouts pass accessibility review.
+- [x] Loading, no-coverage, partial-provider, rate-limit, offline, invalid-AOI, and stale-result behavior is verified.
+- [x] Behavior tests, an agreed performance budget, and desktop/mobile visual evidence pass.
 
 Non-goals: a real-time global mosaic, automatic pair approval, assessment changes, or proprietary map lock-in.
+
+Implementation checkpoint: the production vertical slice is active on `feature/eat-018-maplibre-explore`. MapLibre 6.6.0 renders an environment-selected MapTiler private-R&D basemap or attributed public-OSM local fallback, validated AOI, and normalized provider footprints behind an isolated Explore mode while Analyze remains intact. The EAT-017 client requests providers independently with a bounded timeout, preserves partial success, classifies permission/rate-limit/offline failures, and exposes provider reports instead of collapsing failures into zero results. Exact and two-corner pointer AOI editing, provider/date/product/polarization/resolution filters, map/list selection, source/license metadata, draft pair selection, and a focus-contained metadata-review dialog have automated coverage. Explicit global place submissions use an allowlisted provider adapter selected by environment while coordinates stay local; Sacramento resolved live through the Nominatim development fallback to a bounded AOI. A live Bingham Canyon check returned 15 actual Sentinel-1 metadata records with matching footprints and no browser errors at desktop/mobile widths. Durable global-search, desktop, mobile, and 200%-responsive-equivalent screenshots are recorded. Browser accessibility-tree order now matches the visual results-before-map flow, and focus enters/returns from pair review correctly. Optional pointer drag handles are explicitly deferred because exact editing and cancelable two-corner redraw satisfy the approved boundary. Carl approved the measured performance budget on 2026-08-25: MapLibre at most 300 kB gzip, total emitted/first-Explore JavaScript at most 450 kB gzip, CSS at most 25 kB gzip, and no raster acquisition download during catalog search; current output is 249.36 kB, approximately 372.00 kB, and 17.04 kB respectively. MapTiler key activation is an external private-host configuration step, while public/commercial provider and spending approval remain a separate release gate. See `docs/qa/explore-interface-v1.md`.
 
 ### EAT-019 — Connect Explore selection to the Analyze pipeline
 
