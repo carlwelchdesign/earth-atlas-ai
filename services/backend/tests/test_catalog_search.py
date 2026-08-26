@@ -367,6 +367,21 @@ def test_umbra_adapter_spatially_filters_static_catalog_fixture() -> None:
     assert adapter.search(outside, limit=10).items == ()
 
 
+def test_umbra_adapter_targets_only_requested_month_catalogs() -> None:
+    adapter = UmbraCatalogSearchAdapter(StacCatalogAdapter(UmbraFixtureClient()))
+    search = request(
+        providers=("umbra",),
+        start_at=datetime(2025, 6, 10, tzinfo=UTC),
+        end_at=datetime(2025, 8, 1, tzinfo=UTC),
+    )
+
+    assert adapter._search_roots(search) == (
+        "https://umbra-open-data-catalog.s3.us-west-2.amazonaws.com/stac/2025/2025-06/catalog.json",
+        "https://umbra-open-data-catalog.s3.us-west-2.amazonaws.com/stac/2025/2025-07/catalog.json",
+        "https://umbra-open-data-catalog.s3.us-west-2.amazonaws.com/stac/2025/2025-08/catalog.json",
+    )
+
+
 def test_sentinel_adapter_reports_bounded_page_limit() -> None:
     page = Sentinel1CatalogSearchAdapter(FixtureClient(), max_pages=1, page_size=1).search(
         request(), limit=10

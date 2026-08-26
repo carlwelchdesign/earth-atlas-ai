@@ -2,6 +2,12 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { KeyboardEvent, RefObject } from "react";
 
 import {
+  HttpAnalysisJobClient,
+  type AnalysisJob,
+  type AnalysisJobClient,
+  type AnalysisSelectionManifest,
+} from "./analysis";
+import {
   CatalogClientError,
   HttpPlaceSearchAdapter,
   HttpCatalogSearchClient,
@@ -10,6 +16,7 @@ import {
 } from "./catalog";
 import { defaultBasemap, type BasemapConfig } from "./basemap";
 import { MapSurface } from "./MapSurface";
+import { parseWorkbenchBundle, type WorkbenchBundle } from "../workbench/model";
 import {
   BINGHAM_CANYON_BBOX,
   formatProvider,
@@ -28,16 +35,22 @@ type Pair = { before: CatalogItem | null; after: CatalogItem | null };
 
 export function Explore({
   onAnalyze,
+  onAnalysisReady = () => undefined,
   catalog = new HttpCatalogSearchClient(),
   places = new HttpPlaceSearchAdapter(),
+  analysis = new HttpAnalysisJobClient(),
   basemap = defaultBasemap(),
   renderMap = true,
+  analysisPollMs = 750,
 }: {
   onAnalyze: () => void;
+  onAnalysisReady?: (bundle: WorkbenchBundle) => void;
   catalog?: CatalogSearchClient;
   places?: PlaceSearchAdapter;
+  analysis?: AnalysisJobClient;
   basemap?: BasemapConfig;
   renderMap?: boolean;
+  analysisPollMs?: number;
 }) {
   const [query, setQuery] = useState("Bingham Canyon, Utah");
   const [placeLabel, setPlaceLabel] = useState("Bingham Canyon, Utah");
@@ -787,14 +800,18 @@ export function Explore({
             Review pair
           </button>
           <p className="explore-note">
-            Comparability and processing arrive in EAT-019.
+            Review comparability before starting deterministic preparation.
           </p>
         </aside>
       </main>
       {reviewOpen && pair.before && pair.after && (
         <PairReviewDialog
+          aoi={{ bbox, geometry: polygonFromBbox(bbox) }}
           before={pair.before}
           after={pair.after}
+          analysis={analysis}
+          analysisPollMs={analysisPollMs}
+          onAnalysisReady={onAnalysisReady}
           returnFocus={reviewButton}
           onClose={() => setReviewOpen(false)}
         />
@@ -833,18 +850,36 @@ function PairSlot({
 }
 
 function PairReviewDialog({
+  aoi,
   before,
   after,
+  analysis,
+  analysisPollMs,
+  onAnalysisReady,
   returnFocus,
   onClose,
 }: {
+  aoi: { bbox: BBox; geometry: ReturnType<typeof polygonFromBbox> };
   before: CatalogItem;
   after: CatalogItem;
+  analysis: AnalysisJobClient;
+  analysisPollMs: number;
+  onAnalysisReady: (bundle: WorkbenchBundle) => void;
   returnFocus: RefObject<HTMLButtonElement | null>;
   onClose: () => void;
 }) {
   const heading = useRef<HTMLHeadingElement>(null);
   const dialog = useRef<HTMLDivElement>(null);
+  const deliveredJob = useRef<string | null>(null);
+  const [manifest, setManifest] = useState<AnalysisSelectionManifest | null>(
+    null,
+  );
+  const [job, setJob] = useState<AnalysisJob | null>(null);
+  const [action, setAction] = useState<"idle" | "comparing" | "starting">(
+    "idle",
+  );
+  const [analysisError, setAnalysisError] = useState<string | null>(null);
+  const activeJob = job?.status === "queued" || job?.status === "running";
 
   useEffect(() => {
     const focusTarget = returnFocus.current;
@@ -852,10 +887,122 @@ function PairReviewDialog({
     return () => focusTarget?.focus();
   }, [returnFocus]);
 
+  const acceptJob = useCallback(
+    (next: AnalysisJob) => {
+      setJob(next);
+      if (next.status !== "succeeded" || deliveredJob.current === next.job_id) {
+        return;
+      }
+      deliveredJob.current = next.job_id;
+      try {
+        if (next.bundle === null) {
+          throw new Error(
+            "The completed job did not return a validated bundle.",
+          );
+        }
+        onAnalysisReady(parseWorkbenchBundle(next.bundle));
+      } catch (error) {
+        setAnalysisError(
+          error instanceof Error
+            ? error.message
+            : "The completed bundle could not be opened.",
+        );
+      }
+    },
+    [onAnalysisReady],
+  );
+
+  useEffect(() => {
+    if (!activeJob || !job) return;
+    let active = true;
+    const timer = window.setTimeout(() => {
+      analysis
+        .get(job.job_id)
+        .then((next) => {
+          if (active) acceptJob(next);
+        })
+        .catch((error: unknown) => {
+          if (active) {
+            setAnalysisError(
+              error instanceof Error
+                ? error.message
+                : "The analysis job status could not be loaded.",
+            );
+          }
+        });
+    }, analysisPollMs);
+    return () => {
+      active = false;
+      window.clearTimeout(timer);
+    };
+  }, [acceptJob, activeJob, analysis, analysisPollMs, job]);
+
+  const compare = async () => {
+    setAction("comparing");
+    setAnalysisError(null);
+    setJob(null);
+    try {
+      setManifest(await analysis.compare(aoi, before, after));
+    } catch (error) {
+      setAnalysisError(
+        error instanceof Error
+          ? error.message
+          : "Pair comparability could not be calculated.",
+      );
+    } finally {
+      setAction("idle");
+    }
+  };
+
+  const start = async () => {
+    if (!manifest) return;
+    setAction("starting");
+    setAnalysisError(null);
+    try {
+      acceptJob(await analysis.start(manifest));
+    } catch (error) {
+      setAnalysisError(
+        error instanceof Error
+          ? error.message
+          : "The preparation job could not be started.",
+      );
+    } finally {
+      setAction("idle");
+    }
+  };
+
+  const cancel = async () => {
+    if (!job || !activeJob) return;
+    setAnalysisError(null);
+    try {
+      acceptJob(await analysis.cancel(job.job_id));
+    } catch (error) {
+      setAnalysisError(
+        error instanceof Error
+          ? error.message
+          : "The preparation job could not be cancelled.",
+      );
+    }
+  };
+
+  const retry = async () => {
+    if (!job || !manifest) return;
+    setAnalysisError(null);
+    try {
+      acceptJob(await analysis.retry(job.job_id, manifest.manifest_sha256));
+    } catch (error) {
+      setAnalysisError(
+        error instanceof Error
+          ? error.message
+          : "The preparation job could not be retried.",
+      );
+    }
+  };
+
   const handleKeyDown = (event: KeyboardEvent) => {
     if (event.key === "Escape") {
       event.preventDefault();
-      onClose();
+      if (!activeJob) onClose();
       return;
     }
     if (event.key !== "Tab" || dialog.current === null) return;
@@ -888,12 +1035,16 @@ function PairReviewDialog({
       >
         <div className="explore-dialog-heading">
           <div>
-            <p className="overline">Metadata review · no processing</p>
+            <p className="overline">Pair evidence · explicit processing</p>
             <h2 id="pair-review-title" ref={heading} tabIndex={-1}>
               Review candidate pair
             </h2>
           </div>
-          <button onClick={onClose} aria-label="Close pair review">
+          <button
+            onClick={onClose}
+            aria-label="Close pair review"
+            disabled={activeJob}
+          >
             Close
           </button>
         </div>
@@ -904,15 +1055,119 @@ function PairReviewDialog({
           <PairReviewItem label="Before" item={before} />
           <PairReviewItem label="After" item={after} />
         </div>
-        <p className="explore-note">
-          EAT-019 will compare geometry, product, polarization, resolution,
-          orbit, and timing before a processing manifest can be created.
-        </p>
-        <button className="primary-button" disabled>
-          Check comparability · EAT-019
-        </button>
+        {!manifest ? (
+          <>
+            <p className="explore-note">
+              Check geometry, overlap, product, polarization, resolution, orbit,
+              and timing before any preparation job is created.
+            </p>
+            <button
+              className="primary-button"
+              onClick={() => void compare()}
+              disabled={action !== "idle"}
+            >
+              {action === "comparing"
+                ? "Checking comparability…"
+                : "Check comparability"}
+            </button>
+          </>
+        ) : (
+          <ComparabilityPanel manifest={manifest} />
+        )}
+        {manifest && !job && (
+          <button
+            className="primary-button"
+            onClick={() => void start()}
+            disabled={action !== "idle"}
+          >
+            {action === "starting"
+              ? "Queueing preparation…"
+              : "Start deterministic preparation"}
+          </button>
+        )}
+        {job && (
+          <div className="analysis-job-status" role="status" aria-live="polite">
+            <strong>Preparation {job.status}</strong>
+            <span>Job {job.job_id}</span>
+            {job.error && <p>{job.error}</p>}
+            {activeJob && (
+              <button onClick={() => void cancel()}>Cancel preparation</button>
+            )}
+            {(job.status === "failed" || job.status === "cancelled") && (
+              <button onClick={() => void retry()}>Retry preparation</button>
+            )}
+          </div>
+        )}
+        {analysisError && (
+          <p className="pair-dialog-error" role="alert">
+            {analysisError}
+          </p>
+        )}
       </div>
     </div>
+  );
+}
+
+function ComparabilityPanel({
+  manifest,
+}: {
+  manifest: AnalysisSelectionManifest;
+}) {
+  const evidence = manifest.comparability;
+  const days = evidence.temporal_separation_seconds / 86_400;
+  return (
+    <section
+      className="comparability-panel"
+      aria-labelledby="comparability-title"
+    >
+      <p className="overline">Immutable selection manifest</p>
+      <h3 id="comparability-title">Comparability evidence</h3>
+      <dl>
+        <div>
+          <dt>Temporal separation</dt>
+          <dd>{days.toFixed(1)} days</dd>
+        </div>
+        <div>
+          <dt>Footprint overlap</dt>
+          <dd>
+            {evidence.before_overlap_percent.toFixed(1)}% before ·{" "}
+            {evidence.after_overlap_percent.toFixed(1)}% after
+          </dd>
+        </div>
+        <div>
+          <dt>Product</dt>
+          <dd>{evidence.same_product ? "Same" : "Different"}</dd>
+        </div>
+        <div>
+          <dt>Shared polarization</dt>
+          <dd>{evidence.shared_polarizations.join(" + ") || "None"}</dd>
+        </div>
+        <div>
+          <dt>Orbit direction</dt>
+          <dd>{evidence.same_orbit_state ? "Same" : "Different"}</dd>
+        </div>
+        <div>
+          <dt>Manifest</dt>
+          <dd>{manifest.manifest_sha256.slice(0, 12)}…</dd>
+        </div>
+      </dl>
+      {evidence.warnings.length > 0 ? (
+        <div className="comparability-warnings">
+          <strong>Comparability warnings</strong>
+          <ul>
+            {evidence.warnings.map((warning) => (
+              <li key={warning}>{warning}</li>
+            ))}
+          </ul>
+        </div>
+      ) : (
+        <p>No metadata mismatch warnings were generated.</p>
+      )}
+      <p className="pair-dialog-warning">
+        Scientific validity: not determined. This evidence only describes the
+        selected metadata and overlap.
+      </p>
+    </section>
   );
 }
 

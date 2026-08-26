@@ -3,13 +3,15 @@
 from __future__ import annotations
 
 from collections.abc import Mapping
+from concurrent.futures import ThreadPoolExecutor
+from datetime import datetime
 from typing import Any
 from urllib.parse import urlencode, urlparse
 
 from pydantic import ValidationError
 
 from echoatlas.processor.catalog.http import CatalogAccessError, MetadataClient, SafeMetadataClient
-from echoatlas.processor.catalog.models import Acquisition, CatalogWarning
+from echoatlas.processor.catalog.models import Acquisition, CatalogWarning, TraversalResult
 from echoatlas.processor.catalog.search import (
     CatalogProviderAdapter,
     CatalogSearchService,
@@ -50,14 +52,24 @@ class UmbraCatalogSearchAdapter:
         self._max_items = max_items
 
     def search(self, request: CatalogSearchRequest, *, limit: int) -> ProviderSearchPage:
-        traversal = self._stac.traverse(
-            self._root_url,
-            max_catalogs=self._max_catalogs,
-            max_items=min(self._max_items, limit),
-            include_assets=False,
-        )
-        warnings = tuple(self._warning(warning) for warning in traversal.warnings)
-        has_more = traversal.coverage.catalog_limit_reached or traversal.coverage.item_limit_reached
+        roots = self._search_roots(request)
+        acquisitions: dict[str, Acquisition] = {}
+        warnings: tuple[CatalogSearchWarning, ...] = ()
+        item_budgets = _distribute_budget(min(self._max_items, limit), len(roots))
+        catalog_budgets = _distribute_budget(self._max_catalogs, len(roots))
+        arguments = tuple(zip(roots, catalog_budgets, item_budgets, strict=True))
+        with ThreadPoolExecutor(
+            max_workers=min(4, len(arguments)), thread_name_prefix="echoatlas-umbra"
+        ) as executor:
+            traversals = tuple(executor.map(self._traverse_root, arguments))
+        has_more = False
+        for traversal in traversals:
+            warnings += tuple(self._warning(warning) for warning in traversal.warnings)
+            acquisitions.update(
+                (acquisition.item_id, acquisition) for acquisition in traversal.acquisitions
+            )
+            has_more = has_more or traversal.coverage.catalog_limit_reached
+            has_more = has_more or traversal.coverage.item_limit_reached
         if has_more:
             warnings += (
                 CatalogSearchWarning(
@@ -72,11 +84,38 @@ class UmbraCatalogSearchAdapter:
                 ),
             )
         items: list[CatalogSearchItem] = []
-        for acquisition in traversal.acquisitions:
+        for acquisition in acquisitions.values():
             item = self._item(acquisition)
             if matches_search_request(request, item):
                 items.append(item)
         return ProviderSearchPage(items=tuple(items), warnings=warnings, has_more=has_more)
+
+    def _traverse_root(self, arguments: tuple[str, int, int]) -> TraversalResult:
+        root, max_catalogs, max_items = arguments
+        return self._stac.traverse(
+            root,
+            max_catalogs=max_catalogs,
+            max_items=max_items,
+            include_assets=False,
+        )
+
+    def _search_roots(self, request: CatalogSearchRequest) -> tuple[str, ...]:
+        if self._root_url != UMBRA_ROOT_URL:
+            return (self._root_url,)
+        months: list[str] = []
+        cursor = datetime(request.start_at.year, request.start_at.month, 1)
+        end = datetime(request.end_at.year, request.end_at.month, 1)
+        while cursor <= end:
+            months.append(
+                "https://umbra-open-data-catalog.s3.us-west-2.amazonaws.com/"
+                f"stac/{cursor.year:04d}/{cursor.year:04d}-{cursor.month:02d}/catalog.json"
+            )
+            cursor = datetime(
+                cursor.year + (1 if cursor.month == 12 else 0),
+                1 if cursor.month == 12 else cursor.month + 1,
+                1,
+            )
+        return tuple(months)
 
     @staticmethod
     def _item(acquisition: Acquisition) -> CatalogSearchItem:
@@ -300,6 +339,11 @@ def _search_item(
             href=acquisition.source_url,
         ),
     )
+
+
+def _distribute_budget(total: int, buckets: int) -> tuple[int, ...]:
+    quotient, remainder = divmod(total, buckets)
+    return tuple(quotient + (1 if index < remainder else 0) for index in range(buckets))
 
 
 def _is_https_url(value: str) -> bool:

@@ -596,6 +596,64 @@ a:focus-visible {
   width: calc(100% - 2rem);
   margin: 0 1rem 1rem;
 }
+.comparability-panel {
+  margin: 0 1rem 1rem;
+  padding: 0.9rem;
+  border: 1px solid var(--line-strong);
+  border-radius: 0.35rem;
+  background: #09151b;
+}
+.comparability-panel dl {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.55rem;
+  margin: 0.8rem 0;
+}
+.comparability-panel dl div {
+  min-width: 0;
+  padding: 0.55rem;
+  border: 1px solid var(--line);
+  background: var(--surface);
+}
+.comparability-panel dt {
+  color: var(--muted);
+  font-size: 0.62rem;
+}
+.comparability-panel dd {
+  margin: 0.18rem 0 0;
+  overflow-wrap: anywhere;
+  font-size: 0.72rem;
+}
+.comparability-panel > .pair-dialog-warning {
+  margin: 0.75rem -0.9rem -0.9rem;
+}
+.comparability-warnings {
+  color: var(--warning);
+  font-size: 0.7rem;
+}
+.analysis-job-status {
+  display: grid;
+  gap: 0.5rem;
+  margin: 0 1rem 1rem;
+  padding: 0.8rem;
+  border: 1px solid var(--line-strong);
+  background: #0a141a;
+  font-size: 0.68rem;
+}
+.analysis-job-status span {
+  overflow-wrap: anywhere;
+  color: var(--muted);
+}
+.analysis-job-status button {
+  justify-self: start;
+  min-height: 2.5rem;
+}
+.pair-dialog-error {
+  margin: 0 1rem 1rem;
+  padding: 0.75rem;
+  border: 1px solid var(--danger);
+  color: #ffb5b5;
+}
 
 @media (max-width: 1179px) {
   .explore-grid-live {
@@ -647,6 +705,9 @@ a:focus-visible {
     grid-column: 1;
   }
   .pair-review-grid {
+    grid-template-columns: 1fr;
+  }
+  .comparability-panel dl {
     grid-template-columns: 1fr;
   }
 }

@@ -9,6 +9,12 @@ import axe from "axe-core";
 import { describe, expect, it, vi } from "vitest";
 
 import { App } from "../App";
+import { demoBundle } from "../workbench/demo-bundle";
+import type {
+  AnalysisJob,
+  AnalysisJobClient,
+  AnalysisSelectionManifest,
+} from "./analysis";
 import { selectBasemap } from "./basemap";
 import type { CatalogSearchClient, PlaceSearchAdapter } from "./catalog";
 import {
@@ -109,6 +115,114 @@ function client(result = response()): CatalogSearchClient {
         sampled_result_count: results.length,
       });
     }),
+  };
+}
+
+function selectionManifest(
+  before: CatalogItem,
+  after: CatalogItem,
+): AnalysisSelectionManifest {
+  return {
+    contract_version: "1.0.0",
+    selection_id: "selection-ui-test",
+    created_at: "2026-08-26T02:00:00Z",
+    aoi: {
+      bbox: [-112.2, 40.45, -112.05, 40.6],
+      geometry: polygonFromBbox([-112.2, 40.45, -112.05, 40.6]),
+    },
+    aoi_geometry_sha256: "a".repeat(64),
+    before,
+    after,
+    comparability: {
+      temporal_separation_seconds: 691_200,
+      common_footprint: polygonFromBbox([-112.2, 40.45, -112.05, 40.6]),
+      common_bbox: [-112.2, 40.45, -112.05, 40.6],
+      before_overlap_percent: 100,
+      after_overlap_percent: 100,
+      same_product: false,
+      shared_polarizations: [],
+      range_resolution_delta_percent: 1900,
+      azimuth_resolution_delta_percent: 1900,
+      same_observation_direction: false,
+      same_orbit_state: true,
+      incidence_angle_delta_deg: 1.9,
+      warnings: ["product types differ", "no shared polarization"],
+      scientific_validity: "not_determined",
+    },
+    processing_inputs: {
+      preset: "echoatlas-standard-v1",
+      normalization: "robust-percentile",
+      resampling: "bilinear",
+      score_method: "absolute-difference",
+      score_threshold: 0.65,
+      minimum_component_pixels: 48,
+    },
+    interpretation_limits: [
+      "Comparability evidence does not establish scientific validity.",
+    ],
+    manifest_sha256: "b".repeat(64),
+  };
+}
+
+function analysisHarness(): {
+  client: AnalysisJobClient;
+  start: ReturnType<typeof vi.fn<AnalysisJobClient["start"]>>;
+  cancel: ReturnType<typeof vi.fn<AnalysisJobClient["cancel"]>>;
+  retry: ReturnType<typeof vi.fn<AnalysisJobClient["retry"]>>;
+} {
+  let manifest = selectionManifest(sentinel, umbra);
+  const compare = vi.fn<AnalysisJobClient["compare"]>((_, before, after) => {
+    manifest = selectionManifest(before, after);
+    return Promise.resolve(manifest);
+  });
+  const start = vi.fn<AnalysisJobClient["start"]>((nextManifest) =>
+    Promise.resolve({
+      contract_version: "1.0.0",
+      job_id: "analysis-ui-test",
+      retry_of: null,
+      status: "queued",
+      manifest: nextManifest,
+      created_at: "2026-08-26T02:00:00Z",
+      updated_at: "2026-08-26T02:00:00Z",
+      error: null,
+      bundle: null,
+    }),
+  );
+  const get = vi.fn<AnalysisJobClient["get"]>(() =>
+    Promise.resolve({
+      contract_version: "1.0.0",
+      job_id: "analysis-ui-test",
+      retry_of: null,
+      status: "succeeded",
+      manifest,
+      created_at: "2026-08-26T02:00:00Z",
+      updated_at: "2026-08-26T02:00:01Z",
+      error: null,
+      bundle: demoBundle,
+    }),
+  );
+  const terminal = (status: "cancelled" | "failed"): AnalysisJob => ({
+    contract_version: "1.0.0",
+    job_id: "analysis-ui-test",
+    retry_of: null,
+    status,
+    manifest,
+    created_at: "2026-08-26T02:00:00Z",
+    updated_at: "2026-08-26T02:00:01Z",
+    error: status === "failed" ? "Preparation failed safely." : null,
+    bundle: null,
+  });
+  const cancel = vi.fn<AnalysisJobClient["cancel"]>(() =>
+    Promise.resolve(terminal("cancelled")),
+  );
+  const retry = vi.fn<AnalysisJobClient["retry"]>(() =>
+    Promise.resolve(terminal("failed")),
+  );
+  return {
+    client: { compare, start, get, cancel, retry },
+    start,
+    cancel,
+    retry,
   };
 }
 
@@ -249,10 +363,113 @@ describe("Explore", () => {
     ).toBeInTheDocument();
     expect(
       within(dialog).getByRole("button", { name: /Check comparability/ }),
-    ).toBeDisabled();
+    ).toBeEnabled();
     fireEvent.keyDown(dialog, { key: "Escape" });
     expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
     expect(reviewButton).toHaveFocus();
+  });
+
+  it("shows comparability before processing and opens a successful bundle in Analyze", async () => {
+    const { client: analysis, start } = analysisHarness();
+    render(
+      <App
+        initialMode="explore"
+        catalog={client()}
+        analysis={analysis}
+        renderExploreMap={false}
+        analysisPollMs={0}
+      />,
+    );
+    fireEvent.click(
+      screen.getByRole("button", { name: "Search reported acquisitions" }),
+    );
+    await screen.findByRole("heading", { name: "2 reported acquisitions" });
+    fireEvent.click(
+      screen.getByRole("button", { name: "Use S1-2025-07-20 as Before" }),
+    );
+    fireEvent.click(
+      screen.getByRole("button", { name: "Use UMBRA-2025-07-28 as After" }),
+    );
+    fireEvent.click(screen.getByRole("button", { name: "Review pair" }));
+
+    expect(start).not.toHaveBeenCalled();
+    fireEvent.click(
+      screen.getByRole("button", { name: "Check comparability" }),
+    );
+    expect(
+      await screen.findByRole("heading", { name: "Comparability evidence" }),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByText(/Scientific validity: not determined/),
+    ).toBeInTheDocument();
+    expect(screen.getByText("product types differ")).toBeInTheDocument();
+    expect(start).not.toHaveBeenCalled();
+
+    fireEvent.click(
+      screen.getByRole("button", { name: "Start deterministic preparation" }),
+    );
+    expect(
+      await screen.findByRole("heading", { name: demoBundle.mission.title }),
+    ).toBeInTheDocument();
+    expect(start).toHaveBeenCalledTimes(1);
+
+    fireEvent.click(screen.getByRole("button", { name: "Return to Explore" }));
+    expect(
+      screen.getByRole("heading", {
+        name: "Explore provider-reported SAR availability",
+      }),
+    ).toBeInTheDocument();
+  });
+
+  it("keeps an active job contained and exposes cancellation plus safe retry", async () => {
+    const { client: analysis, cancel, retry } = analysisHarness();
+    render(
+      <App
+        initialMode="explore"
+        catalog={client()}
+        analysis={analysis}
+        renderExploreMap={false}
+        analysisPollMs={10_000}
+      />,
+    );
+    fireEvent.click(
+      screen.getByRole("button", { name: "Search reported acquisitions" }),
+    );
+    await screen.findByRole("heading", { name: "2 reported acquisitions" });
+    fireEvent.click(
+      screen.getByRole("button", { name: "Use S1-2025-07-20 as Before" }),
+    );
+    fireEvent.click(
+      screen.getByRole("button", { name: "Use UMBRA-2025-07-28 as After" }),
+    );
+    fireEvent.click(screen.getByRole("button", { name: "Review pair" }));
+    fireEvent.click(
+      screen.getByRole("button", { name: "Check comparability" }),
+    );
+    await screen.findByRole("heading", { name: "Comparability evidence" });
+    fireEvent.click(
+      screen.getByRole("button", { name: "Start deterministic preparation" }),
+    );
+
+    expect(await screen.findByText("Preparation queued")).toBeInTheDocument();
+    const dialog = screen.getByRole("dialog");
+    expect(
+      within(dialog).getByRole("button", { name: "Close pair review" }),
+    ).toBeDisabled();
+    fireEvent.keyDown(dialog, { key: "Escape" });
+    expect(screen.getByRole("dialog")).toBeInTheDocument();
+
+    fireEvent.click(
+      within(dialog).getByRole("button", { name: "Cancel preparation" }),
+    );
+    expect(
+      await screen.findByText("Preparation cancelled"),
+    ).toBeInTheDocument();
+    expect(cancel).toHaveBeenCalledWith("analysis-ui-test");
+    fireEvent.click(screen.getByRole("button", { name: "Retry preparation" }));
+    await waitFor(() =>
+      expect(retry).toHaveBeenCalledWith("analysis-ui-test", "b".repeat(64)),
+    );
   });
 
   it("distinguishes an empty provider response from never-imaged", async () => {
