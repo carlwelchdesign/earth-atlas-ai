@@ -66,5 +66,7 @@ Status: owner-review package verification passed on 2026-08-25. Public release i
 - [Prepared container tablet](evidence/eat015-container-tablet.png)
 - [Prepared container mobile](evidence/eat015-container-mobile.png)
 
-The source commit and pull request are added to the ticket evidence at delivery.
-CI must remain green before merge and EAT-015 completion.
+Unsigned source commit `7416e19` was delivered in
+[PR #48](https://github.com/carlwelchdesign/earth-atlas-ai/pull/48), which passed
+both required CI jobs and merged as
+`cbaf17f36713d923b91eef7de3556fa81e247bf8`. EAT-015 is complete in Asana.
