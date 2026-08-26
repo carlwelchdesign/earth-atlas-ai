@@ -1,6 +1,6 @@
 # EchoAtlas Explore v1 design validation
 
-Status: prototype walkthrough verification complete; Carl approval remains open.
+Status: prototype walkthrough verification complete and approved by Carl Welch on 2026-08-25.
 
 Date: 2026-08-25
 
@@ -37,14 +37,14 @@ State review uses the selector for loading, no coverage, partial provider, stale
 
 ## Acceptance evidence
 
-| Requirement                                                      | Evidence                                                | Status           |
-| ---------------------------------------------------------------- | ------------------------------------------------------- | ---------------- |
-| Explore/Analyze separation and retained state                    | Mode model, navigation rules, pair tray, handoff dialog | Ready for review |
-| Navigation, search, AOI, footprints, filters, pair, mobile       | Workflow, interaction contract, responsive prototype    | Ready for review |
-| Truthful states                                                  | Required-state table and prototype selector             | Ready for review |
-| Equivalent non-map actions                                       | Results-first mobile order and list actions             | Ready for review |
-| Civilian use, sensitivity, provenance, license, machine boundary | Persistent copy and per-record contract                 | Ready for review |
-| Desktop/mobile walkthrough and Carl approval                     | Responsive browser walkthrough passed; approval open    | Approval open    |
+| Requirement                                                      | Evidence                                                   | Status           |
+| ---------------------------------------------------------------- | ---------------------------------------------------------- | ---------------- |
+| Explore/Analyze separation and retained state                    | Mode model, navigation rules, pair tray, handoff dialog    | Ready for review |
+| Navigation, search, AOI, footprints, filters, pair, mobile       | Workflow, interaction contract, responsive prototype       | Ready for review |
+| Truthful states                                                  | Required-state table and prototype selector                | Ready for review |
+| Equivalent non-map actions                                       | Results-first mobile order and list actions                | Ready for review |
+| Civilian use, sensitivity, provenance, license, machine boundary | Persistent copy and per-record contract                    | Ready for review |
+| Desktop/mobile walkthrough and Carl approval                     | Responsive walkthrough passed; Carl approved on 2026-08-25 | Pass             |
 
 ## Browser walkthrough evidence
 
@@ -83,4 +83,12 @@ The synthetic map is design evidence only. It does not establish MapLibre qualit
 
 ## Approval gate
 
-EAT-018 must not start until Carl reviews the specification and desktop/mobile prototype and explicitly approves the direction. Approval must be recorded here and in Asana. No approval is claimed by this document.
+Carl explicitly approved the Explore design in the EAT-DES-002 Codex task on 2026-08-25. The approval covers:
+
+1. separate Explore and Analyze modes with retained AOI, query, and pair state;
+2. a MapLibre navigation surface plus an equivalent results-first non-map workflow;
+3. explicit AOI, filter, footprint, provider, provenance, license, and failure-state behavior;
+4. responsive desktop, tablet, zoomed-desktop, and phone layouts; and
+5. the visible boundary that availability and pair selection do not establish scientific suitability.
+
+The approval unlocks EAT-018 implementation. It does not approve production deployment, paid provider access, automated pair validation, or any relaxation of the civilian-use and sensitivity boundaries.

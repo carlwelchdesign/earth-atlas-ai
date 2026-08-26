@@ -8,7 +8,7 @@ Post-MVP milestone M5 expands that proven workflow with a global **Explore** mod
 
 EAT-017 now supplies the versioned provider-neutral search boundary needed by Explore. The API and CLI query bounded provider metadata, preserve actual acquisition footprints, license and source identity, keep raw payloads behind adapters, and report provider failures or sample limits without erasing successful results. The MapLibre interface remains EAT-018 and does not begin until EAT-DES-002 design approval is recorded.
 
-EAT-DES-002 now has a review-candidate [Explore specification](../docs/design/explore-interface-v1.md) and responsive standalone prototype. They define Explore/Analyze navigation, AOI/search/filter behavior, map/list parity, provider/failure language, retained pair selection, mobile order, and the EAT-019 comparability handoff. Browser walkthrough checks pass; Carl's explicit design approval remains the final gate.
+EAT-DES-002's approved [Explore specification](../docs/design/explore-interface-v1.md) and responsive standalone prototype define Explore/Analyze navigation, AOI/search/filter behavior, map/list parity, provider/failure language, retained pair selection, mobile order, and the EAT-019 comparability handoff. Browser walkthrough checks pass, and Carl's 2026-08-25 approval unlocks EAT-018 implementation.
 
 Canonical GitHub repository: [carlwelchdesign/earth-atlas-ai](https://github.com/carlwelchdesign/earth-atlas-ai).
 

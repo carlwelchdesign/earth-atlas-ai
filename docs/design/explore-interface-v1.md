@@ -1,6 +1,6 @@
 # EchoAtlas Explore interface v1
 
-Status: review candidate; Carl approval is required before EAT-018 implementation.
+Status: approved by Carl Welch for EAT-018 implementation on 2026-08-25.
 
 Ticket: [EAT-DES-002](https://app.asana.com/1/9789386902387/project/1217790716964797/task/1217846797595944)
 
