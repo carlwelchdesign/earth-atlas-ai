@@ -1,0 +1,469 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Design-review prototype for EchoAtlas global Explore mode"
+    />
+    <title>EchoAtlas Explore design prototype</title>
+    <link rel="stylesheet" href="styles.css" />
+    <script src="prototype.js" defer></script>
+  </head>
+  <body data-review-state="ready">
+    <a class="skip-link" href="#results">Skip to acquisition results</a>
+    <aside class="prototype-bar" aria-label="Design prototype controls">
+      <div>
+        <strong>Design review prototype</strong
+        ><span>Synthetic records · no provider calls</span>
+      </div>
+      <label
+        >Review state
+        <select id="review-state">
+          <option value="ready">Results available</option>
+          <option value="loading">Searching providers</option>
+          <option value="empty">No reported coverage</option>
+          <option value="partial">Partial provider result</option>
+          <option value="stale">Stale cached result</option>
+          <option value="rate">Provider rate limited</option>
+          <option value="invalid">Invalid AOI</option>
+          <option value="offline">Offline</option>
+          <option value="permission">Permission limited</option>
+        </select>
+      </label>
+    </aside>
+
+    <div class="app-shell">
+      <header class="app-header">
+        <a class="brand" href="#"
+          ><span aria-hidden="true">EA</span><strong>EchoAtlas</strong></a
+        >
+        <nav aria-label="Primary">
+          <a href="#" aria-current="page">Explore</a>
+          <button type="button" id="analyze-nav">
+            Analyze <span id="nav-count">· no pair</span>
+          </button>
+        </nav>
+        <div class="header-meta">
+          <span class="civilian-pill">Civilian research use</span
+          ><button type="button" class="quiet">About data</button>
+        </div>
+      </header>
+
+      <section class="search-band" aria-labelledby="explore-title">
+        <div>
+          <p class="overline">Global imagery discovery</p>
+          <h1 id="explore-title">Explore provider-reported SAR availability</h1>
+          <p>
+            Navigate anywhere. Availability appears only where a provider
+            reports an acquisition footprint.
+          </p>
+        </div>
+        <form class="place-search" role="search">
+          <label for="place">Place or coordinates</label>
+          <div>
+            <input id="place" value="Bingham Canyon, Utah" /><button
+              type="submit"
+            >
+              Go
+            </button>
+          </div>
+        </form>
+      </section>
+
+      <section
+        class="boundary-banner"
+        aria-label="Coverage and interpretation boundary"
+      >
+        <span aria-hidden="true">i</span>
+        <p>
+          <strong>The globe is navigation—not imagery coverage.</strong>
+          Outlines are provider-reported acquisitions. A candidate pair still
+          requires comparability review before processing.
+        </p>
+        <button class="text-button" type="button">Read boundaries</button>
+      </section>
+
+      <section class="state-notice" id="state-notice" aria-live="polite" hidden>
+        <span class="state-icon" aria-hidden="true">!</span>
+        <div>
+          <p class="overline" id="state-kicker">Catalog state</p>
+          <h2 id="state-title"></h2>
+          <p id="state-message"></p>
+        </div>
+        <button id="state-action" type="button">Retry</button>
+      </section>
+
+      <main class="explore-grid">
+        <aside class="query-panel panel" aria-labelledby="query-title">
+          <div class="panel-heading">
+            <div>
+              <p class="overline">Search definition</p>
+              <h2 id="query-title">Area and filters</h2>
+            </div>
+            <span class="step">1</span>
+          </div>
+          <section class="aoi-card" aria-labelledby="aoi-title">
+            <div>
+              <h3 id="aoi-title">Bingham Canyon AOI</h3>
+              <span class="valid">Valid · 238 km²</span>
+            </div>
+            <p>Rectangle · WGS84<br />−112.20, 40.45 to −112.05, 40.60</p>
+            <div class="button-row">
+              <button id="edit-aoi" type="button">Edit on map</button
+              ><button type="button" class="quiet">Reset</button>
+            </div>
+          </section>
+          <fieldset>
+            <legend>Providers</legend>
+            <label><input type="checkbox" checked /> Umbra Open Data</label
+            ><label><input type="checkbox" checked /> Sentinel-1 GRD</label>
+          </fieldset>
+          <fieldset>
+            <legend>Date range</legend>
+            <label>From<input type="date" value="2025-06-01" /></label
+            ><label>To<input type="date" value="2025-08-01" /></label>
+          </fieldset>
+          <fieldset>
+            <legend>Acquisition filters</legend>
+            <label
+              >Product<select>
+                <option>All compatible products</option>
+                <option>GRD</option>
+                <option>GEC</option>
+              </select></label
+            ><label
+              >Polarization<select>
+                <option>Any polarization</option>
+                <option>VV + VH</option>
+                <option>HH</option>
+              </select></label
+            ><label
+              >Maximum resolution<select>
+                <option>Any reported resolution</option>
+                <option>10 m</option>
+                <option>5 m</option>
+                <option>1 m</option>
+              </select></label
+            >
+          </fieldset>
+          <button class="primary full" type="button" id="search-button">
+            Search reported acquisitions
+          </button>
+          <p class="query-note">
+            Search is bounded to this AOI and date range. No raster imagery is
+            downloaded.
+          </p>
+        </aside>
+
+        <section class="map-panel panel" aria-labelledby="map-title">
+          <div class="panel-heading map-heading">
+            <div>
+              <p class="overline">Navigation surface</p>
+              <h2 id="map-title">Map and reported footprints</h2>
+            </div>
+            <div class="map-actions">
+              <button type="button">−</button><button type="button">+</button
+              ><button type="button">Reset view</button>
+            </div>
+          </div>
+          <div
+            class="map-stage"
+            role="region"
+            aria-label="Synthetic map centered on Bingham Canyon. One AOI and four provider-reported acquisition footprints are shown. Every map action has an equivalent control in the results list."
+          >
+            <svg viewBox="0 0 900 620" role="presentation" aria-hidden="true">
+              <defs>
+                <pattern
+                  id="grid"
+                  width="70"
+                  height="70"
+                  patternUnits="userSpaceOnUse"
+                >
+                  <path
+                    d="M70 0H0V70"
+                    fill="none"
+                    stroke="#253849"
+                    stroke-width="1"
+                  />
+                </pattern>
+              </defs>
+              <rect width="900" height="620" fill="#0b1721" />
+              <rect width="900" height="620" fill="url(#grid)" />
+              <path
+                d="M0 420C150 360 245 430 375 340S630 300 900 180V620H0Z"
+                fill="#152831"
+              />
+              <path
+                d="M0 190C170 230 270 120 430 170S690 110 900 70"
+                fill="none"
+                stroke="#294554"
+                stroke-width="30"
+                opacity=".55"
+              />
+              <g class="footprints">
+                <path d="M286 155 662 203 617 492 247 446Z" />
+                <path d="M322 188 714 247 668 522 281 462Z" />
+                <path class="umbra" d="M407 276 552 294 531 405 387 385Z" />
+                <path class="umbra" d="M456 241 607 261 586 373 438 353Z" />
+              </g>
+              <path class="aoi-shape" d="M400 268H578V410H400Z" />
+              <g class="place-labels">
+                <text x="418" y="340">Bingham Canyon AOI</text>
+                <text x="670" y="145">Salt Lake City</text>
+                <text x="88" y="530">Oquirrh Mountains</text>
+              </g>
+            </svg>
+            <div class="map-status">
+              <span><i class="swatch aoi"></i>Search AOI</span
+              ><span><i class="swatch sentinel"></i>Sentinel-1 · 2</span
+              ><span><i class="swatch umbra"></i>Umbra · 2</span>
+            </div>
+            <div class="draw-help" id="draw-help" hidden>
+              <strong>Edit AOI</strong>
+              <p>
+                Drag corner handles or enter exact coordinates in the filter
+                panel.
+              </p>
+              <button type="button" id="done-aoi">Done editing</button>
+            </div>
+          </div>
+          <footer class="map-footer">
+            <span>Map: synthetic design surface</span
+            ><span>Footprints: synthetic fixtures</span
+            ><button class="text-button" type="button">
+              Attribution and licenses
+            </button>
+          </footer>
+        </section>
+
+        <section
+          class="results-panel panel"
+          id="results"
+          aria-labelledby="results-title"
+        >
+          <div class="panel-heading">
+            <div>
+              <p class="overline">Equivalent non-map path</p>
+              <h2 id="results-title">
+                <span id="result-count">4</span> reported acquisitions
+              </h2>
+            </div>
+            <span class="step">2</span>
+          </div>
+          <div class="results-summary">
+            <p id="result-summary">2 Sentinel-1 · 2 Umbra</p>
+            <label
+              >Sort<select>
+                <option>Newest first</option>
+                <option>Provider</option>
+                <option>Resolution</option>
+              </select></label
+            >
+          </div>
+          <ol class="result-list" id="result-list">
+            <li>
+              <article class="result-card" data-id="S1-0730">
+                <header>
+                  <span class="provider sentinel-label">Sentinel-1</span
+                  ><time>30 Jul 2025 · 01:18 UTC</time>
+                </header>
+                <h3>S1C · IW GRD</h3>
+                <dl>
+                  <div>
+                    <dt>Resolution</dt>
+                    <dd>10 m reported</dd>
+                  </div>
+                  <div>
+                    <dt>Polarization</dt>
+                    <dd>VV + VH</dd>
+                  </div>
+                  <div>
+                    <dt>Orbit</dt>
+                    <dd>Ascending</dd>
+                  </div>
+                </dl>
+                <p class="source">Copernicus Data Space · legal notice</p>
+                <div class="card-actions">
+                  <button type="button" data-zoom="S1-0730">
+                    Show footprint</button
+                  ><button type="button" data-slot="before">
+                    Use as before</button
+                  ><button type="button" data-slot="after">Use as after</button>
+                </div>
+              </article>
+            </li>
+            <li>
+              <article class="result-card" data-id="UM-0718">
+                <header>
+                  <span class="provider umbra-label">Umbra</span
+                  ><time>18 Jul 2025 · 06:42 UTC</time>
+                </header>
+                <h3>Spotlight · GEC</h3>
+                <dl>
+                  <div>
+                    <dt>Resolution</dt>
+                    <dd>0.25 m reported</dd>
+                  </div>
+                  <div>
+                    <dt>Polarization</dt>
+                    <dd>VV</dd>
+                  </div>
+                  <div>
+                    <dt>License</dt>
+                    <dd>CC BY 4.0</dd>
+                  </div>
+                </dl>
+                <p class="source">Umbra Open Data · provider item UM-0718</p>
+                <div class="card-actions">
+                  <button type="button" data-zoom="UM-0718">
+                    Show footprint</button
+                  ><button type="button" data-slot="before">
+                    Use as before</button
+                  ><button type="button" data-slot="after">Use as after</button>
+                </div>
+              </article>
+            </li>
+            <li>
+              <article class="result-card" data-id="S1-0612">
+                <header>
+                  <span class="provider sentinel-label">Sentinel-1</span
+                  ><time>12 Jun 2025 · 01:19 UTC</time>
+                </header>
+                <h3>S1A · IW GRD</h3>
+                <dl>
+                  <div>
+                    <dt>Resolution</dt>
+                    <dd>10 m reported</dd>
+                  </div>
+                  <div>
+                    <dt>Polarization</dt>
+                    <dd>VV + VH</dd>
+                  </div>
+                  <div>
+                    <dt>Orbit</dt>
+                    <dd>Ascending</dd>
+                  </div>
+                </dl>
+                <p class="source">Copernicus Data Space · legal notice</p>
+                <div class="card-actions">
+                  <button type="button" data-zoom="S1-0612">
+                    Show footprint</button
+                  ><button type="button" data-slot="before">
+                    Use as before</button
+                  ><button type="button" data-slot="after">Use as after</button>
+                </div>
+              </article>
+            </li>
+            <li>
+              <article class="result-card" data-id="UM-0608">
+                <header>
+                  <span class="provider umbra-label">Umbra</span
+                  ><time>08 Jun 2025 · 18:11 UTC</time>
+                </header>
+                <h3>Spotlight · GEC</h3>
+                <dl>
+                  <div>
+                    <dt>Resolution</dt>
+                    <dd>0.35 m reported</dd>
+                  </div>
+                  <div>
+                    <dt>Polarization</dt>
+                    <dd>VV</dd>
+                  </div>
+                  <div>
+                    <dt>License</dt>
+                    <dd>CC BY 4.0</dd>
+                  </div>
+                </dl>
+                <p class="source">Umbra Open Data · provider item UM-0608</p>
+                <div class="card-actions">
+                  <button type="button" data-zoom="UM-0608">
+                    Show footprint</button
+                  ><button type="button" data-slot="before">
+                    Use as before</button
+                  ><button type="button" data-slot="after">Use as after</button>
+                </div>
+              </article>
+            </li>
+          </ol>
+          <div class="empty-results" id="empty-results" hidden>
+            <strong
+              >No provider reported an acquisition for this search.</strong
+            >
+            <p>
+              The globe remains available for navigation. Expand the date range,
+              change providers, or edit the AOI. This does not mean the location
+              has never been imaged.
+            </p>
+          </div>
+        </section>
+      </main>
+
+      <aside class="pair-tray" aria-labelledby="pair-title">
+        <div>
+          <p class="overline">Selection retained across modes</p>
+          <h2 id="pair-title">Candidate pair</h2>
+        </div>
+        <div class="pair-slot">
+          <span>Before</span><strong id="before-value">Not selected</strong>
+        </div>
+        <span class="pair-arrow" aria-hidden="true">→</span>
+        <div class="pair-slot">
+          <span>After</span><strong id="after-value">Not selected</strong>
+        </div>
+        <p class="pair-warning" id="pair-warning">
+          Select two acquisitions. Availability does not establish scientific
+          comparability.
+        </p>
+        <button class="primary" id="review-pair" type="button" disabled>
+          Review pair
+        </button>
+      </aside>
+    </div>
+    <dialog id="handoff-dialog" aria-labelledby="handoff-title">
+      <form method="dialog">
+        <header>
+          <p class="overline">Analyze handoff preview</p>
+          <h2 id="handoff-title" tabindex="-1">
+            Review candidate pair before processing
+          </h2>
+          <button aria-label="Close" value="cancel">×</button>
+        </header>
+        <p>
+          The AOI and pair selection are retained. This design does not process
+          imagery.
+        </p>
+        <dl>
+          <div>
+            <dt>Before</dt>
+            <dd id="dialog-before"></dd>
+          </div>
+          <div>
+            <dt>After</dt>
+            <dd id="dialog-after"></dd>
+          </div>
+          <div>
+            <dt>Boundary</dt>
+            <dd>Bingham Canyon AOI · 238 km²</dd>
+          </div>
+        </dl>
+        <div class="dialog-warning">
+          <strong>Machine-selected inputs, not a valid scientific pair.</strong>
+          <p>
+            EAT-019 will show orbit, geometry, polarization, timing, and
+            processing compatibility before a job can start.
+          </p>
+        </div>
+        <footer>
+          <button value="cancel">Return to Explore</button
+          ><button class="primary" value="cancel">
+            Continue to Analyze preview
+          </button>
+        </footer>
+      </form>
+    </dialog>
+    <p class="sr-only" id="announcement" aria-live="polite"></p>
+  </body>
+</html>

@@ -237,12 +237,14 @@ Outcome: an implementation-ready design defines how users move from global navig
 
 Acceptance:
 
-- [ ] Separate Explore and Analyze modes, navigation between them, and retained selection state are specified.
-- [ ] Globe navigation, place/coordinate search, AOI draw/edit, acquisition footprints, provider/date/resolution/polarization filters, pair comparison, and mobile behavior are covered.
-- [ ] Loading, no-coverage, partial-provider, stale, rate-limit, invalid-AOI, offline, and permission states use truthful language.
-- [ ] An equivalent keyboard- and screen-reader-usable results list supports every core map discovery action.
-- [ ] Civilian-use, sensitivity, provenance, license, and machine-candidate boundaries remain visible.
-- [ ] Desktop/mobile walkthrough evidence and Carl's design approval are recorded before EAT-018 starts.
+- [x] Separate Explore and Analyze modes, navigation between them, and retained selection state are specified.
+- [x] Globe navigation, place/coordinate search, AOI draw/edit, acquisition footprints, provider/date/resolution/polarization filters, pair comparison, and mobile behavior are covered.
+- [x] Loading, no-coverage, partial-provider, stale, rate-limit, invalid-AOI, offline, and permission states use truthful language.
+- [x] An equivalent keyboard- and screen-reader-usable results list supports every core map discovery action.
+- [x] Civilian-use, sensitivity, provenance, license, and machine-candidate boundaries remain visible.
+- [x] Desktop/mobile walkthrough evidence and Carl's design approval are recorded before EAT-018 starts.
+
+Design checkpoint: `docs/design/explore-interface-v1.md` and `prototypes/eat-des-002` define the implementation-ready contract. Local browser verification covers 320, 390, 768, and 1440 CSS-pixel layouts; list-only pair selection; retained handoff state; provider/error states; accessible names; overflow; and console errors. Carl approved the Explore design on 2026-08-25, unlocking EAT-018 implementation.
 
 Non-goals: production code, paid provider tasking, operational alerts, or changes to SAR processing policy.
 
