@@ -340,3 +340,14 @@ Acceptance:
 - [ ] Document the product problem, architecture, decisions, tradeoffs, implementation, and limitations without inflated claims.
 - [ ] Link the public deployment and repository.
 - [ ] Run final verification and reconcile every remaining ticket state.
+
+### EAT-023 — Restore Analyze navigation and bound non-map results
+
+Outcome: Analyze retains an unmistakable return path to Explore, while the equivalent non-map acquisition path remains fully usable inside a bounded scroll region.
+
+Acceptance:
+
+- [x] Show Explore/Analyze primary navigation in ready, loading, and rejected Analyze states.
+- [x] Identify Analyze as the current mode and keep Explore actionable.
+- [x] Bound the acquisition-card list and make it keyboard-scrollable without hiding result context.
+- [ ] Add regression coverage and verify the public Vercel flow. Regression coverage and local browser verification pass; public verification follows merge.

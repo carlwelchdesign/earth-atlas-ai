@@ -31,6 +31,7 @@ import type {
   ComparisonMode,
   WorkbenchBundle,
 } from "./model";
+import { ModeHeader } from "../ModeHeader";
 interface WorkbenchProps {
   bundle: WorkbenchBundle;
   assessmentStore?: AssessmentStore;
@@ -180,7 +181,8 @@ export function Workbench({
       <a className="skip-link" href="#candidate-queue">
         Skip to candidate queue
       </a>
-      <MissionHeader bundle={bundle} status={status} onExplore={onExplore} />
+      <ModeHeader mode="analyze" onExplore={onExplore} />
+      <MissionHeader bundle={bundle} status={status} />
       <QualityBanner bundle={bundle} status={status} />
       {stale ? (
         <StateNotice
@@ -295,10 +297,9 @@ export function Workbench({
 interface MissionHeaderProps {
   bundle: WorkbenchBundle;
   status: "success" | "degraded" | "missing" | "stale";
-  onExplore?: () => void;
 }
 
-function MissionHeader({ bundle, status, onExplore }: MissionHeaderProps) {
+function MissionHeader({ bundle, status }: MissionHeaderProps) {
   const before = acquisitionByRole(bundle, "before");
   const after = acquisitionByRole(bundle, "after");
   const labels = {
@@ -308,7 +309,7 @@ function MissionHeader({ bundle, status, onExplore }: MissionHeaderProps) {
     stale: { icon: "!", text: "Validated · stale" },
   } as const;
   return (
-    <header className="mission-header">
+    <section className="mission-header" aria-label="Analysis mission summary">
       <div className="mission-brand">
         <span className="brand-mark" aria-hidden="true">
           EA
@@ -341,11 +342,6 @@ function MissionHeader({ bundle, status, onExplore }: MissionHeaderProps) {
         </div>
       </dl>
       <div className="mission-status">
-        {onExplore ? (
-          <button className="mode-switch-button" onClick={onExplore}>
-            Return to Explore
-          </button>
-        ) : null}
         <span className={`status-pill status-${status}`}>
           <span aria-hidden="true">{labels[status].icon}</span>
           {labels[status].text}
@@ -357,7 +353,7 @@ function MissionHeader({ bundle, status, onExplore }: MissionHeaderProps) {
           Standalone deterministic runtime
         </span>
       </div>
-    </header>
+    </section>
   );
 }
 

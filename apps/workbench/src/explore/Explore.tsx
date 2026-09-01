@@ -7,6 +7,7 @@ import {
   type AnalysisJobClient,
   type AnalysisSelectionManifest,
 } from "./analysis";
+import { ModeHeader } from "../ModeHeader";
 import {
   CatalogClientError,
   HttpPlaceSearchAdapter,
@@ -332,26 +333,11 @@ export function Explore({
       <a className="skip-link" href="#acquisition-results">
         Skip to acquisition results
       </a>
-      <header className="explore-header">
-        <div className="mission-brand">
-          <span className="brand-mark" aria-hidden="true">
-            EA
-          </span>
-          <strong>EchoAtlas</strong>
-        </div>
-        <nav aria-label="Primary">
-          <button aria-current="page">Explore</button>
-          <button onClick={onAnalyze}>
-            Analyze{" "}
-            <span>
-              · {pair.before && pair.after ? "pair retained" : "no pair"}
-            </span>
-          </button>
-        </nav>
-        <span className="status-pill status-success">
-          Civilian research use
-        </span>
-      </header>
+      <ModeHeader
+        mode="explore"
+        onAnalyze={onAnalyze}
+        analyzeDetail={pair.before && pair.after ? "pair retained" : "no pair"}
+      />
 
       <section className="explore-search-band" aria-labelledby="explore-title">
         <div>
@@ -639,7 +625,11 @@ export function Explore({
               </p>
             </div>
           )}
-          <ol className="acquisition-list">
+          <ol
+            className="acquisition-list acquisition-list-scroll"
+            aria-label="Scrollable acquisition results"
+            tabIndex={0}
+          >
             {response?.results.map((item) => {
               const key = itemKey(item);
               return (

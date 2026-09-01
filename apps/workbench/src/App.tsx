@@ -16,6 +16,7 @@ import type {
 } from "./explore/catalog";
 import type { BasemapConfig } from "./explore/basemap";
 import type { AnalysisJobClient } from "./explore/analysis";
+import { ModeHeader } from "./ModeHeader";
 
 type LoadState =
   | { status: "loading" }
@@ -100,35 +101,33 @@ export function App({
 
   if (state.status === "loading") {
     return (
-      <main className="load-shell">
-        <div className="load-brand">
-          <span aria-hidden="true">EA</span>
-          <strong>EchoAtlas</strong>
-        </div>
-        <StateNotice
-          kind="loading"
-          title="Validating bundle"
-          message="Checking the contract version, required fields, local artifact paths, and comparison records."
-        />
-      </main>
+      <div className="analyze-shell">
+        <ModeHeader mode="analyze" onExplore={() => setMode("explore")} />
+        <main className="load-shell">
+          <StateNotice
+            kind="loading"
+            title="Validating bundle"
+            message="Checking the contract version, required fields, local artifact paths, and comparison records."
+          />
+        </main>
+      </div>
     );
   }
 
   if (state.status === "invalid") {
     return (
-      <main className="load-shell">
-        <div className="load-brand">
-          <span aria-hidden="true">EA</span>
-          <strong>EchoAtlas</strong>
-        </div>
-        <StateNotice
-          kind="error"
-          title="Bundle rejected"
-          message={`No artifacts were rendered. ${state.detail}`}
-          action="Retry bundle"
-          onAction={retry}
-        />
-      </main>
+      <div className="analyze-shell">
+        <ModeHeader mode="analyze" onExplore={() => setMode("explore")} />
+        <main className="load-shell">
+          <StateNotice
+            kind="error"
+            title="Bundle rejected"
+            message={`No artifacts were rendered. ${state.detail}`}
+            action="Retry bundle"
+            onAction={retry}
+          />
+        </main>
+      </div>
     );
   }
 
