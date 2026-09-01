@@ -3,6 +3,55 @@ import { expect, test } from "@playwright/test";
 const BEFORE_ID = "89284e7a-04bc-4917-9467-502f2ff3bece";
 const AFTER_ID = "f784904e-b115-4a2c-b5d5-9a94ed075e94";
 
+test("Analyze keeps page height bounded and scrolls candidate rows", async ({
+  page,
+}) => {
+  await page.goto("/");
+  await page.getByRole("button", { name: /^Analyze/ }).click();
+  await expect(
+    page.getByRole("heading", {
+      name: "Bingham Canyon mine surface-change review",
+    }),
+  ).toBeVisible();
+
+  const queue = page.getByRole("region", {
+    name: "Scrollable candidate queue",
+  });
+  await expect(queue).toBeVisible();
+  await expect
+    .poll(() =>
+      page.evaluate(
+        () =>
+          document.documentElement.scrollHeight -
+          document.documentElement.clientHeight,
+      ),
+    )
+    .toBeLessThanOrEqual(1);
+  await expect
+    .poll(() =>
+      queue.evaluate((element) => ({
+        clientHeight: element.clientHeight,
+        overflowY: getComputedStyle(element).overflowY,
+        scrollHeight: element.scrollHeight,
+        tabIndex: element.tabIndex,
+      })),
+    )
+    .toEqual({
+      clientHeight: expect.any(Number),
+      overflowY: "auto",
+      scrollHeight: expect.any(Number),
+      tabIndex: 0,
+    });
+  expect(
+    await queue.evaluate((element) => element.scrollHeight),
+  ).toBeGreaterThan(await queue.evaluate((element) => element.clientHeight));
+  await queue.press("PageDown");
+  await expect
+    .poll(() => queue.evaluate((element) => element.scrollTop))
+    .toBeGreaterThan(0);
+  expect(await page.evaluate(() => window.scrollY)).toBe(0);
+});
+
 test("public Explore search opens the approved real-derived review bundle", async ({
   page,
 }) => {

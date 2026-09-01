@@ -353,3 +353,15 @@ Acceptance:
 - [x] Add regression coverage and verify the public Vercel flow.
 
 Completion: [PR #55](https://github.com/carlwelchdesign/earth-atlas-ai/pull/55) merged. The public Vercel deployment preserves the Explore/Analyze navigation contract and contains 17 live catalog results in a bounded independently scrollable list. Full local and GitHub checks passed.
+
+### EAT-024 — Constrain Analyze workspace and scroll candidate queue
+
+Outcome: the wide-desktop Analyze workspace fits the viewport, keeps queue controls visible, and scrolls candidate rows independently without stretching the comparison and evidence panels.
+
+Acceptance:
+
+- [x] Bound the wide-desktop Analyze shell to the viewport and prevent candidate count from determining document height.
+- [x] Make the semantic candidate list a named, keyboard-focusable internal scroll region.
+- [x] Keep queue controls fixed and give long evidence content its own overflow owner.
+- [x] Preserve normal document flow on narrow/mobile/high-zoom layouts.
+- [ ] Add component and Playwright geometry regressions and verify the public Vercel release. Local regression coverage passes; public verification remains pending.

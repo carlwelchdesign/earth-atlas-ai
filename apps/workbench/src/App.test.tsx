@@ -184,6 +184,26 @@ describe("App", () => {
     ).toBeInTheDocument();
   });
 
+  it("makes the Analyze candidate rows a named keyboard scroll region", async () => {
+    render(<App loadBundle={load()} />);
+    await screen.findByRole("heading", { name: demoBundle.mission.title });
+
+    const queue = screen.getByRole("region", {
+      name: "Scrollable candidate queue",
+    });
+    expect(queue).toHaveAttribute("tabindex", "0");
+    expect(queue).toHaveClass("candidate-scrollport");
+    expect(
+      within(queue).getByRole("list", { name: "Candidates" }),
+    ).toBeInTheDocument();
+    Object.defineProperties(queue, {
+      clientHeight: { configurable: true, value: 200 },
+      scrollHeight: { configurable: true, value: 1000 },
+    });
+    fireEvent.keyDown(queue, { key: "PageDown" });
+    expect(queue.scrollTop).toBe(160);
+  });
+
   it("shows the explicit empty-candidate state without hiding the comparison", async () => {
     const bundle = copyBundle();
     bundle.candidates = [];

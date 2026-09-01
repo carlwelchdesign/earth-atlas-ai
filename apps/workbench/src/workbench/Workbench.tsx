@@ -183,57 +183,59 @@ export function Workbench({
       </a>
       <ModeHeader mode="analyze" onExplore={onExplore} />
       <MissionHeader bundle={bundle} status={status} />
-      <QualityBanner bundle={bundle} status={status} />
-      {stale ? (
-        <StateNotice
-          kind="warning"
-          title="Stale bundle"
-          message={`${bundle.freshness.reason} Evaluated ${formatTimestamp(bundle.freshness.evaluatedAt)}.${staleAccepted ? " Stale data continuation acknowledged for this session." : " Review remains available; verify freshness before relying on the evidence."}`}
-          action={staleAccepted ? undefined : "Continue with stale data"}
-          onAction={() => {
-            setStaleAccepted(true);
-            setAssessmentAnnouncement(
-              "Stale bundle continuation acknowledged for this session.",
-            );
-          }}
-        />
-      ) : null}
-      {status === "missing" ? (
-        <StateNotice
-          kind="warning"
-          title="Required comparison artifact is missing"
-          message={`${missingAcquisitions.map((item) => item.label).join(" and ")} imagery is unavailable. Available evidence remains visible, but the comparison is incomplete.`}
-        />
-      ) : null}
-      {bundle.status === "partial" ? (
-        <StateNotice
-          kind="warning"
-          title="Partial bundle: optional outputs unavailable"
-          message={
-            bundle.qualityWarnings[0] ?? "An optional output is unavailable."
-          }
-        />
-      ) : degraded ? (
-        <StateNotice
-          kind="warning"
-          title="Validated bundle with quality warnings"
-          message={bundle.qualityWarnings[0]}
-        />
-      ) : null}
-      {bundle.permissions.assessments.state === "denied" ? (
-        <StateNotice
-          kind="warning"
-          title="Assessment permission unavailable"
-          message={`${bundle.permissions.assessments.reason} Evidence inspection remains available.`}
-        />
-      ) : null}
-      {assessmentLoadError ? (
-        <StateNotice
-          kind="warning"
-          title="Local assessment history unavailable"
-          message={`${assessmentLoadError} The validated imagery and candidate evidence remain available.`}
-        />
-      ) : null}
+      <div className="workbench-notices">
+        <QualityBanner bundle={bundle} status={status} />
+        {stale ? (
+          <StateNotice
+            kind="warning"
+            title="Stale bundle"
+            message={`${bundle.freshness.reason} Evaluated ${formatTimestamp(bundle.freshness.evaluatedAt)}.${staleAccepted ? " Stale data continuation acknowledged for this session." : " Review remains available; verify freshness before relying on the evidence."}`}
+            action={staleAccepted ? undefined : "Continue with stale data"}
+            onAction={() => {
+              setStaleAccepted(true);
+              setAssessmentAnnouncement(
+                "Stale bundle continuation acknowledged for this session.",
+              );
+            }}
+          />
+        ) : null}
+        {status === "missing" ? (
+          <StateNotice
+            kind="warning"
+            title="Required comparison artifact is missing"
+            message={`${missingAcquisitions.map((item) => item.label).join(" and ")} imagery is unavailable. Available evidence remains visible, but the comparison is incomplete.`}
+          />
+        ) : null}
+        {bundle.status === "partial" ? (
+          <StateNotice
+            kind="warning"
+            title="Partial bundle: optional outputs unavailable"
+            message={
+              bundle.qualityWarnings[0] ?? "An optional output is unavailable."
+            }
+          />
+        ) : degraded ? (
+          <StateNotice
+            kind="warning"
+            title="Validated bundle with quality warnings"
+            message={bundle.qualityWarnings[0]}
+          />
+        ) : null}
+        {bundle.permissions.assessments.state === "denied" ? (
+          <StateNotice
+            kind="warning"
+            title="Assessment permission unavailable"
+            message={`${bundle.permissions.assessments.reason} Evidence inspection remains available.`}
+          />
+        ) : null}
+        {assessmentLoadError ? (
+          <StateNotice
+            kind="warning"
+            title="Local assessment history unavailable"
+            message={`${assessmentLoadError} The validated imagery and candidate evidence remain available.`}
+          />
+        ) : null}
+      </div>
       <main className="workbench-grid" aria-label="Analyst workbench">
         <CandidateQueue
           candidates={bundle.candidates}
@@ -396,6 +398,7 @@ function CandidateQueue({
   onSelect,
 }: CandidateQueueProps) {
   const [filter, setFilter] = useState<"all" | "pending" | "reviewed">("all");
+  const scrollport = useRef<HTMLDivElement>(null);
   const reviewedCount = currentAssessments.size;
   const sortedCandidates = useMemo(
     () =>
@@ -416,6 +419,12 @@ function CandidateQueue({
         }),
     [candidates, currentAssessments, filter],
   );
+  useEffect(() => {
+    if (!selectedCandidateId) return;
+    scrollport.current
+      ?.querySelector<HTMLElement>('[aria-current="true"]')
+      ?.scrollIntoView?.({ block: "nearest" });
+  }, [selectedCandidateId]);
   return (
     <section
       className="candidate-panel panel"
@@ -453,7 +462,7 @@ function CandidateQueue({
               </button>
             ))}
           </div>
-          <p className="sort-rule">
+          <p className="sort-rule" id="candidate-sort-rule">
             Pending first, then score and candidate ID
           </p>
           {sortedCandidates.length === 0 ? (
@@ -463,54 +472,84 @@ function CandidateQueue({
               <p>Change the status filter to continue reviewing this bundle.</p>
             </div>
           ) : (
-            <ol className="candidate-list" aria-label="Candidates">
-              {sortedCandidates.map((candidate, index) => (
-                <li key={candidate.id}>
-                  <button
-                    className="candidate-row"
-                    type="button"
-                    aria-current={
-                      selectedCandidateId === candidate.id ? "true" : undefined
-                    }
-                    onClick={() => onSelect(candidate.id)}
-                  >
-                    <span className="candidate-number" aria-hidden="true">
-                      {String(index + 1).padStart(2, "0")}
-                    </span>
-                    <span className="candidate-main">
-                      <strong>{candidate.id}</strong>
-                      <span>
-                        {formatArea(candidate.areaSquareMeters)} ·{" "}
-                        {candidate.pixelCount} px
+            <div
+              className="candidate-scrollport"
+              role="region"
+              aria-label="Scrollable candidate queue"
+              aria-describedby="candidate-sort-rule"
+              tabIndex={0}
+              ref={scrollport}
+              onKeyDown={scrollCandidateQueue}
+            >
+              <ol className="candidate-list" aria-label="Candidates">
+                {sortedCandidates.map((candidate, index) => (
+                  <li key={candidate.id}>
+                    <button
+                      className="candidate-row"
+                      type="button"
+                      aria-current={
+                        selectedCandidateId === candidate.id
+                          ? "true"
+                          : undefined
+                      }
+                      onClick={() => onSelect(candidate.id)}
+                    >
+                      <span className="candidate-number" aria-hidden="true">
+                        {String(index + 1).padStart(2, "0")}
                       </span>
-                    </span>
-                    <span className="candidate-meta">
-                      <span
-                        className={`assessment-row-status ${currentAssessments.has(candidate.id) ? "is-reviewed" : "is-pending"}`}
-                      >
-                        {currentAssessments.has(candidate.id)
-                          ? dispositionLabel(
-                              currentAssessments.get(candidate.id)!.disposition,
-                            )
-                          : "Pending"}
+                      <span className="candidate-main">
+                        <strong>{candidate.id}</strong>
+                        <span>
+                          {formatArea(candidate.areaSquareMeters)} ·{" "}
+                          {candidate.pixelCount} px
+                        </span>
                       </span>
-                      <span className="candidate-score">
-                        {candidate.heuristicScore.toFixed(2)}
+                      <span className="candidate-meta">
+                        <span
+                          className={`assessment-row-status ${currentAssessments.has(candidate.id) ? "is-reviewed" : "is-pending"}`}
+                        >
+                          {currentAssessments.has(candidate.id)
+                            ? dispositionLabel(
+                                currentAssessments.get(candidate.id)!
+                                  .disposition,
+                              )
+                            : "Pending"}
+                        </span>
+                        <span className="candidate-score">
+                          {candidate.heuristicScore.toFixed(2)}
+                        </span>
+                        <span className="candidate-warnings">
+                          <span aria-hidden="true">!</span>{" "}
+                          {candidate.warningCount}
+                        </span>
                       </span>
-                      <span className="candidate-warnings">
-                        <span aria-hidden="true">!</span>{" "}
-                        {candidate.warningCount}
-                      </span>
-                    </span>
-                  </button>
-                </li>
-              ))}
-            </ol>
+                    </button>
+                  </li>
+                ))}
+              </ol>
+            </div>
           )}
         </>
       )}
     </section>
   );
+}
+
+function scrollCandidateQueue(event: KeyboardEvent<HTMLDivElement>) {
+  if (event.target !== event.currentTarget) return;
+  const page = Math.max(1, Math.floor(event.currentTarget.clientHeight * 0.8));
+  const positions: Partial<Record<string, number>> = {
+    ArrowDown: event.currentTarget.scrollTop + 48,
+    ArrowUp: event.currentTarget.scrollTop - 48,
+    End: event.currentTarget.scrollHeight,
+    Home: 0,
+    PageDown: event.currentTarget.scrollTop + page,
+    PageUp: event.currentTarget.scrollTop - page,
+  };
+  const next = positions[event.key];
+  if (next === undefined) return;
+  event.preventDefault();
+  event.currentTarget.scrollTop = next;
 }
 
 interface TemporalComparisonProps {

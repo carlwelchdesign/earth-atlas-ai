@@ -1049,6 +1049,10 @@ h3 {
   padding: 0;
   list-style: none;
 }
+.candidate-scrollport:focus-visible {
+  outline: 3px solid var(--focus);
+  outline-offset: -3px;
+}
 .candidate-row {
   display: grid;
   grid-template-columns: 2rem 1fr auto;
@@ -1894,6 +1898,58 @@ h3 {
 @keyframes pulse {
   50% {
     opacity: 0.45;
+  }
+}
+
+@media (min-width: 1200px) and (min-height: 700px) {
+  .workbench-shell {
+    display: flex;
+    height: 100dvh;
+    min-height: 0;
+    flex-direction: column;
+    overflow: hidden;
+  }
+  .workbench-notices {
+    flex: 0 0 auto;
+    max-height: 24dvh;
+    min-height: 0;
+    overflow-y: auto;
+    overscroll-behavior-y: contain;
+    scrollbar-gutter: stable;
+  }
+  .workbench-grid {
+    flex: 1 1 0;
+    min-height: 0;
+    align-items: stretch;
+  }
+  .candidate-panel,
+  .summary-panel {
+    display: flex;
+    min-height: 0;
+    flex-direction: column;
+  }
+  .candidate-scrollport,
+  .summary-content {
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow-y: auto;
+    overscroll-behavior-y: contain;
+    scrollbar-gutter: stable;
+  }
+  .comparison-panel {
+    display: grid;
+    min-height: 0;
+    grid-template-rows: auto minmax(0, 1fr) auto;
+  }
+  .comparison-stage,
+  .image-view {
+    min-height: 0;
+  }
+  .summary-panel > .empty-panel {
+    flex: 1 1 auto;
+  }
+  .workbench-footer {
+    flex: 0 0 auto;
   }
 }
 
