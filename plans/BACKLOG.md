@@ -376,4 +376,6 @@ Acceptance:
 
 - [x] Capture the deployed Analyze page with navigation, bounded queue, real-derived imagery, and selected-candidate evidence visible.
 - [x] Preserve prior release evidence and add a dedicated EAT-025 artifact.
-- [ ] Update and verify the README image on GitHub.
+- [x] Update and verify the README image on GitHub.
+
+Completion: [PR #59](https://github.com/carlwelchdesign/earth-atlas-ai/pull/59) merged. The README now renders a verified 1440 x 900 production capture with selected candidate evidence and the post-EAT-024 scroll ownership visible; the prior EAT-021 release image remains intact.
