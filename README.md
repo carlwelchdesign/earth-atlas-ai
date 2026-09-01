@@ -35,7 +35,7 @@ creates display derivatives, and generates a transparent queue of 26 review
 candidates. Source identity, acquisition time, processing parameters, warnings,
 artifact hashes, and CC BY 4.0 attribution stay visible.
 
-![EchoAtlas public Analyze workspace with real satellite-derived imagery and candidate evidence](docs/qa/evidence/eat-021/vercel-analyze.png)
+![EchoAtlas public Analyze workspace with a bounded candidate queue, two-up satellite-derived imagery, and selected-candidate evidence](docs/qa/evidence/eat-025/vercel-analyze-viewport.jpg)
 
 An analyst can mark a candidate **Supported**, **Rejected**, or **Needs context**,
 add a note, and later correct the decision. Events are append-only and persist in

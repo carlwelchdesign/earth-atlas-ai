@@ -367,3 +367,13 @@ Acceptance:
 - [x] Add component and Playwright geometry regressions and verify the public Vercel release.
 
 Completion: [PR #57](https://github.com/carlwelchdesign/earth-atlas-ai/pull/57) merged. At 1280 x 720 the document remains viewport-height while the 26-row candidate queue scrolls independently; narrow layouts retain normal document flow. Full local and GitHub checks passed, and the public Vercel regression passed on deployment `dpl_AQCZDLTSN85m1EWTDRcT7GU3CreP`.
+
+### EAT-025 — Refresh README Analyze screenshot after viewport fix
+
+Outcome: the README presents the corrected production Analyze workspace in a balanced, portfolio-quality frame rather than reusing the pre-EAT-024 capture.
+
+Acceptance:
+
+- [x] Capture the deployed Analyze page with navigation, bounded queue, real-derived imagery, and selected-candidate evidence visible.
+- [x] Preserve prior release evidence and add a dedicated EAT-025 artifact.
+- [ ] Update and verify the README image on GitHub.
