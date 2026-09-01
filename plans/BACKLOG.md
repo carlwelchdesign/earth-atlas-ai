@@ -311,11 +311,13 @@ Outcome: EchoAtlas has no Palantir runtime, SDK, adapter, hosting, or active-pro
 
 Acceptance:
 
-- [ ] Remove Palantir OSDK packages, runtime probe, UI state, backend projection/package commands, and dedicated active documentation.
+- [x] Remove Palantir OSDK packages, runtime probe, UI state, backend projection/package commands, and dedicated active documentation.
 - [x] Compare maintained free/open-source ontology and graph options using primary project sources.
 - [x] Record the no-ontology decision and explicit revisit triggers.
-- [ ] Preserve the provider-neutral analysis bundle and deterministic processing boundaries.
-- [ ] Run `make check`, commit on the ticket branch, record review evidence, and reconcile Asana.
+- [x] Preserve the provider-neutral analysis bundle and deterministic processing boundaries.
+- [x] Run `make check`, commit on the ticket branch, record review evidence, and reconcile Asana.
+
+Completion: [PR #50](https://github.com/carlwelchdesign/earth-atlas-ai/pull/50) merged. Asana is complete and in the Complete section. `make check` and both GitHub checks passed.
 
 ### EAT-021 — Deploy portfolio-ready EchoAtlas to Vercel
 

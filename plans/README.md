@@ -1,6 +1,6 @@
 # EchoAtlas planning package
 
-Status: EAT-001 through EAT-011, EAT-DES-001, EAT-014 through EAT-019, and the AI-disabled standalone owner-review package are complete. EAT-012 remains in qualified-review and adjudication, so EAT-013 remains gated. EAT-020 is removing the retired Palantir experiment and recording that EchoAtlas needs no ontology dependency at its current scale. EAT-021 and EAT-022 cover the approved public Vercel deployment and portfolio case-study closeout.
+Status: EAT-001 through EAT-011, EAT-DES-001, and EAT-014 through EAT-020 are complete. EAT-012 remains in qualified-review and adjudication, so EAT-013 remains gated. EAT-020 removed the retired Palantir experiment and recorded that EchoAtlas needs no ontology dependency at its current scale. EAT-021 and EAT-022 cover the approved public Vercel deployment and portfolio case-study closeout.
 
 EchoAtlas is a civilian disaster and infrastructure-change SAR intelligence workbench. The first release will prove one end-to-end analyst workflow with public Umbra data: select a comparable image pair, produce deterministic change candidates, inspect the evidence, and record a human assessment.
 
