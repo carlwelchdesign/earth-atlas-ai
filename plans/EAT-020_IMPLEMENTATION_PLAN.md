@@ -2,7 +2,7 @@
 
 Asana: [EAT-020](https://app.asana.com/1/9789386902387/project/1217790716964797/task/1218037528278102)
 
-Status: in progress
+Status: complete — [PR #50](https://github.com/carlwelchdesign/earth-atlas-ai/pull/50)
 
 ## Outcome
 
@@ -38,7 +38,7 @@ Decision: add none. The analysis bundle already supplies stable object identitie
 
 ## Completion evidence
 
-- Dedicated branch and commit/PR.
-- No Palantir/OSDK runtime dependency or application code remains.
-- Active documentation records no Palantir product path.
-- `make check` passes.
+- [x] Dedicated branch and merged PR #50.
+- [x] No Palantir/OSDK runtime dependency or application code remains.
+- [x] Active documentation records no Palantir product path.
+- [x] `make check` passed: 109 backend tests, 74 workbench tests, static analysis, production build, and secret scan.
