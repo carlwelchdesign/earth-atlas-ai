@@ -11,15 +11,10 @@ requires-python = ">=3.12,<3.14"
 license = "MIT"
 authors = [{ name = "Carl Welch" }]
 dependencies = [
-  "awscrt>=0.29,<1",
   "fastapi>=0.141.1,<0.142",
   "jsonschema>=4.25,<5",
-  "numpy>=2.2,<3",
-  "pillow>=12.3,<13",
   "pydantic>=2.13.0,<3",
-  "rasterio>=1.4.4,<2",
   "referencing>=0.36,<1",
-  "scipy>=1.16,<2",
   "uvicorn[standard]>=0.52.0,<0.53",
 ]
 
@@ -38,6 +33,13 @@ echoatlas-validate-bundle = "echoatlas.bundle.cli:validate_main"
 echoatlas-prepare-workbench-demo = "echoatlas.demo.cli:main"
 
 [dependency-groups]
+processing = [
+  "awscrt>=0.29,<1",
+  "numpy>=2.2,<3",
+  "pillow>=12.3,<13",
+  "rasterio>=1.4.4,<2",
+  "scipy>=1.16,<2",
+]
 dev = [
   "detect-secrets>=1.5.0,<2",
   "httpx2>=2.12.0,<3",
@@ -63,7 +65,7 @@ target-version = "py312"
 select = ["E", "F", "I", "UP", "B", "SIM"]
 
 [tool.ruff.lint.isort]
-known-first-party = ["echoatlas"]
+known-first-party = ["api", "echoatlas"]
 
 [tool.mypy]
 python_version = "3.12"
@@ -74,4 +76,4 @@ mypy_path = "services/backend/src"
 [tool.pytest.ini_options]
 addopts = "--strict-config --strict-markers --cov=echoatlas --cov-report=term-missing"
 testpaths = ["services/backend/tests"]
-pythonpath = ["services/backend/src"]
+pythonpath = [".", "services/backend/src"]

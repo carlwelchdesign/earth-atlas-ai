@@ -13,6 +13,7 @@ from echoatlas.processor.catalog.http import CatalogAccessError, SafeMetadataCli
 from echoatlas.processor.catalog.providers import (
     Sentinel1CatalogSearchAdapter,
     UmbraCatalogSearchAdapter,
+    UmbraItemListSearchAdapter,
 )
 from echoatlas.processor.catalog.search import CatalogSearchError, CatalogSearchService
 from echoatlas.processor.catalog.search_models import (
@@ -365,6 +366,19 @@ def test_umbra_adapter_spatially_filters_static_catalog_fixture() -> None:
         ),
     )
     assert adapter.search(outside, limit=10).items == ()
+
+
+def test_umbra_item_list_adapter_reads_only_explicit_items() -> None:
+    client = UmbraFixtureClient()
+    item_url = "https://example.test/stac/valid.json"
+    adapter = UmbraItemListSearchAdapter(client, item_urls=(item_url,))
+
+    page = adapter.search(request(providers=("umbra",), page_size=10), limit=10)
+
+    assert client.requested == [item_url]
+    assert [result.source.item_id for result in page.items] == ["item-1"]
+    assert page.has_more is False
+    assert page.warnings == ()
 
 
 def test_umbra_adapter_targets_only_requested_month_catalogs() -> None:

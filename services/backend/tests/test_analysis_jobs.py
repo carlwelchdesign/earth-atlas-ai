@@ -211,6 +211,16 @@ def test_job_succeeds_and_returns_matching_bundle() -> None:
     assert completed.error is None
 
 
+def test_inline_job_returns_terminal_result_for_stateless_deployments() -> None:
+    service = AnalysisJobService(ImmediateRunner(), clock=lambda: NOW, run_inline=True)
+
+    completed = service.create(_manifest())
+
+    assert completed.status == "succeeded"
+    assert completed.bundle is not None
+    assert service.get(completed.job_id) == completed
+
+
 def test_job_failure_can_retry_with_the_same_manifest() -> None:
     service = AnalysisJobService(FailingRunner(), clock=lambda: NOW)
     failed = _await_terminal(service, service.create(_manifest()).job_id)

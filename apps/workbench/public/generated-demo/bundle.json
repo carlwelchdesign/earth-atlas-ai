@@ -1,0 +1,877 @@
+{
+  "acquisitions": [
+    {
+      "acquiredAt": "2025-06-10T04:04:46.299998Z",
+      "artifact": {
+        "available": true,
+        "mediaType": "image/png",
+        "src": "/generated-demo/before.png"
+      },
+      "id": "89284e7a-04bc-4917-9467-502f2ff3bece",
+      "label": "Before",
+      "role": "before"
+    },
+    {
+      "acquiredAt": "2025-07-05T05:18:39.200000Z",
+      "artifact": {
+        "available": true,
+        "mediaType": "image/png",
+        "src": "/generated-demo/after.png"
+      },
+      "id": "f784904e-b115-4a2c-b5d5-9a94ed075e94",
+      "label": "After",
+      "role": "after"
+    }
+  ],
+  "bundleId": "bundle-change-9c8a27b2a55081fc6b07",
+  "candidates": [
+    {
+      "areaSquareMeters": 2081.0,
+      "evidenceArtifactIds": [
+        "artifact-before",
+        "artifact-after",
+        "artifact-score-preview",
+        "artifact-candidate-overlay",
+        "artifact-candidates"
+      ],
+      "heuristicScore": 0.628639817237854,
+      "id": "C-001",
+      "mapPosition": {
+        "heightPercent": 3.416624,
+        "leftPercent": 10.025335,
+        "rotationDegrees": 0,
+        "topPercent": 0.152983,
+        "widthPercent": 1.411509
+      },
+      "pixelCount": 2081,
+      "warningCount": 3,
+      "warnings": [
+        "Machine-generated engineering candidate pending human review.",
+        "May reflect speckle, surface conditions, terrain geometry, resampling, or residual registration effects.",
+        "Independent display normalization prevents calibrated magnitude interpretation."
+      ]
+    },
+    {
+      "areaSquareMeters": 4537.0,
+      "evidenceArtifactIds": [
+        "artifact-before",
+        "artifact-after",
+        "artifact-score-preview",
+        "artifact-candidate-overlay",
+        "artifact-candidates"
+      ],
+      "heuristicScore": 0.7155117988586426,
+      "id": "C-002",
+      "mapPosition": {
+        "heightPercent": 8.261091,
+        "leftPercent": 10.24249,
+        "rotationDegrees": 0,
+        "topPercent": 0.17848,
+        "widthPercent": 2.4249
+      },
+      "pixelCount": 4537,
+      "warningCount": 3,
+      "warnings": [
+        "Machine-generated engineering candidate pending human review.",
+        "May reflect speckle, surface conditions, terrain geometry, resampling, or residual registration effects.",
+        "Independent display normalization prevents calibrated magnitude interpretation."
+      ]
+    },
+    {
+      "areaSquareMeters": 1228.0,
+      "evidenceArtifactIds": [
+        "artifact-before",
+        "artifact-after",
+        "artifact-score-preview",
+        "artifact-candidate-overlay",
+        "artifact-candidates"
+      ],
+      "heuristicScore": 0.7103263735771179,
+      "id": "C-003",
+      "mapPosition": {
+        "heightPercent": 5.099439,
+        "leftPercent": 17.336229,
+        "rotationDegrees": 0,
+        "topPercent": 0.203978,
+        "widthPercent": 1.085776
+      },
+      "pixelCount": 1228,
+      "warningCount": 3,
+      "warnings": [
+        "Machine-generated engineering candidate pending human review.",
+        "May reflect speckle, surface conditions, terrain geometry, resampling, or residual registration effects.",
+        "Independent display normalization prevents calibrated magnitude interpretation."
+      ]
+    },
+    {
+      "areaSquareMeters": 680.0,
+      "evidenceArtifactIds": [
+        "artifact-before",
+        "artifact-after",
+        "artifact-score-preview",
+        "artifact-candidate-overlay",
+        "artifact-candidates"
+      ],
+      "heuristicScore": 0.720120370388031,
+      "id": "C-004",
+      "mapPosition": {
+        "heightPercent": 3.467619,
+        "leftPercent": 12.595005,
+        "rotationDegrees": 0,
+        "topPercent": 1.63182,
+        "widthPercent": 1.158161
+      },
+      "pixelCount": 680,
+      "warningCount": 3,
+      "warnings": [
+        "Machine-generated engineering candidate pending human review.",
+        "May reflect speckle, surface conditions, terrain geometry, resampling, or residual registration effects.",
+        "Independent display normalization prevents calibrated magnitude interpretation."
+      ]
+    },
+    {
+      "areaSquareMeters": 3875.0,
+      "evidenceArtifactIds": [
+        "artifact-before",
+        "artifact-after",
+        "artifact-score-preview",
+        "artifact-candidate-overlay",
+        "artifact-candidates"
+      ],
+      "heuristicScore": 0.6472011208534241,
+      "id": "C-005",
+      "mapPosition": {
+        "heightPercent": 9.255482,
+        "leftPercent": 8.54144,
+        "rotationDegrees": 0,
+        "topPercent": 3.518613,
+        "widthPercent": 2.099168
+      },
+      "pixelCount": 3875,
+      "warningCount": 3,
+      "warnings": [
+        "Machine-generated engineering candidate pending human review.",
+        "May reflect speckle, surface conditions, terrain geometry, resampling, or residual registration effects.",
+        "Independent display normalization prevents calibrated magnitude interpretation."
+      ]
+    },
+    {
+      "areaSquareMeters": 578.0,
+      "evidenceArtifactIds": [
+        "artifact-before",
+        "artifact-after",
+        "artifact-score-preview",
+        "artifact-candidate-overlay",
+        "artifact-candidates"
+      ],
+      "heuristicScore": 0.639274001121521,
+      "id": "C-006",
+      "mapPosition": {
+        "heightPercent": 1.861295,
+        "leftPercent": 14.332248,
+        "rotationDegrees": 0,
+        "topPercent": 3.646099,
+        "widthPercent": 0.579081
+      },
+      "pixelCount": 578,
+      "warningCount": 3,
+      "warnings": [
+        "Machine-generated engineering candidate pending human review.",
+        "May reflect speckle, surface conditions, terrain geometry, resampling, or residual registration effects.",
+        "Independent display normalization prevents calibrated magnitude interpretation."
+      ]
+    },
+    {
+      "areaSquareMeters": 3313.0,
+      "evidenceArtifactIds": [
+        "artifact-before",
+        "artifact-after",
+        "artifact-score-preview",
+        "artifact-candidate-overlay",
+        "artifact-candidates"
+      ],
+      "heuristicScore": 0.689463198184967,
+      "id": "C-007",
+      "mapPosition": {
+        "heightPercent": 9.17899,
+        "leftPercent": 11.219689,
+        "rotationDegrees": 0,
+        "topPercent": 5.277919,
+        "widthPercent": 1.556279
+      },
+      "pixelCount": 3313,
+      "warningCount": 3,
+      "warnings": [
+        "Machine-generated engineering candidate pending human review.",
+        "May reflect speckle, surface conditions, terrain geometry, resampling, or residual registration effects.",
+        "Independent display normalization prevents calibrated magnitude interpretation."
+      ]
+    },
+    {
+      "areaSquareMeters": 772.0,
+      "evidenceArtifactIds": [
+        "artifact-before",
+        "artifact-after",
+        "artifact-score-preview",
+        "artifact-candidate-overlay",
+        "artifact-candidates"
+      ],
+      "heuristicScore": 0.6445730924606323,
+      "id": "C-008",
+      "mapPosition": {
+        "heightPercent": 2.396736,
+        "leftPercent": 14.187477,
+        "rotationDegrees": 0,
+        "topPercent": 5.558389,
+        "widthPercent": 0.723851
+      },
+      "pixelCount": 772,
+      "warningCount": 3,
+      "warnings": [
+        "Machine-generated engineering candidate pending human review.",
+        "May reflect speckle, surface conditions, terrain geometry, resampling, or residual registration effects.",
+        "Independent display normalization prevents calibrated magnitude interpretation."
+      ]
+    },
+    {
+      "areaSquareMeters": 763.0,
+      "evidenceArtifactIds": [
+        "artifact-before",
+        "artifact-after",
+        "artifact-score-preview",
+        "artifact-candidate-overlay",
+        "artifact-candidates"
+      ],
+      "heuristicScore": 0.631436288356781,
+      "id": "C-009",
+      "mapPosition": {
+        "heightPercent": 2.26925,
+        "leftPercent": 19.399204,
+        "rotationDegrees": 0,
+        "topPercent": 6.501785,
+        "widthPercent": 0.904814
+      },
+      "pixelCount": 763,
+      "warningCount": 3,
+      "warnings": [
+        "Machine-generated engineering candidate pending human review.",
+        "May reflect speckle, surface conditions, terrain geometry, resampling, or residual registration effects.",
+        "Independent display normalization prevents calibrated magnitude interpretation."
+      ]
+    },
+    {
+      "areaSquareMeters": 729.0,
+      "evidenceArtifactIds": [
+        "artifact-before",
+        "artifact-after",
+        "artifact-score-preview",
+        "artifact-candidate-overlay",
+        "artifact-candidates"
+      ],
+      "heuristicScore": 0.6970906257629395,
+      "id": "C-010",
+      "mapPosition": {
+        "heightPercent": 2.345742,
+        "leftPercent": 15.635179,
+        "rotationDegrees": 0,
+        "topPercent": 8.847527,
+        "widthPercent": 0.470503
+      },
+      "pixelCount": 729,
+      "warningCount": 3,
+      "warnings": [
+        "Machine-generated engineering candidate pending human review.",
+        "May reflect speckle, surface conditions, terrain geometry, resampling, or residual registration effects.",
+        "Independent display normalization prevents calibrated magnitude interpretation."
+      ]
+    },
+    {
+      "areaSquareMeters": 636.0,
+      "evidenceArtifactIds": [
+        "artifact-before",
+        "artifact-after",
+        "artifact-score-preview",
+        "artifact-candidate-overlay",
+        "artifact-candidates"
+      ],
+      "heuristicScore": 0.6604935526847839,
+      "id": "C-011",
+      "mapPosition": {
+        "heightPercent": 2.626211,
+        "leftPercent": 10.061527,
+        "rotationDegrees": 0,
+        "topPercent": 11.805201,
+        "widthPercent": 0.579081
+      },
+      "pixelCount": 636,
+      "warningCount": 3,
+      "warnings": [
+        "Machine-generated engineering candidate pending human review.",
+        "May reflect speckle, surface conditions, terrain geometry, resampling, or residual registration effects.",
+        "Independent display normalization prevents calibrated magnitude interpretation."
+      ]
+    },
+    {
+      "areaSquareMeters": 1315.0,
+      "evidenceArtifactIds": [
+        "artifact-before",
+        "artifact-after",
+        "artifact-score-preview",
+        "artifact-candidate-overlay",
+        "artifact-candidates"
+      ],
+      "heuristicScore": 0.6601808667182922,
+      "id": "C-012",
+      "mapPosition": {
+        "heightPercent": 5.175931,
+        "leftPercent": 11.94354,
+        "rotationDegrees": 0,
+        "topPercent": 14.584396,
+        "widthPercent": 0.687658
+      },
+      "pixelCount": 1315,
+      "warningCount": 3,
+      "warnings": [
+        "Machine-generated engineering candidate pending human review.",
+        "May reflect speckle, surface conditions, terrain geometry, resampling, or residual registration effects.",
+        "Independent display normalization prevents calibrated magnitude interpretation."
+      ]
+    },
+    {
+      "areaSquareMeters": 607.0,
+      "evidenceArtifactIds": [
+        "artifact-before",
+        "artifact-after",
+        "artifact-score-preview",
+        "artifact-candidate-overlay",
+        "artifact-candidates"
+      ],
+      "heuristicScore": 0.6550882458686829,
+      "id": "C-013",
+      "mapPosition": {
+        "heightPercent": 2.957675,
+        "leftPercent": 10.966341,
+        "rotationDegrees": 0,
+        "topPercent": 16.394697,
+        "widthPercent": 0.579081
+      },
+      "pixelCount": 607,
+      "warningCount": 3,
+      "warnings": [
+        "Machine-generated engineering candidate pending human review.",
+        "May reflect speckle, surface conditions, terrain geometry, resampling, or residual registration effects.",
+        "Independent display normalization prevents calibrated magnitude interpretation."
+      ]
+    },
+    {
+      "areaSquareMeters": 1051.0,
+      "evidenceArtifactIds": [
+        "artifact-before",
+        "artifact-after",
+        "artifact-score-preview",
+        "artifact-candidate-overlay",
+        "artifact-candidates"
+      ],
+      "heuristicScore": 0.765778660774231,
+      "id": "C-014",
+      "mapPosition": {
+        "heightPercent": 2.957675,
+        "leftPercent": 9.916757,
+        "rotationDegrees": 0,
+        "topPercent": 16.573177,
+        "widthPercent": 0.832429
+      },
+      "pixelCount": 1051,
+      "warningCount": 3,
+      "warnings": [
+        "Machine-generated engineering candidate pending human review.",
+        "May reflect speckle, surface conditions, terrain geometry, resampling, or residual registration effects.",
+        "Independent display normalization prevents calibrated magnitude interpretation."
+      ]
+    },
+    {
+      "areaSquareMeters": 850.0,
+      "evidenceArtifactIds": [
+        "artifact-before",
+        "artifact-after",
+        "artifact-score-preview",
+        "artifact-candidate-overlay",
+        "artifact-candidates"
+      ],
+      "heuristicScore": 0.6968027353286743,
+      "id": "C-015",
+      "mapPosition": {
+        "heightPercent": 2.779194,
+        "leftPercent": 8.975751,
+        "rotationDegrees": 0,
+        "topPercent": 17.593065,
+        "widthPercent": 0.542888
+      },
+      "pixelCount": 850,
+      "warningCount": 3,
+      "warnings": [
+        "Machine-generated engineering candidate pending human review.",
+        "May reflect speckle, surface conditions, terrain geometry, resampling, or residual registration effects.",
+        "Independent display normalization prevents calibrated magnitude interpretation."
+      ]
+    },
+    {
+      "areaSquareMeters": 932.0,
+      "evidenceArtifactIds": [
+        "artifact-before",
+        "artifact-after",
+        "artifact-score-preview",
+        "artifact-candidate-overlay",
+        "artifact-candidates"
+      ],
+      "heuristicScore": 0.6959567666053772,
+      "id": "C-016",
+      "mapPosition": {
+        "heightPercent": 3.977562,
+        "leftPercent": 11.400651,
+        "rotationDegrees": 0,
+        "topPercent": 20.627231,
+        "widthPercent": 3.003981
+      },
+      "pixelCount": 932,
+      "warningCount": 3,
+      "warnings": [
+        "Machine-generated engineering candidate pending human review.",
+        "May reflect speckle, surface conditions, terrain geometry, resampling, or residual registration effects.",
+        "Independent display normalization prevents calibrated magnitude interpretation."
+      ]
+    },
+    {
+      "areaSquareMeters": 561.0,
+      "evidenceArtifactIds": [
+        "artifact-before",
+        "artifact-after",
+        "artifact-score-preview",
+        "artifact-candidate-overlay",
+        "artifact-candidates"
+      ],
+      "heuristicScore": 0.6689457297325134,
+      "id": "C-017",
+      "mapPosition": {
+        "heightPercent": 1.504335,
+        "leftPercent": 14.440825,
+        "rotationDegrees": 0,
+        "topPercent": 24.757777,
+        "widthPercent": 0.977199
+      },
+      "pixelCount": 561,
+      "warningCount": 3,
+      "warnings": [
+        "Machine-generated engineering candidate pending human review.",
+        "May reflect speckle, surface conditions, terrain geometry, resampling, or residual registration effects.",
+        "Independent display normalization prevents calibrated magnitude interpretation."
+      ]
+    },
+    {
+      "areaSquareMeters": 881.0,
+      "evidenceArtifactIds": [
+        "artifact-before",
+        "artifact-after",
+        "artifact-score-preview",
+        "artifact-candidate-overlay",
+        "artifact-candidates"
+      ],
+      "heuristicScore": 0.8203558921813965,
+      "id": "C-018",
+      "mapPosition": {
+        "heightPercent": 3.467619,
+        "leftPercent": 12.052117,
+        "rotationDegrees": 0,
+        "topPercent": 42.427333,
+        "widthPercent": 1.194354
+      },
+      "pixelCount": 881,
+      "warningCount": 3,
+      "warnings": [
+        "Machine-generated engineering candidate pending human review.",
+        "May reflect speckle, surface conditions, terrain geometry, resampling, or residual registration effects.",
+        "Independent display normalization prevents calibrated magnitude interpretation."
+      ]
+    },
+    {
+      "areaSquareMeters": 952.0,
+      "evidenceArtifactIds": [
+        "artifact-before",
+        "artifact-after",
+        "artifact-score-preview",
+        "artifact-candidate-overlay",
+        "artifact-candidates"
+      ],
+      "heuristicScore": 0.6799576878547668,
+      "id": "C-019",
+      "mapPosition": {
+        "heightPercent": 2.626211,
+        "leftPercent": 7.853782,
+        "rotationDegrees": 0,
+        "topPercent": 43.26874,
+        "widthPercent": 1.302932
+      },
+      "pixelCount": 952,
+      "warningCount": 3,
+      "warnings": [
+        "Machine-generated engineering candidate pending human review.",
+        "May reflect speckle, surface conditions, terrain geometry, resampling, or residual registration effects.",
+        "Independent display normalization prevents calibrated magnitude interpretation."
+      ]
+    },
+    {
+      "areaSquareMeters": 3269.0,
+      "evidenceArtifactIds": [
+        "artifact-before",
+        "artifact-after",
+        "artifact-score-preview",
+        "artifact-candidate-overlay",
+        "artifact-candidates"
+      ],
+      "heuristicScore": 0.6514184474945068,
+      "id": "C-020",
+      "mapPosition": {
+        "heightPercent": 7.164712,
+        "leftPercent": 3.619254,
+        "rotationDegrees": 0,
+        "topPercent": 44.594595,
+        "widthPercent": 1.773435
+      },
+      "pixelCount": 3269,
+      "warningCount": 3,
+      "warnings": [
+        "Machine-generated engineering candidate pending human review.",
+        "May reflect speckle, surface conditions, terrain geometry, resampling, or residual registration effects.",
+        "Independent display normalization prevents calibrated magnitude interpretation."
+      ]
+    },
+    {
+      "areaSquareMeters": 3440.0,
+      "evidenceArtifactIds": [
+        "artifact-before",
+        "artifact-after",
+        "artifact-score-preview",
+        "artifact-candidate-overlay",
+        "artifact-candidates"
+      ],
+      "heuristicScore": 0.712134063243866,
+      "id": "C-021",
+      "mapPosition": {
+        "heightPercent": 6.068332,
+        "leftPercent": 0.941006,
+        "rotationDegrees": 0,
+        "topPercent": 48.113208,
+        "widthPercent": 2.678248
+      },
+      "pixelCount": 3440,
+      "warningCount": 3,
+      "warnings": [
+        "Machine-generated engineering candidate pending human review.",
+        "May reflect speckle, surface conditions, terrain geometry, resampling, or residual registration effects.",
+        "Independent display normalization prevents calibrated magnitude interpretation."
+      ]
+    },
+    {
+      "areaSquareMeters": 1495.0,
+      "evidenceArtifactIds": [
+        "artifact-before",
+        "artifact-after",
+        "artifact-score-preview",
+        "artifact-candidate-overlay",
+        "artifact-candidates"
+      ],
+      "heuristicScore": 0.6930860280990601,
+      "id": "C-022",
+      "mapPosition": {
+        "heightPercent": 3.799082,
+        "leftPercent": 5.935577,
+        "rotationDegrees": 0,
+        "topPercent": 50.81591,
+        "widthPercent": 0.941006
+      },
+      "pixelCount": 1495,
+      "warningCount": 3,
+      "warnings": [
+        "Machine-generated engineering candidate pending human review.",
+        "May reflect speckle, surface conditions, terrain geometry, resampling, or residual registration effects.",
+        "Independent display normalization prevents calibrated magnitude interpretation."
+      ]
+    },
+    {
+      "areaSquareMeters": 1322.0,
+      "evidenceArtifactIds": [
+        "artifact-before",
+        "artifact-after",
+        "artifact-score-preview",
+        "artifact-candidate-overlay",
+        "artifact-candidates"
+      ],
+      "heuristicScore": 0.6970518827438354,
+      "id": "C-023",
+      "mapPosition": {
+        "heightPercent": 3.977562,
+        "leftPercent": 4.813608,
+        "rotationDegrees": 0,
+        "topPercent": 54.309026,
+        "widthPercent": 2.026782
+      },
+      "pixelCount": 1322,
+      "warningCount": 3,
+      "warnings": [
+        "Machine-generated engineering candidate pending human review.",
+        "May reflect speckle, surface conditions, terrain geometry, resampling, or residual registration effects.",
+        "Independent display normalization prevents calibrated magnitude interpretation."
+      ]
+    },
+    {
+      "areaSquareMeters": 552.0,
+      "evidenceArtifactIds": [
+        "artifact-before",
+        "artifact-after",
+        "artifact-score-preview",
+        "artifact-candidate-overlay",
+        "artifact-candidates"
+      ],
+      "heuristicScore": 0.7657407522201538,
+      "id": "C-024",
+      "mapPosition": {
+        "heightPercent": 1.070882,
+        "leftPercent": 0.904814,
+        "rotationDegrees": 0,
+        "topPercent": 67.083121,
+        "widthPercent": 1.302932
+      },
+      "pixelCount": 552,
+      "warningCount": 3,
+      "warnings": [
+        "Machine-generated engineering candidate pending human review.",
+        "May reflect speckle, surface conditions, terrain geometry, resampling, or residual registration effects.",
+        "Independent display normalization prevents calibrated magnitude interpretation."
+      ]
+    },
+    {
+      "areaSquareMeters": 626.0,
+      "evidenceArtifactIds": [
+        "artifact-before",
+        "artifact-after",
+        "artifact-score-preview",
+        "artifact-candidate-overlay",
+        "artifact-candidates"
+      ],
+      "heuristicScore": 0.6789663434028625,
+      "id": "C-025",
+      "mapPosition": {
+        "heightPercent": 1.045385,
+        "leftPercent": 32.935215,
+        "rotationDegrees": 0,
+        "topPercent": 96.124426,
+        "widthPercent": 1.375317
+      },
+      "pixelCount": 626,
+      "warningCount": 3,
+      "warnings": [
+        "Machine-generated engineering candidate pending human review.",
+        "May reflect speckle, surface conditions, terrain geometry, resampling, or residual registration effects.",
+        "Independent display normalization prevents calibrated magnitude interpretation."
+      ]
+    },
+    {
+      "areaSquareMeters": 963.0,
+      "evidenceArtifactIds": [
+        "artifact-before",
+        "artifact-after",
+        "artifact-score-preview",
+        "artifact-candidate-overlay",
+        "artifact-candidates"
+      ],
+      "heuristicScore": 0.6929448246955872,
+      "id": "C-026",
+      "mapPosition": {
+        "heightPercent": 2.7282,
+        "leftPercent": 77.6692,
+        "rotationDegrees": 0,
+        "topPercent": 97.016828,
+        "widthPercent": 0.651466
+      },
+      "pixelCount": 963,
+      "warningCount": 3,
+      "warnings": [
+        "Machine-generated engineering candidate pending human review.",
+        "May reflect speckle, surface conditions, terrain geometry, resampling, or residual registration effects.",
+        "Independent display normalization prevents calibrated magnitude interpretation."
+      ]
+    }
+  ],
+  "contractVersion": "1.0.0",
+  "createdAt": "2026-08-24T17:42:00Z",
+  "evidence": {
+    "acquisitions": [
+      {
+        "acquisitionId": "89284e7a-04bc-4917-9467-502f2ff3bece",
+        "checksum": {
+          "algorithm": "CRC64NVME",
+          "value": "/ExQvs+SKLE="
+        },
+        "incidenceAngleDegrees": 42.061401830391524,
+        "polarization": "VV",
+        "productType": "GEC",
+        "provider": "Umbra Lab Inc \u00b7 Umbra-05",
+        "resolutionMeters": 0.5000000001660068,
+        "source": {
+          "href": "https://umbra-open-data-catalog.s3.us-west-2.amazonaws.com/stac/2025/2025-06/2025-06-10/89284e7a-04bc-4917-9467-502f2ff3bece/89284e7a-04bc-4917-9467-502f2ff3bece.json",
+          "label": "Before Umbra STAC item",
+          "status": "available"
+        }
+      },
+      {
+        "acquisitionId": "f784904e-b115-4a2c-b5d5-9a94ed075e94",
+        "checksum": {
+          "algorithm": "CRC64NVME",
+          "value": "G4YmVhNOTFA="
+        },
+        "incidenceAngleDegrees": 39.9226491987447,
+        "polarization": "VV",
+        "productType": "GEC",
+        "provider": "Umbra Lab Inc \u00b7 Umbra-08",
+        "resolutionMeters": 0.5000000001878505,
+        "source": {
+          "href": "https://umbra-open-data-catalog.s3.us-west-2.amazonaws.com/stac/2025/2025-07/2025-07-05/f784904e-b115-4a2c-b5d5-9a94ed075e94/f784904e-b115-4a2c-b5d5-9a94ed075e94.json",
+          "label": "After Umbra STAC item",
+          "status": "available"
+        }
+      }
+    ],
+    "artifacts": [
+      {
+        "available": true,
+        "id": "artifact-before",
+        "label": "Before SAR thumbnail",
+        "mediaType": "image/png",
+        "path": "/generated-demo/before.png",
+        "required": true,
+        "sha256": "4686910b2a25f87c04021a1f6a7d3f3e5840667114a05d4e400065fb53c6ef87",
+        "sizeBytes": 155971
+      },
+      {
+        "available": true,
+        "id": "artifact-after",
+        "label": "After SAR thumbnail",
+        "mediaType": "image/png",
+        "path": "/generated-demo/after.png",
+        "required": true,
+        "sha256": "5c23ac32d60e2ed457417a74bf09dcc1ae8a06e63f46b0b8cd7a9b26e785a63a",
+        "sizeBytes": 154440
+      },
+      {
+        "available": false,
+        "id": "artifact-score-preview",
+        "label": "Change-score preview",
+        "mediaType": "image/png",
+        "path": "/generated-demo/change-score.png",
+        "required": false,
+        "sha256": "e40436f4f1593e9328837d7891865292c3cbea5af08f63b62bed1dffab97904e",
+        "sizeBytes": 7607938
+      },
+      {
+        "available": false,
+        "id": "artifact-candidate-overlay",
+        "label": "Candidate overlay",
+        "mediaType": "image/png",
+        "path": "/generated-demo/candidate-overlay.png",
+        "required": false,
+        "sha256": "aac778bf94827ac1c91fe85ba513dd72a5c5ab487616d04ab19e79cd7c1c9be1",
+        "sizeBytes": 16591545
+      },
+      {
+        "available": false,
+        "id": "artifact-candidates",
+        "label": "Candidate GeoJSON",
+        "mediaType": "application/geo+json",
+        "path": "/generated-demo/candidates.geojson",
+        "required": false,
+        "sha256": "2c82e6dea99b9fe2a993195dbcd561057a14327ffaf53d285781d735a11668e3",
+        "sizeBytes": 387540
+      }
+    ],
+    "attribution": "Umbra Lab Inc public SAR data \u00b7 CC-BY-4.0 \u00b7 derived by EchoAtlas",
+    "license": {
+      "href": "https://creativecommons.org/licenses/by/4.0/",
+      "label": "Creative Commons Attribution 4.0",
+      "status": "available"
+    },
+    "lineage": "satellite-derived",
+    "lineageNotice": "These images and measurements are derived from the pinned public Umbra SAR acquisitions. Candidates are unreviewed engineering signals, not confirmed change.",
+    "run": {
+      "id": "change-9c8a27b2a55081fc6b07",
+      "parameters": [
+        {
+          "name": "Target grid",
+          "value": "EPSG:32612 \u00b7 1 m"
+        },
+        {
+          "name": "Normalization",
+          "value": "independent_percentile_stretch \u00b7 2\u201398 percentile"
+        },
+        {
+          "name": "Resampling",
+          "value": "bilinear"
+        },
+        {
+          "name": "Filter",
+          "value": "none"
+        },
+        {
+          "name": "Score method",
+          "value": "symmetric_neighborhood_normalized_absolute_difference"
+        },
+        {
+          "name": "Score threshold",
+          "value": "0.5"
+        },
+        {
+          "name": "Registration tolerance",
+          "value": "2 px"
+        },
+        {
+          "name": "Minimum component",
+          "value": "512 px"
+        }
+      ]
+    },
+    "software": {
+      "commit": "38b860fa2b0c3b1121d95fbecae35905af7cb849",
+      "version": "echoatlas 0.1.0"
+    },
+    "warnings": [
+      "Engineering comparability is not SAR-domain validation or calibrated confidence.",
+      "Speckle, moisture, slope, layover, shadow, acquisition geometry, and registration can create apparent differences.",
+      "The workflow may produce candidates but cannot infer excavation, production, equipment movement, damage, intent, safety, or environmental compliance.",
+      "External project context is not pixel-level ground truth.",
+      "A qualified SAR reviewer is required before calibrated or scientific performance claims.",
+      "Outputs are machine-generated engineering candidates pending human review.",
+      "The score uses independently stretched intensity values and is not calibrated backscatter or confidence.",
+      "A 2-pixel neighborhood tolerance reduces simple registration-edge responses but cannot remove all geometry effects.",
+      "Speckle, moisture, slope, layover, shadow, resampling, and acquisition geometry can produce candidate responses.",
+      "Candidate geometry and measurements describe the thresholded raster response only; they do not establish cause, identity, impact, or operational status."
+    ]
+  },
+  "freshness": {
+    "evaluatedAt": "2026-08-24T17:42:00Z",
+    "reason": null,
+    "state": "current"
+  },
+  "mission": {
+    "boundaryLabel": "Central open-pit area only; excludes smelter, refinery, tailings facilities, nearby communities, and access roads.",
+    "title": "Bingham Canyon mine surface-change review"
+  },
+  "permissions": {
+    "assessments": {
+      "reason": null,
+      "state": "allowed"
+    }
+  },
+  "qualityWarnings": [
+    "The public portfolio bundle omits the optional full-resolution change-score, candidate-overlay, and GeoJSON downloads; the before/after imagery and inline candidate records remain available."
+  ],
+  "status": "partial"
+}

@@ -139,6 +139,55 @@ class UmbraCatalogSearchAdapter:
         )
 
 
+class UmbraItemListSearchAdapter:
+    """Search a small, explicit set of provider STAC items without catalog traversal."""
+
+    provider: ProviderId = "umbra"
+
+    def __init__(self, client: MetadataClient, *, item_urls: tuple[str, ...]) -> None:
+        self._client = client
+        self._item_urls = item_urls
+        self._normalizer = StacCatalogAdapter(client)
+
+    def search(self, request: CatalogSearchRequest, *, limit: int) -> ProviderSearchPage:
+        items: list[CatalogSearchItem] = []
+        warnings: list[CatalogSearchWarning] = []
+        for item_url in self._item_urls[:limit]:
+            try:
+                document = self._client.get_json(item_url)
+                acquisition, item_warnings = self._normalizer.normalize_item(
+                    item_url, document, include_assets=False
+                )
+                item = _search_item(
+                    provider="umbra",
+                    collection="umbra-open-data",
+                    acquisition=acquisition,
+                    license=CatalogLicense(
+                        label="CC-BY-4.0",
+                        url="https://creativecommons.org/licenses/by/4.0/",
+                    ),
+                )
+                if matches_search_request(request, item):
+                    items.append(item)
+                warnings.extend(
+                    UmbraCatalogSearchAdapter._warning(warning) for warning in item_warnings
+                )
+            except (CatalogAccessError, ValidationError, TypeError, ValueError) as error:
+                warnings.append(
+                    CatalogSearchWarning(
+                        code="umbra_item_unavailable",
+                        provider="umbra",
+                        retryable=True,
+                        message=f"An explicitly indexed Umbra item was unavailable: {error}",
+                    )
+                )
+        return ProviderSearchPage(
+            items=tuple(items),
+            warnings=tuple(warnings),
+            has_more=len(self._item_urls) > limit,
+        )
+
+
 class Sentinel1CatalogSearchAdapter:
     """Query the official Copernicus Data Space Sentinel-1 GRD STAC collection."""
 
@@ -286,6 +335,7 @@ def build_default_catalog_search_service(
     umbra_root_url: str = UMBRA_ROOT_URL,
     umbra_max_catalogs: int = 500,
     umbra_max_items: int = 500,
+    umbra_item_urls: tuple[str, ...] = (),
 ) -> CatalogSearchService:
     """Construct the production metadata-only search boundary."""
 
@@ -299,13 +349,18 @@ def build_default_catalog_search_service(
         max_response_bytes=5_000_000,
         timeout_seconds=20,
     )
-    adapters: dict[ProviderId, CatalogProviderAdapter] = {
-        "umbra": UmbraCatalogSearchAdapter(
+    umbra: CatalogProviderAdapter
+    if umbra_item_urls:
+        umbra = UmbraItemListSearchAdapter(client, item_urls=umbra_item_urls)
+    else:
+        umbra = UmbraCatalogSearchAdapter(
             StacCatalogAdapter(client),
             root_url=umbra_root_url,
             max_catalogs=umbra_max_catalogs,
             max_items=umbra_max_items,
-        ),
+        )
+    adapters: dict[ProviderId, CatalogProviderAdapter] = {
+        "umbra": umbra,
         "sentinel-1": Sentinel1CatalogSearchAdapter(client),
     }
     return CatalogSearchService(adapters)

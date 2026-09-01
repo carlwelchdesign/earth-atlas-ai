@@ -117,8 +117,8 @@ describe("analysis client", () => {
 
     expect(compared.comparability.scientific_validity).toBe("not_determined");
     expect(job.status).toBe("queued");
-    expect(fetchMock.mock.calls[0]?.[0]).toBe("/v1/analysis/selections");
-    expect(fetchMock.mock.calls[1]?.[0]).toBe("/v1/analysis/jobs");
+    expect(fetchMock.mock.calls[0]?.[0]).toBe("/api/v1/analysis/selections");
+    expect(fetchMock.mock.calls[1]?.[0]).toBe("/api/v1/analysis/jobs");
     const startRequest = fetchMock.mock.calls[1]?.[1];
     const startBody = startRequest?.body;
     if (typeof startBody !== "string") {

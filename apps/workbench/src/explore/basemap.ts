@@ -4,7 +4,7 @@ export interface BasemapConfig {
   style: string | StyleSpecification;
   label: string;
   attributionUrl: string;
-  deployment: "development" | "private-r-and-d";
+  deployment: "public-low-traffic" | "private-r-and-d";
 }
 
 const osmDevelopmentBasemap: BasemapConfig = {
@@ -26,9 +26,9 @@ const osmDevelopmentBasemap: BasemapConfig = {
       },
     ],
   },
-  label: "OpenStreetMap development tiles",
+  label: "OpenStreetMap standard tiles",
   attributionUrl: "https://www.openstreetmap.org/copyright",
-  deployment: "development",
+  deployment: "public-low-traffic",
 };
 
 export function selectBasemap(mapTilerKey?: string): BasemapConfig {

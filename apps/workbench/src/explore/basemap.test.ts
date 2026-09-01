@@ -6,8 +6,8 @@ describe("basemap selection", () => {
   it("uses the bounded public OSM fallback only without a deployment key", () => {
     const basemap = selectBasemap();
 
-    expect(basemap.deployment).toBe("development");
-    expect(basemap.label).toContain("OpenStreetMap");
+    expect(basemap.deployment).toBe("public-low-traffic");
+    expect(basemap.label).toBe("OpenStreetMap standard tiles");
     expect(typeof basemap.style).toBe("object");
   });
 
