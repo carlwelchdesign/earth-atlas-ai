@@ -756,8 +756,8 @@ export function Explore({
           </div>
           <footer>
             Basemap: {basemap.label} ·{" "}
-            {basemap.deployment === "development"
-              ? "local development fallback"
+            {basemap.deployment === "public-low-traffic"
+              ? "public low-traffic fallback"
               : "private R&D deployment"}{" "}
             · Renderer: MapLibre · Footprints: provider-reported metadata ·{" "}
             <a href={basemap.attributionUrl} target="_blank" rel="noreferrer">

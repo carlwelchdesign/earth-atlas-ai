@@ -230,15 +230,10 @@ name = "echoatlas-backend"
 version = "0.1.0"
 source = { editable = "." }
 dependencies = [
-    { name = "awscrt" },
     { name = "fastapi" },
     { name = "jsonschema" },
-    { name = "numpy" },
-    { name = "pillow" },
     { name = "pydantic" },
-    { name = "rasterio" },
     { name = "referencing" },
-    { name = "scipy" },
     { name = "uvicorn", extra = ["standard"] },
 ]
 
@@ -252,18 +247,20 @@ dev = [
     { name = "ruff" },
     { name = "types-jsonschema" },
 ]
+processing = [
+    { name = "awscrt" },
+    { name = "numpy" },
+    { name = "pillow" },
+    { name = "rasterio" },
+    { name = "scipy" },
+]
 
 [package.metadata]
 requires-dist = [
-    { name = "awscrt", specifier = ">=0.29,<1" },
     { name = "fastapi", specifier = ">=0.141.1,<0.142" },
     { name = "jsonschema", specifier = ">=4.25,<5" },
-    { name = "numpy", specifier = ">=2.2,<3" },
-    { name = "pillow", specifier = ">=12.3,<13" },
     { name = "pydantic", specifier = ">=2.13.0,<3" },
-    { name = "rasterio", specifier = ">=1.4.4,<2" },
     { name = "referencing", specifier = ">=0.36,<1" },
-    { name = "scipy", specifier = ">=1.16,<2" },
     { name = "uvicorn", extras = ["standard"], specifier = ">=0.52.0,<0.53" },
 ]
 
@@ -276,6 +273,13 @@ dev = [
     { name = "pytest-cov", specifier = ">=7.0.0,<8" },
     { name = "ruff", specifier = ">=0.16.4,<0.17" },
     { name = "types-jsonschema", specifier = ">=4.25,<5" },
+]
+processing = [
+    { name = "awscrt", specifier = ">=0.29,<1" },
+    { name = "numpy", specifier = ">=2.2,<3" },
+    { name = "pillow", specifier = ">=12.3,<13" },
+    { name = "rasterio", specifier = ">=1.4.4,<2" },
+    { name = "scipy", specifier = ">=1.16,<2" },
 ]
 
 [[package]]

@@ -119,3 +119,11 @@
 - Decision: remove the Palantir adapter, OSDK/OAuth runtime, private hosted build, import/package tooling, and active platform documentation. Do not add RDFLib, Oxigraph, Apache Jena, NetworkX, or another ontology/graph dependency now. Keep the versioned analysis bundle as the portable knowledge boundary.
 - Why: the private Foundry surface does not satisfy the public portfolio objective, and EchoAtlas has no current semantic inference, RDF/SPARQL query, graph-algorithm, or cross-system ontology requirement. The existing bundle already provides stable identities, typed records, explicit links, provenance, and validation. A replacement ontology would add operational and conceptual cost without user-visible value.
 - Revisit when: a concrete requirement exists for linked-data interchange, cross-domain semantic queries, inference, or graph algorithms. RDFLib is the first standards-based Python option to evaluate; Oxigraph is the first embedded persistent RDF store to evaluate.
+
+## D-016 — Publish a bounded Vercel portfolio deployment
+
+- Date: 2026-08-31
+- Status: accepted by Carl for public portfolio deployment.
+- Decision: publish the Explore-first Vite application and lightweight FastAPI metadata/comparability boundary on Vercel. Include only the reduced approved Bingham Canyon display bundle needed for the exact-pair demonstration. Keep raster processing, raw imagery, provider payloads, caches, durable jobs, and multi-user assessment storage outside Vercel.
+- Why: the portfolio needs a public, login-free product surface. Vercel supports Vite static assets and FastAPI Functions, while EchoAtlas's provider-neutral API and bundle contracts let the deployment remain bounded and truthful.
+- Revisit when: traffic, provider terms, durable storage, background processing, operational monitoring, paid tasking, authentication, or a public SLA becomes a real requirement.

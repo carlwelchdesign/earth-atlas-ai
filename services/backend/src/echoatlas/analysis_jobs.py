@@ -224,6 +224,7 @@ class AnalysisJobService:
         clock: Callable[[], datetime] = lambda: datetime.now(UTC),
         max_jobs: int = 32,
         executor: ThreadPoolExecutor | None = None,
+        run_inline: bool = False,
     ) -> None:
         if max_jobs < 1:
             raise ValueError("max_jobs must be positive")
@@ -233,6 +234,7 @@ class AnalysisJobService:
         self._executor = executor or ThreadPoolExecutor(
             max_workers=2, thread_name_prefix="echoatlas-analysis"
         )
+        self._run_inline = run_inline
         self._records: dict[str, _JobRecord] = {}
         self._lock = threading.Lock()
 
@@ -282,6 +284,9 @@ class AnalysisJobService:
             record = _JobRecord(job_id=job_id, manifest=manifest, now=now, retry_of=retry_of)
             self._records[job_id] = record
             view = self._view(record)
+        if self._run_inline:
+            self._run(job_id)
+            return self.get(job_id)
         self._executor.submit(self._run, job_id)
         return view
 
@@ -379,7 +384,8 @@ def build_default_analysis_job_service(
     environment = os.environ if environ is None else environ
     configured = environment.get("ECHOATLAS_PREPARED_BUNDLE_PATH", "").strip()
     path = Path(configured) if configured else None
-    return AnalysisJobService(PreparedBundleRunner(path))
+    run_inline = environment.get("ECHOATLAS_ANALYSIS_RUN_INLINE", "").strip() == "1"
+    return AnalysisJobService(PreparedBundleRunner(path), run_inline=run_inline)
 
 
 def _as_acquisition(item: CatalogSearchItem) -> Acquisition:

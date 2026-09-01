@@ -28,7 +28,7 @@ export class CatalogClientError extends Error {
 
 export class HttpCatalogSearchClient implements CatalogSearchClient {
   constructor(
-    private readonly endpoint = "/v1/catalog/search",
+    private readonly endpoint = "/api/v1/catalog/search",
     private readonly timeoutMs = 25_000,
   ) {}
 
@@ -102,7 +102,7 @@ export interface PlaceSearchResult {
 
 export class HttpPlaceSearchAdapter implements PlaceSearchAdapter {
   constructor(
-    private readonly endpoint = "/v1/places/resolve",
+    private readonly endpoint = "/api/v1/places/resolve",
     private readonly timeoutMs = 10_000,
   ) {}
 

@@ -1,0 +1,16 @@
+.git
+.github
+.venv
+node_modules
+data
+fixtures
+prototypes
+docs/qa/evidence
+apps/workbench/coverage
+apps/workbench/dist
+apps/workbench/public/generated-demo/candidate-overlay.png
+apps/workbench/public/generated-demo/change-score.png
+apps/workbench/public/generated-demo/candidates.geojson
+apps/workbench/public/generated-demo/prepared-demo-manifest.json
+*.log
+*.zip

@@ -66,7 +66,7 @@ export interface AnalysisJobClient {
 }
 
 export class HttpAnalysisJobClient implements AnalysisJobClient {
-  constructor(private readonly root = "/v1/analysis") {}
+  constructor(private readonly root = "/api/v1/analysis") {}
 
   async compare(
     aoi: { bbox: BBox; geometry: PolygonGeometry },

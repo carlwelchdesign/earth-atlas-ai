@@ -8,6 +8,8 @@ their provenance and limitations intact.
 > EchoAtlas produces machine-generated **candidates**, never confirmed change,
 > damage, cause, identity, intent, or operational truth.
 
+**[Open the public, login-free EchoAtlas portfolio deployment](https://earth-atlas-ai.vercel.app)**
+
 ## Explore anywhere; claim only what the data supports
 
 Search for a place or draw a bounded area on the MapLibre globe. EchoAtlas queries
@@ -16,13 +18,13 @@ keeps successful results when one provider fails, and offers an accessible list
 for every map action. Global navigation does not imply global imagery coverage or
 scientific suitability.
 
-![EchoAtlas global place search and provider availability](docs/qa/evidence/eat-018-global-place-search.jpg)
+![EchoAtlas public MapLibre Explore view](docs/qa/evidence/eat-021/vercel-explore-desktop.png)
 
 Before analysis, the pair-review step exposes temporal separation, overlap,
 geometry, source identity, licensing, and warnings. The selection handed to the
 backend is immutable.
 
-![EchoAtlas comparability review for a real Umbra pair](docs/qa/evidence/eat019-comparability-review.png)
+![EchoAtlas public comparability review for a real Umbra pair](docs/qa/evidence/eat-021/vercel-pair-review.png)
 
 ## Inspect real public Umbra evidence
 
@@ -33,7 +35,7 @@ creates display derivatives, and generates a transparent queue of 26 review
 candidates. Source identity, acquisition time, processing parameters, warnings,
 artifact hashes, and CC BY 4.0 attribution stay visible.
 
-![EchoAtlas containerized Analyze workspace with real satellite-derived imagery and candidate evidence](docs/qa/evidence/eat015-container-desktop.png)
+![EchoAtlas public Analyze workspace with real satellite-derived imagery and candidate evidence](docs/qa/evidence/eat-021/vercel-analyze.png)
 
 An analyst can mark a candidate **Supported**, **Rejected**, or **Needs context**,
 add a note, and later correct the decision. Events are append-only and persist in
@@ -53,9 +55,12 @@ history is owner-review convenience storage, not a multi-user audit service.
 | Native and non-root Docker workflows |  |
 
 The standalone runtime is canonical and does not require an ontology platform,
-OpenAI, or a private map key. EAT-012 qualified SAR adjudication remains incomplete, so the AI
-evaluation in EAT-013 remains gated. Public deployment is a separate owner,
-license, sensitivity, security, and operations decision.
+OpenAI, or a private map key. The public Vercel deployment is a bounded portfolio
+demonstration: it searches Sentinel-1 metadata and an explicit two-item Umbra
+index, then opens the reduced approved Bingham Canyon bundle. Arbitrary raster
+processing, operational monitoring, alerts, multi-user storage, scientific
+validity claims, and AI remain unavailable. EAT-012 qualified SAR adjudication
+is incomplete, so EAT-013 remains gated.
 
 ## Run the owner-review app with Docker
 
