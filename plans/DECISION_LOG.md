@@ -21,7 +21,7 @@
 - Date: 2026-08-24
 - Status: accepted
 - Decision: Python processing emits a versioned, provider-neutral bundle consumed by React, tests, and platform adapters.
-- Why: it preserves reproducibility, isolates raster science, and prevents Palantir lock-in.
+- Why: it preserves reproducibility, isolates raster science, and prevents platform lock-in.
 - Revisit when: a proven performance or governance constraint requires a different transport, without changing the domain contract.
 
 ## D-004 — Deterministic candidates precede AI explanations
@@ -32,10 +32,10 @@
 - Why: measurements, provenance, and analyst control must exist before generated language.
 - Revisit when: only with evaluation evidence and an explicit governance revision.
 
-## D-005 — Palantir is an optional adapter
+## D-005 — Historical platform-spike decision
 
 - Date: 2026-08-24
-- Status: accepted
+- Status: superseded by D-015
 - Decision: Developer Tier work is a bounded feasibility spike after the standalone bundle exists.
 - Why: tier limits and live enrollment capabilities can change, and the public demo must remain reproducible without a proprietary runtime.
 - Revisit when: EAT-014 produces current evidence and a go/adjust/no-go recommendation.
@@ -61,14 +61,14 @@
 - Date: 2026-08-24
 - Status: accepted
 - Decision: use Python 3.12+ with `uv` and FastAPI for one modular backend distribution; keep API and processor as separate modules. Use Node 20.19+, npm workspaces, React 19, TypeScript 5, and Vite 7 for the workbench. Use GitHub Actions for CI and MIT for source code while preserving separate data licenses.
-- Why: the processing ecosystem is Python-native, a modular monolith avoids premature service operations, and the provider-neutral bundle preserves a future split. The selected frontend stack supports a custom standalone and later OSDK-compatible React experience.
+- Why: the processing ecosystem is Python-native, a modular monolith avoids premature service operations, and the provider-neutral bundle preserves a future split. The selected frontend stack supports a portable React experience.
 - Revisit when: measured dependency isolation, scaling, deployment, or platform-adapter constraints justify a service split or runtime upgrade.
 
 ## D-009 — Use containers for reproducible standalone packaging
 
 - Date: 2026-08-24
 - Status: accepted
-- Decision: keep native `uv` and npm workflows for day-to-day development, then package the standalone backend and production workbench as non-root container images with health checks and a local Compose configuration in `EAT-015`. The Compose path uses explicit local persistence and has no Palantir or AI-provider requirement.
+- Decision: keep native `uv` and npm workflows for day-to-day development, then package the standalone backend and production workbench as non-root container images with health checks and a local Compose configuration in `EAT-015`. The Compose path uses explicit local persistence and has no ontology-platform or AI-provider requirement.
 - Why: containers provide a consistent fresh-machine demo and a portable deployment artifact without slowing the current data-processing proof or coupling the product to a platform provider.
 - Revisit when: an approved deployment target imposes runtime, ingress, orchestration, storage, or observability requirements beyond the local standalone package.
 
@@ -96,10 +96,10 @@
 - Why: MapTiler supports MapLibre, global maps, and geocoding behind one replaceable API. Its current Free plan requires no billing information and permits non-commercial use plus commercial-product R&D, which matches EchoAtlas's current private research status. It pauses at quota and has no production SLA, so it is not a silent public/commercial deployment decision.
 - Revisit when: creating or restricting the MapTiler keys, deploying beyond private R&D, approaching quota, requiring an SLA/offline service, or approving spending. Public/commercial launch requires a suitable paid plan, another adapter, or a documented self-hosted stack. See `docs/architecture/explore-map-provider.md`.
 
-## D-013 — Keep Palantir optional after an adjust feasibility result
+## D-013 — Historical platform-spike closeout
 
 - Date: 2026-08-25
-- Status: accepted
+- Status: superseded by D-015
 - Decision: close EAT-014 with an **adjust** result. Foundry may be used as an optional downstream Ontology, media, Map, restricted application, and private-hosting layer. The provider-neutral bundle and standalone deterministic runtime remain canonical; processing policy, assessments, and provider access do not move exclusively into Foundry.
 - Why: live evidence proves the synthetic object/link/raster path, read-only OSDK application, and bounded real-derived static profile, but not real Media Set/Ontology-backed Umbra imagery, cleanup, exact tier ceilings/duration, public scale, or cost. Keeping the adapter optional captures demonstrated value without converting untested platform behavior into product dependencies.
 - Revisit when: a deployment has an approved Palantir operating model, real-imagery scale and licensing evidence, cleanup/retention procedures, known quotas and cost, and a reason the standalone bundle boundary is insufficient.
@@ -111,3 +111,11 @@
 - Decision: EAT-015 may build and verify the reproducible standalone package while EAT-012 awaits qualified independent SAR adjudication and EAT-013 remains gated. The shipped package keeps AI disabled and labels benchmark/AI work as unavailable roadmap.
 - Why: containerization, runbooks, security review, responsive evidence, and truthful portfolio packaging are independently verifiable engineering work. Waiting to package would not accelerate the external review, while pretending the review or AI exists would violate the product boundary.
 - Revisit when: EAT-012 is adjudicated and EAT-013 either passes its governance thresholds or is explicitly removed. Only then may benchmark or AI capabilities move from roadmap to shipped documentation.
+
+## D-015 — Retire Palantir and do not replace it with an ontology dependency
+
+- Date: 2026-08-31
+- Status: accepted; supersedes D-005 and D-013 for active product architecture.
+- Decision: remove the Palantir adapter, OSDK/OAuth runtime, private hosted build, import/package tooling, and active platform documentation. Do not add RDFLib, Oxigraph, Apache Jena, NetworkX, or another ontology/graph dependency now. Keep the versioned analysis bundle as the portable knowledge boundary.
+- Why: the private Foundry surface does not satisfy the public portfolio objective, and EchoAtlas has no current semantic inference, RDF/SPARQL query, graph-algorithm, or cross-system ontology requirement. The existing bundle already provides stable identities, typed records, explicit links, provenance, and validation. A replacement ontology would add operational and conceptual cost without user-visible value.
+- Revisit when: a concrete requirement exists for linked-data interchange, cross-domain semantic queries, inference, or graph algorithms. RDFLib is the first standards-based Python option to evaluate; Oxigraph is the first embedded persistent RDF store to evaluate.

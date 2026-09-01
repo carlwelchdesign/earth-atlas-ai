@@ -63,7 +63,7 @@ Metrics are local and privacy-preserving in MVP. No third-party behavioral analy
 - an LLM interpreting raw SAR pixels;
 - learned object detection before a labeled evaluation set and baseline exist;
 - real-time ingestion, global imagery discovery within the MVP, multi-tenancy, enterprise RBAC, or production operations;
-- Palantir as a required runtime or source of truth;
+- an ontology platform as a required runtime or source of truth;
 - a marketplace, billing, subscriptions, or customer onboarding;
 - claiming disaster impact, causal damage, or operational truth from a change mask alone.
 
@@ -72,7 +72,7 @@ Metrics are local and privacy-preserving in MVP. No third-party behavioral analy
 - **M1 proves data and processing.** No polished application can compensate for an invalid pair.
 - **M2 proves the analyst review experience.** Prepared fixtures are allowed, but all displayed evidence must come from the same bundle contract as live processing.
 - **M3 adds AI only as a cited draft explanation over structured evidence.** It remains feature-gated.
-- **M4 tests Palantir as an adapter and hardens a public demo.** Palantir work does not block the standalone MVP.
+- **M4 hardens the reproducible standalone demo.** Retired platform experiments do not remain product dependencies.
 - **M5 adds global imagery exploration after the single-story workflow is proven.** A MapLibre globe and accessible results list expose provider-reported coverage from Umbra and Sentinel-1 adapters, then hand an explicitly selected pair to the existing analysis pipeline. Navigating anywhere does not imply that suitable imagery exists there.
 
 ## Post-MVP Explore workflow

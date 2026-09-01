@@ -4,7 +4,7 @@ Status: implementation and local acceptance complete on `feature/eat-019-explore
 
 ## Outcome
 
-Connect an explicitly reviewed Explore pair to the existing provider-neutral Analyze bundle without making scientific-validity claims or coupling deterministic processing to MapLibre, Palantir, or AI.
+Connect an explicitly reviewed Explore pair to the existing provider-neutral Analyze bundle without making scientific-validity claims or coupling deterministic processing to MapLibre, deployment vendors, or AI.
 
 ## Boundaries
 
@@ -27,4 +27,4 @@ Connect an explicitly reviewed Explore pair to the existing provider-neutral Ana
 
 - Downloading arbitrary catalog imagery inside the browser.
 - Calling a selected pair scientifically valid.
-- Paid acquisition ordering, AI interpretation, Palantir-only execution, calibrated truth, or public operational deployment.
+- Paid acquisition ordering, AI interpretation, vendor-only execution, calibrated truth, or public operational deployment.

@@ -8,11 +8,6 @@ import {
   type BundleLoader,
   type WorkbenchBundle,
 } from "./workbench/model";
-import {
-  initialPlatformConnectionState,
-  loadPalantirConnectionState,
-  type PlatformConnectionState,
-} from "./workbench/palantir";
 import { StateNotice, Workbench } from "./workbench/Workbench";
 import { Explore } from "./explore/Explore";
 import type {
@@ -29,7 +24,6 @@ type LoadState =
 
 export function App({
   loadBundle = loadWorkbenchBundle,
-  loadPlatformConnection = loadPalantirConnectionState,
   assessmentStore,
   initialMode = "analyze",
   catalog,
@@ -40,7 +34,6 @@ export function App({
   analysisPollMs = 750,
 }: {
   loadBundle?: BundleLoader;
-  loadPlatformConnection?: () => Promise<PlatformConnectionState>;
   assessmentStore?: AssessmentStore;
   initialMode?: "explore" | "analyze";
   catalog?: CatalogSearchClient;
@@ -56,9 +49,6 @@ export function App({
   const [analysisBundle, setAnalysisBundle] = useState<WorkbenchBundle | null>(
     null,
   );
-  const [platformConnection, setPlatformConnection] =
-    useState<PlatformConnectionState>(initialPlatformConnectionState);
-
   useEffect(() => {
     if (mode === "explore") return;
     if (analysisBundle) return;
@@ -80,26 +70,6 @@ export function App({
       active = false;
     };
   }, [analysisBundle, loadBundle, attempt, mode]);
-
-  useEffect(() => {
-    if (mode === "explore") return;
-    let active = true;
-    loadPlatformConnection()
-      .then((connection) => {
-        if (active) setPlatformConnection(connection);
-      })
-      .catch(() => {
-        if (active)
-          setPlatformConnection({
-            status: "unavailable",
-            reason:
-              "The read-only Foundry check did not complete. The validated local bundle remains active.",
-          });
-      });
-    return () => {
-      active = false;
-    };
-  }, [loadPlatformConnection, mode]);
 
   const retry = useCallback(() => {
     setState({ status: "loading" });
@@ -166,7 +136,6 @@ export function App({
     <Workbench
       key={state.bundle.bundleId}
       bundle={state.bundle}
-      platformConnection={platformConnection}
       assessmentStore={assessmentStore}
       onExplore={() => setMode("explore")}
     />

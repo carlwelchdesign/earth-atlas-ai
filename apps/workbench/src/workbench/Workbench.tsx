@@ -31,11 +31,8 @@ import type {
   ComparisonMode,
   WorkbenchBundle,
 } from "./model";
-import type { PlatformConnectionState } from "./palantir";
-
 interface WorkbenchProps {
   bundle: WorkbenchBundle;
-  platformConnection?: PlatformConnectionState;
   assessmentStore?: AssessmentStore;
   onExplore?: () => void;
 }
@@ -45,7 +42,6 @@ let assessmentRequestSequence = 0;
 
 export function Workbench({
   bundle,
-  platformConnection = { status: "standalone" },
   assessmentStore,
   onExplore,
 }: WorkbenchProps) {
@@ -184,12 +180,7 @@ export function Workbench({
       <a className="skip-link" href="#candidate-queue">
         Skip to candidate queue
       </a>
-      <MissionHeader
-        bundle={bundle}
-        status={status}
-        platformConnection={platformConnection}
-        onExplore={onExplore}
-      />
+      <MissionHeader bundle={bundle} status={status} onExplore={onExplore} />
       <QualityBanner bundle={bundle} status={status} />
       {stale ? (
         <StateNotice
@@ -304,16 +295,10 @@ export function Workbench({
 interface MissionHeaderProps {
   bundle: WorkbenchBundle;
   status: "success" | "degraded" | "missing" | "stale";
-  platformConnection: PlatformConnectionState;
   onExplore?: () => void;
 }
 
-function MissionHeader({
-  bundle,
-  status,
-  platformConnection,
-  onExplore,
-}: MissionHeaderProps) {
+function MissionHeader({ bundle, status, onExplore }: MissionHeaderProps) {
   const before = acquisitionByRole(bundle, "before");
   const after = acquisitionByRole(bundle, "after");
   const labels = {
@@ -368,37 +353,11 @@ function MissionHeader({
         <span className="bundle-created">
           Bundle created {formatDate(bundle.createdAt)}
         </span>
-        <PlatformConnectionLabel connection={platformConnection} />
+        <span className="platform-connection">
+          Standalone deterministic runtime
+        </span>
       </div>
     </header>
-  );
-}
-
-function PlatformConnectionLabel({
-  connection,
-}: {
-  connection: PlatformConnectionState;
-}) {
-  const label =
-    connection.status === "standalone"
-      ? "Standalone runtime · Palantir inactive"
-      : connection.status === "connecting"
-        ? "Palantir read-only · connecting"
-        : connection.status === "connected"
-          ? connection.analysisRunAvailable
-            ? "Palantir read-only · synthetic run available"
-            : "Palantir read-only · no analysis run found"
-          : "Palantir unavailable · local bundle active";
-  return (
-    <span
-      className={`platform-connection platform-${connection.status}`}
-      role="status"
-      title={
-        connection.status === "unavailable" ? connection.reason : undefined
-      }
-    >
-      {label}
-    </span>
   );
 }
 

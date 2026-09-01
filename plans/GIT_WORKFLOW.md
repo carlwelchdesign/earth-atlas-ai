@@ -26,4 +26,4 @@
 - migrations, screenshots, artifacts, or runbooks when required;
 - unresolved risks and explicit gates that remain outside the ticket.
 
-Local success, CI success, deployment, provider activation, Palantir enrollment, operational readiness, and public release are distinct states.
+Local success, CI success, deployment, provider activation, operational readiness, and public release are distinct states.

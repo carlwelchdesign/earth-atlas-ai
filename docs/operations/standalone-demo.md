@@ -1,7 +1,7 @@
 # Standalone demo runbook
 
 EchoAtlas has two local operating modes. Both keep the deterministic backend and
-the workbench independent of Palantir and AI providers.
+the workbench independent of ontology and AI providers.
 
 ## Fast owner review: synthetic fallback
 
@@ -76,7 +76,7 @@ make dev-api
 make dev-web
 ```
 
-Run `make check` before review. No OpenAI, Palantir, Umbra, or MapTiler credential
+Run `make check` before review. No OpenAI, Umbra, or MapTiler credential
 is required for the default owner-review path. Place search uses the bounded
 OpenStreetMap Nominatim fallback when no private MapTiler token is configured.
 

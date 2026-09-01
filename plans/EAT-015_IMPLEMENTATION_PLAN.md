@@ -5,7 +5,7 @@ merged as `cbaf17f36713d923b91eef7de3556fa81e247bf8` after green CI.
 
 ## Outcome
 
-Package the truthful standalone owner-review demo as reproducible non-root containers and a Palantir-independent Compose stack while retaining native `uv`/npm development.
+Package the truthful standalone owner-review demo as reproducible non-root containers while retaining native `uv`/npm development.
 
 ## Sequencing decision
 
@@ -25,5 +25,5 @@ Carl's instruction to finish the project authorizes release-packaging work to pr
 - No raw SAR, cache, credentials, assessment state, or generated large artifacts enter an image or Git.
 - The base stack uses the explicit synthetic fallback. The prepared profile mounts an already generated, licensed display bundle read-only.
 - Browser-local assessment persistence is single-origin owner-review storage, not a multi-user audit service.
-- Palantir, MapTiler, and AI keys are not required or embedded.
+- MapTiler and AI keys are not required or embedded.
 - Public deployment/publication, calibrated SAR claims, and AI summaries remain unavailable and separately gated.

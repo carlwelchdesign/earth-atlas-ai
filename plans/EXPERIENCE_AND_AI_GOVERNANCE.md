@@ -6,7 +6,7 @@
 2. Machine candidates and analyst conclusions are visually and semantically distinct.
 3. Quality limitations stay near the decision, not buried in documentation.
 4. Every state offers a next step: retry, inspect, change pair, dismiss, or request context.
-5. The prepared demo works without accounts, live APIs, or Palantir.
+5. The prepared demo works without accounts, live APIs, or proprietary platforms.
 
 ## MVP information architecture
 
@@ -71,7 +71,7 @@ It may not:
 - convert a candidate into a confirmed finding;
 - infer damage, cause, identity, intent, or operational status without cited evidence;
 - change an assessment, create an external alert, subscribe an AOI, or publish a report;
-- call unrestricted network, filesystem, Palantir, or messaging tools;
+- call unrestricted network, filesystem, deployment, or messaging tools;
 - hide unsupported claims behind a numeric confidence value.
 
 ## AI output contract
@@ -106,4 +106,4 @@ AI remains disabled if the evaluation threshold is not met or a provider key is 
 - run a sensitivity review before publishing coordinates, derived tiles, or high-resolution artifacts;
 - provide correction and takedown contact guidance for the public demo;
 - do not market candidates as verified damage, intelligence conclusions, or real-time monitoring;
-- require Carl's explicit approval for Palantir account creation, cloud deployment, provider keys, or public release.
+- require Carl's explicit approval for cloud deployment, provider keys, or public release.

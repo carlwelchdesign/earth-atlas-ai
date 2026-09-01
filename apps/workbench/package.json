@@ -17,9 +17,6 @@
     "typecheck": "tsc -b --pretty false"
   },
   "dependencies": {
-    "@osdk/api": "2.58.0",
-    "@osdk/client": "2.58.0",
-    "@osdk/oauth": "1.1.1",
     "maplibre-gl": "6.6.0",
     "react": "^19.2.8",
     "react-dom": "^19.2.8"
