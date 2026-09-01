@@ -184,9 +184,9 @@ Acceptance:
 
 ## M4 — Platform adapter and demo hardening
 
-### EAT-014 — Validate Palantir Developer Tier and Ontology adapter
+### EAT-014 — Retired platform feasibility spike
 
-Outcome: a time-boxed spike proves or disproves a portable bundle-to-Palantir path without blocking the standalone product.
+Outcome: a time-boxed proprietary-platform experiment was completed without blocking the standalone product. EAT-020 later retired the integration from the active architecture.
 
 Acceptance:
 
@@ -196,7 +196,7 @@ Acceptance:
 - [x] No processing policy is moved exclusively into Foundry.
 - [x] Spike ends with a go/adjust/no-go decision, screenshots/evidence, and cost/access caveats.
 
-Implementation checkpoint: a deterministic, network-free import plan maps validated bundle objects, evidence media, and links without a Palantir SDK or remote writes. Package version 1.3.0 exports upload-ready object/media CSVs, preserves the aggregate link table, adds a dedicated two-column join CSV per declared link type, omits every zero-row object or link family from upload while retaining it in the hashed manifest, and adds lossless UTC epoch-millisecond companion columns for recognized object timestamps while preserving the original RFC3339 values. Carl explicitly approved and completed Developer Tier enrollment. The live plan reports limited vCPUs/GPUs/users, 60 object types, and 60–120K latest-generation LLM tokens per minute; the application catalog exposes Projects & Files, Data Connection, Pipeline Builder, Contour, Ontology Manager, Workshop, AIP Logic, Code Repositories, and AIP Assist. The `EchoAtlas` project contains the exact synthetic fixture as raw JSON/GeoJSON files and PNG media, isolated normalized datasets, five indexed domain object types, six dataset-backed link types, native acquisition/run timestamps, and a synthetic raster media-reference object persisted in a native Map template. The restricted read-only application and OSDK are verified, and hosted asset `0.4.0` serves the approved real-derived Bingham evidence profile. The final decision is **adjust**: use Palantir only as an optional downstream Ontology/media/Map/application layer while the standalone deterministic runtime stays canonical. Real Media Set/Ontology-backed Umbra imagery, resource deletion/cleanup, exact tier ceilings/duration, scale, cost, and public release remain explicitly unproven caveats rather than passed gates. See `docs/qa/palantir-feasibility-closeout.md`.
+Historical checkpoint: the experiment proved a restricted read-only object/link/raster and hosted-client path, but it remained private, incomplete for real imagery, and unnecessary for the public portfolio objective. D-015 supersedes the optional-platform decision. Git and Asana retain the detailed experiment history; active code and documentation do not.
 
 ### EAT-016 — Load the real Bingham Canyon demo in the workbench
 
@@ -211,7 +211,7 @@ Acceptance:
 - [x] Focused tests cover preparation, real-bundle loading, invalid data, missing data, and synthetic fallback behavior.
 - [x] Desktop and mobile browser verification proves the prepared real imagery is visible and the review workflow remains usable.
 
-Non-goals: SAR-domain adjudication, calibrated accuracy claims, AI interpretation, Palantir upload, public deployment, or completion of `EAT-015`.
+Non-goals: SAR-domain adjudication, calibrated accuracy claims, AI interpretation, platform upload, public deployment, or completion of `EAT-015`.
 
 ### EAT-015 — Package reproducible demo and release evidence
 
@@ -221,7 +221,7 @@ Acceptance:
 
 - [x] Fresh-machine setup/rebuild and prepared-demo runbooks pass.
 - [x] Production-oriented backend and workbench container images build reproducibly with pinned runtime inputs, non-root execution, health checks, and no embedded secrets.
-- [x] A local Compose configuration starts the standalone stack with documented ports, health dependencies, and explicit persistent data mounts; Palantir is not required.
+- [x] A local Compose configuration starts the standalone stack with documented ports, health dependencies, and explicit persistent data mounts; no proprietary platform is required.
 - [x] Native development remains supported, and container verification covers clean build, startup, health, shutdown, and persisted local assessments on a fresh machine.
 - [x] Architecture, dataset card, processing limits, AI boundary, attribution, and operator guide are current.
 - [x] Desktop/tablet/mobile evidence and a scripted analyst story are captured.
@@ -263,7 +263,7 @@ Acceptance:
 
 Implementation checkpoint: contract `1.0.0` is exposed at `POST /v1/catalog/search` and through `echoatlas-search-catalog`. AOI, time, provider, filter, cursor, response, host, redirect, timeout, cache, and sample limits are validated. Umbra uses a bounded static STAC traversal with explicit sampling warnings; Sentinel-1 uses the official Copernicus Data Space `sentinel-1-grd` Item Search API. Raw provider documents and asset/download details remain behind adapters. Deterministic tests cover success, empty/filter, pagination, cache, partial-provider failure, schema differences, and safety bounds. The 2026-08-25 bounded live smoke found 15 Sentinel-1 acquisitions and five Umbra acquisitions over the approved Bingham Canyon AOI with complete provider reports and no warnings. These are availability records, not approved pairs or change findings.
 
-Non-goals: paid Umbra tasking, global bulk downloads, image processing, or Palantir-only discovery.
+Non-goals: paid Umbra tasking, global bulk downloads, image processing, or vendor-only discovery.
 
 ### EAT-018 — Implement accessible MapLibre Explore mode
 
@@ -296,9 +296,45 @@ Acceptance:
 - [x] Selection produces an immutable manifest with AOI geometry hash, source identities, timestamps, license/provenance, and processing inputs.
 - [x] A bounded asynchronous job exposes queued, running, succeeded, failed, and cancelled states with safe retry/cancel behavior.
 - [x] Success loads the existing versioned bundle in Analyze and preserves a clear return path to Explore.
-- [x] Deterministic processing remains independent of MapLibre, Palantir, and AI providers.
+- [x] Deterministic processing remains independent of MapLibre, deployment vendors, and AI providers.
 - [x] One Umbra and one Sentinel-1 path are verified where legal test data permits, including no-comparable-pair and processing-failure cases.
 
 Implementation checkpoint: Explore now creates a backend-owned, content-hashed selection manifest before a distinct processing action is available. Comparability reports geometry overlap, timing, product, polarization, resolution, orbit, and warnings while permanently reporting scientific validity as not determined. A bounded injected job service implements queued/running/succeeded/failed/cancelled, cooperative cancellation, linked retry, exact manifest validation, and a 32-record cap. The default runner loads only an explicitly configured, at-most-10-MB bundle whose acquisition IDs exactly match the selection; arbitrary catalog pairs fail safely rather than receiving synthetic or unrelated imagery. The runtime-validated success path loads the existing bundle into Analyze and retains Return to Explore. The public Umbra adapter now targets requested calendar-month roots under its existing total budgets, allowing the approved Bingham Canyon pair to appear in the live Explore results. Browser evidence verifies the exact Umbra pair, 25.1-day/99.9%-overlap comparability, real-derived two-up Analyze imagery, the 26-candidate queue, and a mismatched Sentinel-1 processing failure. See `docs/qa/explore-analyze-pipeline.md`.
 
 Non-goals: calibrated change truth, autonomous alerts, paid acquisition ordering, or public operational deployment.
+
+## M6 — Public portfolio closeout
+
+### EAT-020 — Remove Palantir integration and record ontology decision
+
+Outcome: EchoAtlas has no Palantir runtime, SDK, adapter, hosting, or active-product dependency, and the repository records an evidence-based decision not to add a replacement ontology library without a real requirement.
+
+Acceptance:
+
+- [ ] Remove Palantir OSDK packages, runtime probe, UI state, backend projection/package commands, and dedicated active documentation.
+- [x] Compare maintained free/open-source ontology and graph options using primary project sources.
+- [x] Record the no-ontology decision and explicit revisit triggers.
+- [ ] Preserve the provider-neutral analysis bundle and deterministic processing boundaries.
+- [ ] Run `make check`, commit on the ticket branch, record review evidence, and reconcile Asana.
+
+### EAT-021 — Deploy portfolio-ready EchoAtlas to Vercel
+
+Outcome: a public Vercel deployment presents Explore first and provides an honest, usable portfolio demonstration without a Foundry login.
+
+Acceptance:
+
+- [ ] Record the Vercel frontend/backend architecture and public-provider boundaries.
+- [ ] Configure, deploy, and verify the public application without committed secrets or source imagery.
+- [ ] Validate desktop/mobile, accessibility, runtime errors, attribution, and capability language.
+- [ ] Record the deployment URL and evidence in README, plans, and Asana.
+
+### EAT-022 — Finish EchoAtlas portfolio case study and project closeout
+
+Outcome: the repository and live application provide a polished, evidence-backed case study ready for Carl's portfolio.
+
+Acceptance:
+
+- [ ] Publish high-quality Explore, pair-review, and Analyze screenshots.
+- [ ] Document the product problem, architecture, decisions, tradeoffs, implementation, and limitations without inflated claims.
+- [ ] Link the public deployment and repository.
+- [ ] Run final verification and reconcile every remaining ticket state.

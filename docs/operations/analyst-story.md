@@ -24,7 +24,7 @@ turning machine candidates into claims.
 8. Correct the assessment, open **History**, and show the append-only chain.
 9. Reload the page and show that the browser-local history returns for the same
    bundle and origin.
-10. Close with the boundaries: AI summaries are disabled, Palantir is optional,
+10. Close with the boundaries: AI summaries and operational monitoring are disabled,
     qualified SAR adjudication remains pending, and public release needs a
     separate owner decision.
 

@@ -24,7 +24,7 @@ The default `PreparedBundleRunner` reads only the explicitly configured `ECHOATL
 
 Explore validates every untrusted manifest and job response before retaining it. The first dialog action creates comparability evidence; a distinct second action starts preparation. A successful job is validated through the existing bundle parser before Analyze renders it. Returning to Explore does not mutate the loaded bundle or the immutable selection.
 
-MapLibre remains a navigation renderer. Palantir remains an optional downstream adapter. AI remains outside selection, processing, job state, and bundle validation.
+MapLibre remains a navigation renderer. AI and deployment vendors remain outside selection, processing, job state, and bundle validation.
 
 ## Catalog integration correction
 

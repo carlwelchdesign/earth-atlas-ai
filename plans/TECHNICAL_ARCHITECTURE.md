@@ -2,7 +2,7 @@
 
 ## Architectural intent
 
-Keep geospatial processing portable, deterministic, and independent of any operational platform. Keep framework and provider I/O at the edges. Use one versioned analysis-bundle contract between processing, the standalone workbench, tests, and any future Palantir adapter.
+Keep geospatial processing portable, deterministic, and independent of any operational platform. Keep framework and provider I/O at the edges. Use one versioned analysis-bundle contract between processing, the standalone workbench, and tests.
 
 ## Proposed repository shape
 
@@ -56,7 +56,7 @@ MapLibre globe or accessible search/list
   -> Analyze workbench
 ```
 
-MapLibre owns navigation and rendering only. It may display basemap/vector tiles, acquisition-footprint GeoJSON, and explicitly configured raster tile sources, but it does not decide provider availability, pair suitability, processing policy, candidate meaning, or permissions. Palantir may consume the same normalized objects as an optional adapter; it is not the discovery source of truth.
+MapLibre owns navigation and rendering only. It may display basemap/vector tiles, acquisition-footprint GeoJSON, and explicitly configured raster tile sources, but it does not decide provider availability, pair suitability, processing policy, candidate meaning, or permissions.
 
 ## Boundaries and responsibilities
 
@@ -109,16 +109,16 @@ All untrusted JSON is validated at runtime against versioned schemas.
 - Provides an equivalent searchable acquisition list for every map-only discovery action, including AOI results, selection, and no-coverage explanations.
 - Keeps MapLibre, geocoding, basemap, and raster-tile providers behind UI adapters so they can be replaced without changing catalog or analysis contracts.
 
-### Palantir adapter
+### Knowledge model
 
-Deferred until the standalone bundle is stable. It maps bundles into datasets/media and a minimal Ontology without moving processing policy into Foundry. Any OSDK application must use restricted application resources and operation scopes.
+The versioned bundle is the current knowledge model: stable identities, typed records, explicit links, provenance, and schema validation. No RDF/OWL/SPARQL or proprietary ontology dependency is justified until the product has a concrete semantic-query, inference, or cross-system interchange requirement.
 
 ### Packaging and containers
 
 - Native `uv` and npm workflows remain the fastest supported development path.
 - `EAT-015` packages the standalone backend and built workbench as reproducible, production-oriented container images plus a local Compose configuration.
 - Containers run as non-root users, include health checks, receive configuration and secrets only at runtime, and mount local bundle/assessment storage explicitly.
-- The standalone Compose stack cannot require Palantir, an AI provider, or other optional platform integrations.
+- The standalone Compose stack cannot require an ontology platform, an AI provider, or other optional platform integrations.
 - Container readiness proves packaging and local orchestration only; authentication, durable multi-user storage, operations, public deployment, and release remain separate approval gates.
 
 ## MVP object model

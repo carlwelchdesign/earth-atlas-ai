@@ -11,7 +11,7 @@
 ## Product boundaries
 
 - Treat detections as machine-generated **candidates**, never confirmed change, damage, identity, intent, or operational truth.
-- Keep deterministic geospatial processing independent of UI, AI providers, and Palantir.
+- Keep deterministic geospatial processing independent of UI, AI providers, and deployment vendors.
 - Keep provider payloads behind adapters and validate all untrusted runtime data.
 - AI may only explain structured evidence after the deterministic workflow and evaluation gates exist.
 - Do not add military target tracking, person-level surveillance, autonomous actions, or public deployment without an explicit planning decision and owner approval.

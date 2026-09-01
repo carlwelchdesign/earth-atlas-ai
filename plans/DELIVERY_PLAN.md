@@ -38,9 +38,9 @@ Tickets: `EAT-012` and `EAT-013`.
 
 Gate: AI stays disabled unless citation, permission, and overclaiming evaluations pass.
 
-### M4 — Platform adapter and demo hardening
+### M4 — Demo hardening and retired platform experiment
 
-Outcome: a bounded Palantir feasibility result exists, the standalone path remains intact, and a reproducible public-demo package is ready for owner review.
+Outcome: the standalone path remains intact, the retired platform experiment is recorded historically, and a reproducible public-demo package is ready for owner review.
 
 Tickets: `EAT-014`, `EAT-016`, and `EAT-015`.
 
@@ -94,7 +94,7 @@ Before a remote exists, commit evidence may be local. After a remote and protect
 | Dataset pair selection | Approves | Responsible | Consulted/required before calibrated claims | Informed |
 | Architecture and implementation | Approves material changes | Responsible | Consulted for science boundaries | Consulted for release controls |
 | Candidate interpretation | Accountable as analyst | Supplies tooling, not conclusions | Consulted | Informed |
-| Palantir/provider account actions | Approves explicitly | Responsible only after approval | Informed | Consulted |
+| Provider account actions | Approves explicitly | Responsible only after approval | Informed | Consulted |
 | Public deployment/release | Approves explicitly | Prepares evidence | Consulted | Review required |
 | Global Explore design and provider expansion | Approves design and scope | Responsible | Consulted on pair-comparability language | Consulted on sensitivity, location, and provider controls |
 
@@ -113,7 +113,7 @@ Before a remote exists, commit evidence may be local. After a remote and protect
 The ten planning-role passes produced these integrated decisions:
 
 - Product: one analyst, one civilian change-review workflow, and explicit no-go criteria.
-- Platform: provider adapter, versioned bundle contract, asynchronous job states, checksum cache, and portable Palantir boundary.
+- Platform: provider adapters, versioned bundle contract, asynchronous job states, checksum cache, and vendor-neutral deployment boundaries.
 - AI: delayed, draft-only assistance with structured evidence and deterministic permission gates.
 - Content/data model: MVP object lifecycles and provenance links are canonical; future ontology types are deferred.
 - Trust: licensing, sensitive-site review, public-release approval, and non-causal language are gates.

@@ -39,7 +39,7 @@ M2 is manual review of deterministic candidates. AI is off. The UI does not gene
 - production React implementation or backend integration;
 - calibrated confidence, damage classification, identity, cause, intent, or operational status;
 - account management, live subscriptions, alerts, collaboration, or publication;
-- final marketing identity, public deployment, Palantir, or AI assistance.
+- final marketing identity, public deployment, ontology platforms, or AI assistance.
 
 ## Design direction: quiet analytical instrument
 

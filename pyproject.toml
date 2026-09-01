@@ -35,8 +35,6 @@ echoatlas-validate-labeling = "echoatlas.evaluation.cli:labeling_validation_main
 echoatlas-generate-demo-bundle = "echoatlas.bundle.cli:generate_main"
 echoatlas-process-previews = "echoatlas.processor.previews.cli:main"
 echoatlas-validate-bundle = "echoatlas.bundle.cli:validate_main"
-echoatlas-plan-palantir-import = "echoatlas.adapters.cli:palantir_plan_main"
-echoatlas-package-palantir-import = "echoatlas.adapters.cli:palantir_package_main"
 echoatlas-prepare-workbench-demo = "echoatlas.demo.cli:main"
 
 [dependency-groups]

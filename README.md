@@ -42,18 +42,18 @@ history is owner-review convenience storage, not a multi-user audit service.
 
 ## What is actually shipped
 
-| Shipped standalone | Optional prototype | Unavailable roadmap |
-| --- | --- | --- |
-| MapLibre globe and accessible results | Private Palantir-hosted read-only profile | Calibrated SAR benchmark/accuracy claims |
-| Umbra + Sentinel-1 metadata search | Synthetic Ontology and raster feasibility assets | AI summaries or model calls |
-| Comparability review and immutable handoff | Restricted OSDK/OAuth query path | Multi-user auth and durable assessment service |
-| Deterministic local preparation pipeline | Provider-neutral Palantir import package | Public deployment or operational monitoring |
-| Synthetic fallback and real prepared demo |  | Paid tasking or guaranteed global coverage |
-| Browser-local append-only assessments |  | Automatic alerts or autonomous actions |
-| Native and non-root Docker workflows |  |  |
+| Shipped | Unavailable roadmap |
+| --- | --- |
+| MapLibre globe and accessible results | Calibrated SAR benchmark/accuracy claims |
+| Umbra + Sentinel-1 metadata search | AI summaries or model calls |
+| Comparability review and immutable handoff | Multi-user auth and durable assessment service |
+| Deterministic local preparation pipeline | Operational monitoring or automatic alerts |
+| Synthetic fallback and real prepared demo | Paid tasking or guaranteed global coverage |
+| Browser-local append-only assessments | Live wildfire feeds and event matching |
+| Native and non-root Docker workflows |  |
 
-The standalone runtime is canonical and does not require Palantir, OpenAI, or a
-private map key. EAT-012 qualified SAR adjudication remains incomplete, so the AI
+The standalone runtime is canonical and does not require an ontology platform,
+OpenAI, or a private map key. EAT-012 qualified SAR adjudication remains incomplete, so the AI
 evaluation in EAT-013 remains gated. Public deployment is a separate owner,
 license, sensitivity, security, and operations decision.
 
@@ -148,8 +148,8 @@ real-data artifacts, credentials, or assessments.
 - `plans` — product decisions, tickets, risks, and approval gates.
 
 Provider payloads stop at validated adapters. Deterministic processing does not
-depend on the UI, Palantir, or AI. The portable bundle is the contract among the
-processor, workbench, tests, and optional platform adapters.
+depend on the UI, deployment vendor, or AI. The portable bundle is the contract
+among the processor, workbench, and tests.
 
 Start with the [architecture overview](docs/architecture/README.md),
 [dataset card](docs/data/bingham-canyon-dataset-card.md),

@@ -1,6 +1,6 @@
 # EchoAtlas planning package
 
-Status: EAT-001 through EAT-011, EAT-DES-001, EAT-014 through EAT-019, and the AI-disabled standalone owner-review package are complete. EAT-012 remains in qualified-review and adjudication, so EAT-013 remains gated. EAT-014 closed with an **adjust** decision: its verified synthetic Ontology/raster, restricted read-only application/OSDK, and private real-derived hosted profile remain optional downstream capabilities while the standalone deterministic runtime stays canonical. Real Media Set/Ontology-backed Umbra imagery, cleanup behavior, exact Developer Tier ceilings/duration, scale, cost, and public release remain explicit unproven caveats.
+Status: EAT-001 through EAT-011, EAT-DES-001, EAT-014 through EAT-019, and the AI-disabled standalone owner-review package are complete. EAT-012 remains in qualified-review and adjudication, so EAT-013 remains gated. EAT-020 is removing the retired Palantir experiment and recording that EchoAtlas needs no ontology dependency at its current scale. EAT-021 and EAT-022 cover the approved public Vercel deployment and portfolio case-study closeout.
 
 EchoAtlas is a civilian disaster and infrastructure-change SAR intelligence workbench. The first release will prove one end-to-end analyst workflow with public Umbra data: select a comparable image pair, produce deterministic change candidates, inspect the evidence, and record a human assessment.
 
@@ -30,7 +30,7 @@ Canonical GitHub repository: [carlwelchdesign/earth-atlas-ai](https://github.com
 2. Asana is the execution system of record for ticket ownership, current activity, blockers, evidence, and completion.
 3. Every development change must map to one `EAT-*` ticket and a dedicated branch once Git is initialized.
 4. A task is not complete because code exists. Its acceptance checklist and required verification evidence must be satisfied and recorded in Asana.
-5. Local processing, the standalone workbench, Palantir integration, public deployment, operational readiness, and public release are separate gates.
+5. Local processing, the standalone workbench, public deployment, operational readiness, and public release are separate gates.
 6. Changes to MVP scope, the pinned demonstration dataset, AI permissions, or the portability boundary require a decision-log entry.
 
 ## Current evidence and constraints
@@ -38,8 +38,7 @@ Canonical GitHub repository: [carlwelchdesign/earth-atlas-ai](https://github.com
 - The [AWS Open Data Registry](https://registry.opendata.aws/umbra-open-data/) describes Umbra's public SAR bucket, frequent updates, multiple time-series locations, GEC/SICD/SIDD/CPHD products, and CC BY 4.0 licensing.
 - The live [Umbra STAC root](https://umbra-open-data-catalog.s3.us-west-2.amazonaws.com/stac/catalog.json) reports STAC 1.1.0 and currently links 2024 and 2025 catalogs.
 - EAT-002 proved public object resolution despite empty STAC asset `href` values, and EAT-003 pinned the approved Bingham Canyon GEC pair with exact object identities, access evidence, and checksums.
-- The live Palantir enrollment identifies AIP Developer Tier as the current plan, reports limited compute/users plus a 60-object-type cap and LLM rate limits, and exposes the core data, Ontology, application, code, and AIP tools. Resource Management currently reports zero Foundry compute, storage, and Ontology volume for the last 30 days and separately identifies the Small AIP tier with limited enrollment activity. Exact quota ceilings and EchoAtlas model invocation remain explicit feasibility gates rather than MVP dependencies.
-- The completed [Palantir feasibility spike](../docs/platform/palantir-feasibility.md) maps and normalizes the portable bundle locally, records live raw/media/normalized import and Ontology behavior including the empty-family boundary, timestamp bridge, and synthetic GeoTIFF ingestion, and verifies restricted read-only application scopes, OSDK generation, private hosting, the production browser OAuth/query path, and a bounded real-derived static evidence profile. Its final **adjust** decision retains cleanup and Media Set/Ontology-backed real-imagery behavior as unproven caveats.
+- The versioned analysis bundle already supplies the stable identities, typed records, links, provenance, and validation needed by the current product. D-015 rejects an ontology dependency until a concrete semantic-query, inference, or cross-system interchange requirement exists.
 
 ## Definition of MVP complete
 
