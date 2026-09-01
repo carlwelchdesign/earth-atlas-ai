@@ -364,4 +364,6 @@ Acceptance:
 - [x] Make the semantic candidate list a named, keyboard-focusable internal scroll region.
 - [x] Keep queue controls fixed and give long evidence content its own overflow owner.
 - [x] Preserve normal document flow on narrow/mobile/high-zoom layouts.
-- [ ] Add component and Playwright geometry regressions and verify the public Vercel release. Local regression coverage passes; public verification remains pending.
+- [x] Add component and Playwright geometry regressions and verify the public Vercel release.
+
+Completion: [PR #57](https://github.com/carlwelchdesign/earth-atlas-ai/pull/57) merged. At 1280 x 720 the document remains viewport-height while the 26-row candidate queue scrolls independently; narrow layouts retain normal document flow. Full local and GitHub checks passed, and the public Vercel regression passed on deployment `dpl_AQCZDLTSN85m1EWTDRcT7GU3CreP`.

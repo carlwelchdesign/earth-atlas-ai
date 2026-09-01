@@ -1,6 +1,6 @@
 # EAT-024 — Constrain Analyze workspace and scroll candidate queue
 
-Status: in progress
+Status: complete
 
 Asana: [EAT-024](https://app.asana.com/1/9789386902387/project/1217790716964797/task/1218039358769570)
 
@@ -16,14 +16,14 @@ Keep the semantic ordered review queue and existing visual system. MUI/DataGrid 
 
 ## Acceptance
 
-- [ ] At desktop Analyze widths and supported viewport heights, the document height does not grow with 26 candidate rows.
-- [ ] Queue title, count, filters, and sort rule remain visible while only candidate rows scroll.
-- [ ] The candidate list is a named keyboard-focusable scroll region with visible focus, contained overscroll, and a stable scrollbar gutter.
-- [ ] The comparison stage consumes available workspace height without stretching the grid; long evidence scrolls inside its panel.
-- [ ] Mobile/narrow layouts restore normal document flow and do not force an undersized nested queue scroller.
-- [ ] Selecting a row remains synchronized with the comparison and evidence panels.
-- [ ] Component regression coverage fails before the markup fix; Playwright verifies document height and scroll ownership with the 26-row public bundle.
-- [ ] `make check`, GitHub checks, and live public Vercel verification pass before Asana completion.
+- [x] At desktop Analyze widths and supported viewport heights, the document height does not grow with 26 candidate rows.
+- [x] Queue title, count, filters, and sort rule remain visible while only candidate rows scroll.
+- [x] The candidate list is a named keyboard-focusable scroll region with visible focus, contained overscroll, and a stable scrollbar gutter.
+- [x] The comparison stage consumes available workspace height without stretching the grid; long evidence scrolls inside its panel.
+- [x] Mobile/narrow layouts restore normal document flow and do not force an undersized nested queue scroller.
+- [x] Selecting a row remains synchronized with the comparison and evidence panels.
+- [x] Component regression coverage fails before the markup fix; Playwright verifies document height and scroll ownership with the 26-row public bundle.
+- [x] `make check`, GitHub checks, and live public Vercel verification pass before Asana completion.
 
 ## Responsive boundary
 
@@ -43,4 +43,5 @@ Keep the semantic ordered review queue and existing visual system. MUI/DataGrid 
 - Browser regression: at 1280 x 720, document height remained 720 px while the queue measured 208 px viewport / 1,789 px content; Page Down and wheel input moved the queue without moving the page.
 - Responsive check: at 390 x 844, the layout returned to normal document flow with no horizontal overflow.
 - Repository gate: `make check` passed with 114 backend tests, format, lint, type checks, build, and secret scanning.
-- Public Vercel verification remains required before completion.
+- GitHub: [PR #57](https://github.com/carlwelchdesign/earth-atlas-ai/pull/57) merged after Backend, Workbench, and Vercel checks passed.
+- Public release: Vercel deployment `dpl_AQCZDLTSN85m1EWTDRcT7GU3CreP` reached Ready, and the Analyze viewport/queue Playwright regression passed against [earth-atlas-ai.vercel.app](https://earth-atlas-ai.vercel.app).
