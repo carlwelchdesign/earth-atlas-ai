@@ -324,6 +324,12 @@ describe("Explore", () => {
     );
     await screen.findByRole("heading", { name: "2 reported acquisitions" });
 
+    const results = screen.getByRole("list", {
+      name: "Scrollable acquisition results",
+    });
+    expect(results).toHaveAttribute("tabindex", "0");
+    expect(results).toHaveClass("acquisition-list-scroll");
+
     fireEvent.click(
       screen.getByRole("button", { name: "Use UMBRA-2025-07-28 as Before" }),
     );
@@ -413,7 +419,7 @@ describe("Explore", () => {
     ).toBeInTheDocument();
     expect(start).toHaveBeenCalledTimes(1);
 
-    fireEvent.click(screen.getByRole("button", { name: "Return to Explore" }));
+    fireEvent.click(screen.getByRole("button", { name: "Explore" }));
     expect(
       screen.getByRole("heading", {
         name: "Explore provider-reported SAR availability",

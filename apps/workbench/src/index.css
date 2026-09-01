@@ -62,7 +62,7 @@ a:focus-visible {
   background:
     radial-gradient(circle at 50% -15%, #173041 0, transparent 42rem), var(--bg);
 }
-.explore-header {
+.app-header {
   display: flex;
   align-items: center;
   gap: 2rem;
@@ -71,11 +71,11 @@ a:focus-visible {
   border-bottom: 1px solid var(--line);
   background: #0a141c;
 }
-.explore-header nav {
+.app-header nav {
   display: flex;
   gap: 0.35rem;
 }
-.explore-header nav button {
+.app-header nav button {
   min-height: 2.6rem;
   padding: 0.55rem 0.9rem;
   border: 0;
@@ -83,15 +83,15 @@ a:focus-visible {
   color: var(--muted);
   cursor: pointer;
 }
-.explore-header nav button[aria-current="page"] {
+.app-header nav button[aria-current="page"] {
   color: var(--text);
   background: var(--surface-raised);
   box-shadow: inset 0 -2px var(--accent);
 }
-.explore-header nav span {
+.app-header nav span {
   font-size: 0.68rem;
 }
-.explore-header > .status-pill {
+.app-header > .status-pill {
   margin-left: auto;
 }
 .explore-search-band {
@@ -201,6 +201,12 @@ a:focus-visible {
 }
 .explore-results {
   grid-area: results;
+  display: flex;
+  flex-direction: column;
+  max-height: min(52rem, calc(100vh - 5.75rem));
+  overflow: hidden;
+  position: sticky;
+  top: 0.85rem;
 }
 .pair-tray {
   grid-area: pair;
@@ -390,6 +396,12 @@ a:focus-visible {
   margin: 0;
   padding: 0.7rem;
   list-style: none;
+}
+.acquisition-list-scroll {
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-gutter: stable;
 }
 .acquisition-list article {
   overflow: hidden;
@@ -665,11 +677,11 @@ a:focus-visible {
   }
 }
 @media (max-width: 720px) {
-  .explore-header {
+  .app-header {
     flex-wrap: wrap;
     gap: 0.5rem 1rem;
   }
-  .explore-header > .status-pill {
+  .app-header > .status-pill {
     order: 3;
     width: 100%;
     margin-left: 0;
@@ -825,16 +837,6 @@ h3 {
   flex-direction: column;
   align-items: flex-end;
   gap: 0.38rem;
-}
-.mode-switch-button {
-  min-height: 2.25rem;
-  padding: 0.42rem 0.68rem;
-  border: 1px solid var(--line-strong);
-  border-radius: 0.3rem;
-  background: var(--surface-raised);
-  color: var(--accent);
-  font-weight: 800;
-  cursor: pointer;
 }
 .status-pill {
   display: inline-flex;
@@ -1922,6 +1924,10 @@ h3 {
 }
 
 @media (max-width: 767px) {
+  .explore-results {
+    max-height: min(42rem, 72vh);
+    position: static;
+  }
   .mission-header {
     display: flex;
     flex-direction: column;

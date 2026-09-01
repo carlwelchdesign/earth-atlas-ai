@@ -33,7 +33,7 @@ describe("App", () => {
   });
 
   it("renders a successful, bounded temporal comparison", async () => {
-    render(<App loadBundle={load()} />);
+    render(<App loadBundle={load()} renderExploreMap={false} />);
     expect(
       await screen.findByRole("heading", {
         level: 1,
@@ -54,10 +54,18 @@ describe("App", () => {
   });
 
   it("keeps Explore and Analyze as reversible peer modes", async () => {
-    render(<App loadBundle={load()} />);
+    render(<App loadBundle={load()} renderExploreMap={false} />);
     await screen.findByRole("heading", { name: demoBundle.mission.title });
 
-    fireEvent.click(screen.getByRole("button", { name: "Return to Explore" }));
+    const analyzeNavigation = screen.getByRole("navigation", {
+      name: "Primary",
+    });
+    expect(
+      within(analyzeNavigation).getByRole("button", { name: "Analyze" }),
+    ).toHaveAttribute("aria-current", "page");
+    fireEvent.click(
+      within(analyzeNavigation).getByRole("button", { name: "Explore" }),
+    );
     expect(
       screen.getByRole("heading", {
         name: "Explore provider-reported SAR availability",
@@ -67,6 +75,50 @@ describe("App", () => {
     fireEvent.click(screen.getByRole("button", { name: /Analyze/ }));
     expect(
       await screen.findByRole("heading", { name: demoBundle.mission.title }),
+    ).toBeInTheDocument();
+  });
+
+  it("keeps primary navigation available while Analyze loads", () => {
+    render(
+      <App
+        loadBundle={() => new Promise(() => undefined)}
+        renderExploreMap={false}
+      />,
+    );
+
+    const navigation = screen.getByRole("navigation", { name: "Primary" });
+    expect(
+      within(navigation).getByRole("button", { name: "Analyze" }),
+    ).toHaveAttribute("aria-current", "page");
+    fireEvent.click(
+      within(navigation).getByRole("button", { name: "Explore" }),
+    );
+    expect(
+      screen.getByRole("heading", {
+        name: "Explore provider-reported SAR availability",
+      }),
+    ).toBeInTheDocument();
+  });
+
+  it("keeps primary navigation available when Analyze rejects a bundle", async () => {
+    render(
+      <App
+        loadBundle={load({ contractVersion: "invalid" })}
+        renderExploreMap={false}
+      />,
+    );
+    expect(
+      await screen.findByRole("heading", { name: "Bundle rejected" }),
+    ).toBeInTheDocument();
+
+    const navigation = screen.getByRole("navigation", { name: "Primary" });
+    fireEvent.click(
+      within(navigation).getByRole("button", { name: "Explore" }),
+    );
+    expect(
+      screen.getByRole("heading", {
+        name: "Explore provider-reported SAR availability",
+      }),
     ).toBeInTheDocument();
   });
 
