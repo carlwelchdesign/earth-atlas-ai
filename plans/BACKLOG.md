@@ -350,4 +350,6 @@ Acceptance:
 - [x] Show Explore/Analyze primary navigation in ready, loading, and rejected Analyze states.
 - [x] Identify Analyze as the current mode and keep Explore actionable.
 - [x] Bound the acquisition-card list and make it keyboard-scrollable without hiding result context.
-- [ ] Add regression coverage and verify the public Vercel flow. Regression coverage and local browser verification pass; public verification follows merge.
+- [x] Add regression coverage and verify the public Vercel flow.
+
+Completion: [PR #55](https://github.com/carlwelchdesign/earth-atlas-ai/pull/55) merged. The public Vercel deployment preserves the Explore/Analyze navigation contract and contains 17 live catalog results in a bounded independently scrollable list. Full local and GitHub checks passed.
