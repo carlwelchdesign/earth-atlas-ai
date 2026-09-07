@@ -430,12 +430,14 @@ limitations, attribution, and escaped user text.
 
 ### EAT-032 — Validate Nepal workflow and reconcile documentation
 
-In progress. Release-candidate verification covers source checksums, tile bounds,
-transparent nodata, five-point alignment, map and assessment regressions,
-accessibility, performance, browser evidence, and canonical documentation.
+Completed in [PR #67](https://github.com/carlwelchdesign/earth-atlas-ai/pull/67).
+Release-candidate verification covers source checksums, tile bounds, transparent
+nodata, five-point alignment, map and assessment regressions, accessibility,
+performance, browser evidence, and canonical documentation.
 
 ### EAT-033 — Release and verify Nepal-first experience
 
-Backlog until EAT-032 completes. Assemble from current `main` on a release
-branch, deploy its prepared static assets, verify the public alias and secondary
-routes, merge the exact release back to `main`, and retain rollback evidence.
+Production verified from `release/2026-09-07-nepal`. Deployment
+`dpl_6gHbwWiEuMwxYazScBm9umRUjdFA` serves the prepared static assets at the
+public alias; all four production browser regressions pass. [PR #68](https://github.com/carlwelchdesign/earth-atlas-ai/pull/68)
+performs the exact release merge-back, and the branch is retained for rollback.
