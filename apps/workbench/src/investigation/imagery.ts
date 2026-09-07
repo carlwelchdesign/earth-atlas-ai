@@ -43,9 +43,7 @@ function parseAcquisition(value: unknown, index: number): CaseAcquisition {
     `acquisitions[${index}].source_url`,
   );
   if (
-    !/^\/api\/v1\/investigations\/nepal\/imagery\/[A-Za-z0-9_-]+\.png$/.test(
-      imageUrl,
-    )
+    !/^\/generated-nepal\/acquisitions\/[A-Za-z0-9_-]+\.png$/.test(imageUrl)
   ) {
     throw new Error(`acquisitions[${index}].image_url is not approved.`);
   }
@@ -82,7 +80,7 @@ function parseAcquisition(value: unknown, index: number): CaseAcquisition {
 
 export class HttpNepalImageryClient implements NepalImageryClient {
   constructor(
-    private readonly endpoint = "/api/v1/investigations/nepal/acquisitions",
+    private readonly endpoint = "/generated-nepal/acquisitions.json",
   ) {}
 
   async listAcquisitions(

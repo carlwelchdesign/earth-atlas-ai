@@ -12,8 +12,10 @@ retains the camera, updates the visible acquisition label and quality summary,
 and carries the exact selected pair into both brief formats.
 
 The initial 12 and 27 August pair still uses the prepared static tile pyramid.
-Other selections are rendered from the public Earth Search visual COG for the
-same fixed AOI. Source observations and user assessments are unchanged.
+Other selections use release-prepared image overlays generated from the public
+Earth Search visual COG for the same fixed AOI. Source observations and user
+assessments are unchanged. Keeping raster preparation out of the request path
+also avoids a native GDAL dependency in the public serverless function.
 
 ## Quality finding
 

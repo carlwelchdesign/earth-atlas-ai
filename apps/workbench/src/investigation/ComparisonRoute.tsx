@@ -198,7 +198,7 @@ function ReadyInvestigation({
           `The selected scenes report ${before.cloudCoverPercent.toFixed(1)}% and ${after.cloudCoverPercent.toFixed(1)}% cloud cover across their full Sentinel-2 tiles, not the case AOI alone.`,
           ...(dynamicSelection
             ? [
-                "Updated views are rendered on demand from public georeferenced Sentinel-2 visual COGs.",
+                "Alternate views are prepared from public georeferenced Sentinel-2 visual COGs.",
               ]
             : []),
           ...investigation.quality.limitations.filter(

@@ -156,7 +156,7 @@ class NepalImageryService:
             source_url=(
                 f"https://{EARTH_SEARCH_HOST}/v1/collections/{SENTINEL_COLLECTION}/items/{item_id}"
             ),
-            image_url=f"/api/v1/investigations/nepal/imagery/{item_id}.png",
+            image_url=f"/generated-nepal/acquisitions/{item_id}.png",
             cloud_cover_percent=_number(properties.get("eo:cloud_cover"), "cloud cover"),
             cloud_shadow_percent=_number(
                 properties.get("s2:cloud_shadow_percentage"), "cloud shadow"
