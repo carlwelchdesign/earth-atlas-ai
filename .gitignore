@@ -32,6 +32,7 @@ data/*
 /working/
 fixtures/generated/
 apps/workbench/public/generated-demo/
+apps/workbench/public/generated-nepal/
 apps/workbench/playwright-report/
 apps/workbench/test-results/
 .vercel
