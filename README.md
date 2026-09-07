@@ -17,7 +17,7 @@ without an account or model call.
 The primary case uses pinned Sentinel-2 L2A acquisitions from 12 and 27 August
 2026 over the Bhote Koshi–Trishuli corridor in Rasuwa. MapLibre requests the
 prepared Web Mercator tiles as the camera moves; panning changes location while
-the two acquisition dates remain fixed. Coverage, transparent nodata, source
+the selected acquisition pair remains fixed until the reviewer changes a date. Coverage, transparent nodata, source
 identity, attribution, and the heavy cloud limitation in the after scene remain
 visible.
 
@@ -72,7 +72,7 @@ history is owner-review convenience storage, not a multi-user audit service.
 
 | Shipped                                          | Unavailable roadmap                            |
 | ------------------------------------------------ | ---------------------------------------------- |
-| Prepared Nepal MapLibre investigation            | Arbitrary-area raster processing               |
+| Prepared Nepal MapLibre investigation with bounded date selection | Arbitrary-area raster processing               |
 | Synchronized, swipe, and single-date comparison  | Newly computed Nepal change candidates         |
 | Cited observations and separate user assessments | AI summaries or model calls                    |
 | Deterministic printable HTML and JSON brief      | Multi-user auth and durable assessment service |
@@ -86,7 +86,8 @@ history is owner-review convenience storage, not a multi-user audit service.
 
 The standalone runtime is canonical and has no Palantir, ontology-platform,
 OpenAI, or private-map-key requirement. The public Vercel deployment serves one
-prepared Nepal case from static assets. Explore and the reduced Bingham Canyon
+prepared Nepal case, a bounded Sentinel-2 acquisition list, and georeferenced
+display imagery for that case. Explore and the reduced Bingham Canyon
 SAR demonstration remain secondary regression and portfolio capabilities.
 Arbitrary raster processing, monitoring, alerts, multi-user storage, scientific
 validity claims, and AI remain unavailable. EAT-012 qualified SAR adjudication

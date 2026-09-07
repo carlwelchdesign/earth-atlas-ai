@@ -441,3 +441,19 @@ Production verified from `release/2026-09-07-nepal`. Deployment
 `dpl_6gHbwWiEuMwxYazScBm9umRUjdFA` serves the prepared static assets at the
 public alias; all four production browser regressions pass. [PR #68](https://github.com/carlwelchdesign/earth-atlas-ai/pull/68)
 performs the exact release merge-back, and the branch is retained for rollback.
+
+### EAT-034 — Add bounded Nepal imagery date selection
+
+Outcome: the Nepal investigation exposes editable Before and After acquisition
+selectors, preserves the shared MapLibre camera when imagery changes, and
+renders the selected georeferenced Sentinel-2 visual source for the prepared
+case AOI.
+
+Acceptance:
+
+- [x] Discover available Sentinel-2 acquisitions only inside the prepared Nepal AOI and case window.
+- [x] Keep Before selections before the event and After selections after it.
+- [x] Display acquisition date and full-tile cloud metadata without presenting it as AOI quality.
+- [x] Enforce a maximum 60-day range in the shared catalog request contract, API, and Explore controls.
+- [x] Preserve source attribution, deterministic export inputs, coverage geometry, and assessment behavior.
+- [ ] Verify the release branch and public alias, then record the exact deployment and merge-back evidence.

@@ -1,6 +1,6 @@
 # EchoAtlas planning package
 
-Status: EAT-001 through EAT-011, EAT-DES-001, and EAT-014 through EAT-032 are complete. EAT-033 is production-verified from `release/2026-09-07-nepal`, with exact merge-back tracked in PR #68. EAT-012 remains in qualified review and adjudication, so EAT-013 and M3 remain gated. EAT-020 removed the retired proprietary-platform experiment; EchoAtlas has no Palantir or ontology dependency.
+Status: EAT-001 through EAT-011, EAT-DES-001, and EAT-014 through EAT-032 are complete. EAT-033 is production-verified from `release/2026-09-07-nepal`, with exact merge-back tracked in PR #68. EAT-034 is in progress for bounded Nepal acquisition date selection and the 60-day catalogue contract. EAT-012 remains in qualified review and adjudication, so EAT-013 and M3 remain gated. EAT-020 removed the retired proprietary-platform experiment; EchoAtlas has no Palantir or ontology dependency.
 
 EchoAtlas is a civilian disaster and infrastructure-change investigation workbench. The current release retains the public Umbra SAR workflow as a secondary regression reference and adds a Nepal-first, evidence-first investigation using prepared georeferenced Sentinel-2 imagery and cited observations. It does not compute Nepal change candidates or use AI.
 

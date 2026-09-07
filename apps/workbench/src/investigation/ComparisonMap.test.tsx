@@ -72,7 +72,7 @@ describe("Nepal geographic comparison", () => {
     );
   });
 
-  it("exposes side-by-side, swipe, and fixed-date controls", () => {
+  it("exposes side-by-side, swipe, and selected-date controls", () => {
     render(
       <ComparisonMap
         investigation={investigation}

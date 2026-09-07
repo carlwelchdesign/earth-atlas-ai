@@ -19,6 +19,7 @@ import type { AnalysisJobClient } from "./explore/analysis";
 import { ModeHeader } from "./ModeHeader";
 import { ComparisonRoute } from "./investigation/ComparisonRoute";
 import { CaseOverview } from "./investigation/CaseOverview";
+import type { NepalImageryClient } from "./investigation/imagery";
 import {
   loadInvestigationCase,
   type InvestigationCase,
@@ -42,12 +43,14 @@ interface AppProps {
   initialRoute?: string;
   loadCase?: () => Promise<InvestigationCase>;
   renderInvestigationMap?: boolean;
+  nepalImagery?: NepalImageryClient;
 }
 
 export function App({
   initialRoute,
   loadCase = loadInvestigationCase,
   renderInvestigationMap = true,
+  nepalImagery,
   ...legacyProps
 }: AppProps) {
   if (initialRoute === "/") {
@@ -55,7 +58,11 @@ export function App({
   }
   if (initialRoute === "/investigate/nepal-flood-2026") {
     return (
-      <ComparisonRoute loadCase={loadCase} renderMap={renderInvestigationMap} />
+      <ComparisonRoute
+        loadCase={loadCase}
+        renderMap={renderInvestigationMap}
+        imagery={nepalImagery}
+      />
     );
   }
   return (
@@ -82,7 +89,10 @@ function LegacyApp({
   basemap,
   renderExploreMap = true,
   analysisPollMs = 750,
-}: Omit<AppProps, "initialRoute" | "loadCase" | "renderInvestigationMap">) {
+}: Omit<
+  AppProps,
+  "initialRoute" | "loadCase" | "renderInvestigationMap" | "nepalImagery"
+>) {
   const [mode, setMode] = useState(initialMode);
   const [attempt, setAttempt] = useState(0);
   const [state, setState] = useState<LoadState>({ status: "loading" });

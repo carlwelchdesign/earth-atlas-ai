@@ -272,8 +272,8 @@ def build_case(source_dir: Path, output_dir: Path, checksums: dict[str, str]) ->
             "occurredAt": "2026-08-26",
             "summary": (
                 "A severe flash flood affected the Bhote Koshi–Trishuli river corridors. "
-                "This prepared case compares fixed Sentinel-2 views from before "
-                "and after the event."
+                "This prepared case opens with verified Sentinel-2 views from before "
+                "and after the event; reviewers can choose other dates in the bounded case window."
             ),
         },
         "aoi": polygon_from_aoi(),
@@ -350,7 +350,7 @@ def build_case(source_dir: Path, output_dir: Path, checksums: dict[str, str]) ->
                 "UNOSAT's reference geometry is preliminary and not field validated.",
                 "A common source grid supports display alignment but does not establish "
                 "absolute orthorectification accuracy.",
-                "Panning changes location only; both acquisition dates remain fixed.",
+                "Panning changes location only; a selected acquisition changes only when the reviewer chooses another date.",
             ],
             "alignmentToleranceMetres": 10,
             "measuredGridResidualMetres": residuals,
