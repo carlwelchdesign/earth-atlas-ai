@@ -2,7 +2,7 @@
 
 ## Product thesis
 
-Open SAR imagery is technically available but not automatically decision-ready. EchoAtlas should reduce the work between finding a viable acquisition pair and producing a reviewable, evidence-backed change assessment.
+Satellite imagery is technically available but not automatically decision-ready. EchoAtlas reduces the work between opening a bounded event, comparing trustworthy imagery, and producing a reviewable, evidence-backed assessment.
 
 The product promise is deliberately narrow: **See change through anything, with the evidence and uncertainty needed to review it.**
 
@@ -12,47 +12,48 @@ The MVP serves one primary user: a geospatial analyst or technically capable dis
 
 Job to be done:
 
-> When an event may have affected infrastructure, help me compare suitable SAR acquisitions, find candidate changes, and record an evidence-backed assessment without hiding source quality or processing assumptions.
+> When an event may have affected a civilian area, help me navigate aligned before/after imagery, inspect sourced observations, and record an evidence-backed assessment without hiding coverage or quality limits.
 
 The public portfolio viewer is a secondary audience, not a second workflow. They should be able to load a prepared demo and understand the analyst process without an account or a live cloud dependency.
 
 ## MVP workflow
 
-1. Open the pinned civilian event and area of interest.
-2. Inspect the two selected acquisitions, coverage, timestamps, geometry, and comparability flags.
-3. View synchronized before/after imagery and a temporal map.
-4. Review deterministic change candidates ranked by a transparent score.
-5. Inspect source imagery, processing parameters, measurements, and quality warnings.
-6. Mark each candidate `confirmed`, `rejected`, or `needs_context` and add a note.
-7. Export or reload the analysis bundle and retain the assessment audit trail.
+1. Open the prepared 26 August 2026 Nepal flood case without signing in.
+2. Inspect the case boundary, fixed Sentinel-2 acquisition dates, sources, attribution, and cloud limitations.
+3. Navigate synchronized before/after MapLibre imagery or use swipe and single-date controls.
+4. Select an immutable source-reported observation from the map or accessible list.
+5. Inspect its cited evidence and record `supported`, `rejected`, or `needs_context` with a note.
+6. Correct an assessment without deleting history and reload the browser-local draft.
+7. Export matching printable HTML and JSON briefs with sources, unresolved issues, limitations, and case version.
 
-## Dataset selection gate
+## Prepared Nepal dataset gate
 
-The event is not yet pinned. `EAT-002` and `EAT-003` must choose it from live evidence using this rubric:
+EAT-027 passed the source gate for the Bhote Koshi–Trishuli corridor using exact Sentinel-2 L2A products from 12 and 27 August 2026 plus preliminary UNOSAT reference geometry. The gate requires:
 
 - civilian disaster or infrastructure-change story suitable for public explanation;
-- at least two legally usable Umbra GEC acquisitions with meaningful AOI overlap;
+- at least two legally usable same-sensor acquisitions with meaningful AOI overlap;
 - enough pre/post temporal separation to plausibly reveal change;
 - compatible polarization and processable spatial resolution;
 - acquisition geometry and incidence differences documented, not concealed;
-- assets small enough for a reproducible local demo or support bounded crop/range access;
+- assets small enough for reproducible bounded local preparation;
 - an external event source can establish what happened without being treated as pixel-level ground truth;
 - no person-level surveillance, military target tracking, or sensitive-site targeting.
 
-If no pair passes, the ticket returns a documented no-go and the plan is revised before development continues. The backlog must not quietly substitute a different data provider.
+The case remains limited by 78.47% scene-level cloud cover in the after image. That limit is visible in the product and brief. The source gate prohibits stretching a published comparison JPEG onto the map or silently substituting another disaster.
 
 ## Product outcome and measures
 
-Primary outcome: one analyst can move from a validated acquisition pair to a reviewable set of change candidates with visible evidence.
+Primary outcome: one reviewer can navigate the prepared Nepal case, distinguish cited observations from their own conclusions, and export a reviewable brief.
 
 MVP measures:
 
-- deterministic rebuild produces the same manifest and geometries from the same source objects and parameters;
-- prepared demo reaches the first reviewable candidate in under two minutes on the reference machine;
+- deterministic rebuild produces the same case manifest, tile coverage, and observation geometries from the same source objects and parameters;
+- prepared imagery becomes usable within five seconds on a recorded reference device and network;
+- the guided Context → Compare → Review → Brief flow completes within three minutes;
 - live-data pipeline emits actionable failure and quality states instead of partial silent output;
-- every candidate links to both acquisitions, the run, parameters, and derived artifacts;
+- every published observation links to cited evidence while user assessments remain separate;
 - a reviewer can complete the core workflow using keyboard controls;
-- structured usability sessions show that reviewers can distinguish machine candidates from analyst conclusions.
+- at least four of five first-time reviewers complete the flow without coaching and distinguish source observations from their own conclusions.
 
 Metrics are local and privacy-preserving in MVP. No third-party behavioral analytics is required.
 
@@ -61,6 +62,8 @@ Metrics are local and privacy-preserving in MVP. No third-party behavioral analy
 - military target tracking, person-level surveillance, or automated intelligence conclusions;
 - autonomous alerts or external actions;
 - an LLM interpreting raw SAR pixels;
+- AI summaries or model-generated conclusions in the Nepal release;
+- arbitrary-area processing or newly computed Nepal change candidates;
 - learned object detection before a labeled evaluation set and baseline exist;
 - real-time ingestion, global imagery discovery within the MVP, multi-tenancy, enterprise RBAC, or production operations;
 - an ontology platform as a required runtime or source of truth;

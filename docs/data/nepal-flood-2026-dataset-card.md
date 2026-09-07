@@ -55,3 +55,14 @@ The common grid supports map alignment. Cloud cover in the after image is the
 main limitation and remains visible in the product. Source imagery, extracted
 archives, and generated map tiles are ignored by Git. The generated case
 manifest records the source hashes and preparation parameters.
+
+After preparation, run the release verifier:
+
+```bash
+~/.local/bin/uv run --group processing python scripts/verify_nepal_case.py
+```
+
+It checks the source hashes again, exact expected XYZ coordinates and counts,
+RGBA dimensions, transparent nodata, thumbnail sizes, five grid residuals,
+tolerance, and attribution. Its successful output is recorded in the
+[release-candidate evidence](../qa/nepal-release-candidate.md).

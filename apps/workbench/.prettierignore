@@ -1,6 +1,7 @@
 coverage
 dist
 public/generated-demo
+public/generated-nepal
 node_modules
 playwright-report
 test-results

@@ -1,32 +1,31 @@
-# Scripted owner-review story
+# Scripted Nepal investigation story
 
-This 8–10 minute walkthrough demonstrates the shipped standalone workflow without
-turning machine candidates into claims.
+This three-minute walkthrough demonstrates the public evidence-first workflow
+without turning source observations or reviewer judgments into damage claims.
 
-1. Start on **Explore**. Search for a place or draw a bounded civilian area of
-   interest. Point out that the globe is navigation, not an imagery-coverage map.
-2. Search the Umbra and Sentinel-1 catalogs. Explain that results are
-   provider-reported metadata and that partial provider failures remain visible.
-3. Select one before and one after acquisition. Open **Review pair** and inspect
-   time separation, overlap, geometry, and warnings. A high overlap percentage is
-   useful comparability evidence, not proof of a scientifically valid pair.
-4. Send the immutable selection to **Analyze**. For the reproducible story, use
-   the approved Bingham Canyon prepared bundle.
-5. Toggle before/after and the candidate overlay. Explain that the display images
-   are derived from public Umbra SAR, while the highlighted regions come from a
-   deterministic engineering heuristic.
-6. Select a candidate from the accessible queue rather than the map. Inspect its
-   measurements, source identities, processing lineage, quality flags, checksums,
-   and CC BY 4.0 attribution.
-7. Record **Supported**, **Rejected**, or **Needs context** with an optional note.
-   Say explicitly that Supported means “worth retaining in this review,” not
-   “confirmed real-world change.”
-8. Correct the assessment, open **History**, and show the append-only chain.
-9. Reload the page and show that the browser-local history returns for the same
-   bundle and origin.
-10. Close with the boundaries: AI summaries and operational monitoring are disabled,
-    qualified SAR adjudication remains pending, and public release needs a
-    separate owner decision.
+1. Open `/`. Identify the 26 August 2026 Nepal flood question, prepared corridor,
+   fixed 12/27 August Sentinel-2 dates, source identities, and visible cloud warning.
+2. Choose **Start investigation**. Explain that MapLibre navigation requests
+   tiles from the same two acquisitions; moving the map does not search for new
+   scenes or provide live imagery.
+3. Pan or zoom one desktop map and show that the other follows. Use **Swipe**,
+   **Before**, and **After**, then choose **Return to case extent**.
+4. Select a highlighted observation from the map or the equivalent accessible
+   list. The map centers the geography and the evidence panel opens the cited
+   UNOSAT source and its limitations.
+5. Record **Supported by cited evidence**, **Not supported**, or **Needs context**
+   with a note. Explain that this is the reviewer's assessment of the cited
+   observation; the published statement remains immutable.
+6. Record a correction and reload. The append-only history returns from storage
+   scoped to this browser, case identity, and case version.
+7. Open **Brief** and export printable HTML and JSON. Show that both include the
+   question, exact acquisition dates, source observations, assessments,
+   unresolved items, citations, limitations, attribution, and case version.
+8. Close with the boundaries: after-scene cloud limits interpretation, the
+   observations are preliminary, AI summaries and new Nepal change candidates
+   are excluded, and the experience is civilian research rather than operational
+   monitoring.
 
-Do not use the story to infer cause, damage, identity, intent, operational status,
-or real-time surveillance capability.
+Use `/explore` to demonstrate bounded Umbra/Sentinel-1 catalog navigation and
+`/analyze` to retain the Bingham Canyon SAR candidate workflow as secondary
+engineering evidence.

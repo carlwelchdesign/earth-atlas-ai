@@ -379,3 +379,63 @@ Acceptance:
 - [x] Update and verify the README image on GitHub.
 
 Completion: [PR #59](https://github.com/carlwelchdesign/earth-atlas-ai/pull/59) merged. The README now renders a verified 1440 x 900 production capture with selected candidate evidence and the post-EAT-024 scroll ownership visible; the prior EAT-021 release image remains intact.
+
+## Nepal evidence-first release
+
+### EAT-026 — Deliver Nepal flood investigation
+
+Parent release tracker for EAT-027 through EAT-033. Complete only after the
+verified release branch is deployed, the public alias passes, and the exact
+release is merged back to `main`.
+
+### EAT-027 — Verify Nepal AOI and original imagery
+
+Completed in [PR #61](https://github.com/carlwelchdesign/earth-atlas-ai/pull/61).
+The source gate pins the 12/27 August Sentinel-2 products, UNOSAT archives,
+checksums, AOI, licensing, quality, and reproducible access. The case passed with
+an explicit after-scene cloud limitation.
+
+### EAT-DES-003 — Design Nepal guided investigation
+
+Completed in [PR #62](https://github.com/carlwelchdesign/earth-atlas-ai/pull/62).
+The approved specification covers overview, desktop/mobile comparison,
+observations, assessment, brief, accessibility, and recovery states.
+
+### EAT-028 — Package georeferenced Nepal case and tiles
+
+Completed in [PR #63](https://github.com/carlwelchdesign/earth-atlas-ai/pull/63).
+`InvestigationCase 1.0.0`, the fail-closed preparation script, source lineage,
+three cited observations, thumbnails, and zoom 8–14 tiles are implemented while
+raw and generated imagery remain outside Git.
+
+### EAT-029 — Implement synchronized MapLibre comparison
+
+Completed in [PR #64](https://github.com/carlwelchdesign/earth-atlas-ai/pull/64).
+The fixed-date comparison supports synchronized pan/zoom, swipe, one-date modes,
+coverage state, observation centering, responsive layout, and static fallback.
+
+### EAT-030 — Implement guided observations and assessments
+
+Completed in [PR #65](https://github.com/carlwelchdesign/earth-atlas-ai/pull/65).
+The Nepal overview and Context → Compare → Review → Brief workflow keep cited
+observations immutable while browser-local assessments support correction,
+reload, storage failure, and case-version isolation.
+
+### EAT-031 — Export investigation brief
+
+Completed in [PR #66](https://github.com/carlwelchdesign/earth-atlas-ai/pull/66).
+Printable HTML and JSON derive from one deterministic brief record with exact
+dates, thumbnails, source references, assessment history, unresolved items,
+limitations, attribution, and escaped user text.
+
+### EAT-032 — Validate Nepal workflow and reconcile documentation
+
+In progress. Release-candidate verification covers source checksums, tile bounds,
+transparent nodata, five-point alignment, map and assessment regressions,
+accessibility, performance, browser evidence, and canonical documentation.
+
+### EAT-033 — Release and verify Nepal-first experience
+
+Backlog until EAT-032 completes. Assemble from current `main` on a release
+branch, deploy its prepared static assets, verify the public alias and secondary
+routes, merge the exact release back to `main`, and retain rollback evidence.

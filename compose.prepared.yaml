@@ -14,4 +14,7 @@ services:
         source: ${ECHOATLAS_PREPARED_DEMO_DIR:-./apps/workbench/public/generated-demo}
         target: /usr/share/nginx/html/generated-demo
         read_only: true
-
+      - type: bind
+        source: ${ECHOATLAS_NEPAL_CASE_DIR:-./apps/workbench/public/generated-nepal}
+        target: /usr/share/nginx/html/generated-nepal
+        read_only: true
