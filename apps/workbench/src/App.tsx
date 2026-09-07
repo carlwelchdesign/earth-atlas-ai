@@ -17,23 +17,18 @@ import type {
 import type { BasemapConfig } from "./explore/basemap";
 import type { AnalysisJobClient } from "./explore/analysis";
 import { ModeHeader } from "./ModeHeader";
+import { ComparisonRoute } from "./investigation/ComparisonRoute";
+import {
+  loadInvestigationCase,
+  type InvestigationCase,
+} from "./investigation/model";
 
 type LoadState =
   | { status: "loading" }
   | { status: "ready"; bundle: WorkbenchBundle }
   | { status: "invalid"; detail: string };
 
-export function App({
-  loadBundle = loadWorkbenchBundle,
-  assessmentStore,
-  initialMode = "analyze",
-  catalog,
-  places,
-  analysis,
-  basemap,
-  renderExploreMap = true,
-  analysisPollMs = 750,
-}: {
+interface AppProps {
   loadBundle?: BundleLoader;
   assessmentStore?: AssessmentStore;
   initialMode?: "explore" | "analyze";
@@ -43,7 +38,36 @@ export function App({
   basemap?: BasemapConfig;
   renderExploreMap?: boolean;
   analysisPollMs?: number;
-}) {
+  initialRoute?: string;
+  loadCase?: () => Promise<InvestigationCase>;
+  renderInvestigationMap?: boolean;
+}
+
+export function App({
+  initialRoute = window.location.pathname,
+  loadCase = loadInvestigationCase,
+  renderInvestigationMap = true,
+  ...legacyProps
+}: AppProps) {
+  if (initialRoute === "/investigate/nepal-flood-2026") {
+    return (
+      <ComparisonRoute loadCase={loadCase} renderMap={renderInvestigationMap} />
+    );
+  }
+  return <LegacyApp {...legacyProps} />;
+}
+
+function LegacyApp({
+  loadBundle = loadWorkbenchBundle,
+  assessmentStore,
+  initialMode = "analyze",
+  catalog,
+  places,
+  analysis,
+  basemap,
+  renderExploreMap = true,
+  analysisPollMs = 750,
+}: Omit<AppProps, "initialRoute" | "loadCase" | "renderInvestigationMap">) {
   const [mode, setMode] = useState(initialMode);
   const [attempt, setAttempt] = useState(0);
   const [state, setState] = useState<LoadState>({ status: "loading" });
