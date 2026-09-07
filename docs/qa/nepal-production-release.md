@@ -37,3 +37,24 @@ Artifacts:
 
 The five-person first-time-reviewer study remains unperformed human evidence and
 is not claimed by this release record.
+
+## Post-release packaging correction
+
+The merge-back to `main` triggered a Git-connected Vercel deployment that did
+not contain the Git-ignored prepared Nepal assets. The SPA rewrite returned
+`index.html` for the missing `case.json`, which initially masked the regression.
+
+PRs [#69](https://github.com/carlwelchdesign/earth-atlas-ai/pull/69) and
+[#70](https://github.com/carlwelchdesign/earth-atlas-ai/pull/70) corrected the
+recursive CLI upload allowlist. A follow-up release disables Git-connected
+deployments in `vercel.json`; production is deployed only through the documented
+CLI release path that packages the prepared assets. A repository test preserves
+both controls.
+
+The corrected deployment must pass these checks before its alias is accepted:
+
+- the public and local case-manifest SHA-256 values match;
+- both thumbnails and a sampled RGBA raster tile load as PNG files;
+- all four public Playwright workflows pass; and
+- a repeated alias check after the merge-back still returns the case manifest,
+  rather than the SPA fallback.
