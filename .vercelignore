@@ -10,3 +10,9 @@
 !uv.lock
 !.python-version
 !vercel.json
+apps/workbench/coverage
+apps/workbench/dist
+apps/workbench/public/generated-demo/candidate-overlay.png
+apps/workbench/public/generated-demo/change-score.png
+apps/workbench/public/generated-demo/candidates.geojson
+apps/workbench/public/generated-demo/prepared-demo-manifest.json
