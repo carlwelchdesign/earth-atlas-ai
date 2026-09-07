@@ -460,6 +460,25 @@
   flex: 0 0 auto;
   width: auto;
 }
+.brief-panel {
+  align-items: center;
+  background: linear-gradient(110deg, #102f35, #0a1c22);
+  border: 1px solid var(--line);
+  border-radius: 0.5rem;
+  display: flex;
+  gap: 1.2rem;
+  justify-content: space-between;
+  padding: 1rem;
+}
+.brief-panel h2,
+.brief-panel p {
+  margin: 0.15rem 0;
+}
+.brief-actions {
+  display: flex;
+  flex: 0 0 auto;
+  gap: 0.55rem;
+}
 .investigation-main .comparison-frame {
   min-height: clamp(28rem, 61vh, 45rem);
 }
@@ -636,6 +655,11 @@
   }
 }
 @media (max-width: 700px) {
+  .brief-panel,
+  .brief-actions {
+    align-items: stretch;
+    flex-direction: column;
+  }
   .app-header.investigation-header {
     flex-wrap: wrap;
     gap: 0.5rem;

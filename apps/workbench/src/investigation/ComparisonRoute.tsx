@@ -6,6 +6,12 @@ import {
   type AssessmentEvent,
 } from "../workbench/assessment";
 import { StateNotice } from "../workbench/Workbench";
+import {
+  createInvestigationBrief,
+  createInvestigationBriefJson,
+  createPrintableInvestigationHtml,
+  downloadText,
+} from "./brief";
 import { CaseAssessmentStore, latestAssessments } from "./case-assessment";
 import { ComparisonMap } from "./ComparisonMap";
 import {
@@ -131,6 +137,26 @@ function ReadyInvestigation({
         (entry) => entry.id === selected.citationId,
       ) ?? null)
     : null;
+  const brief = useMemo(
+    () => createInvestigationBrief(investigation, events),
+    [events, investigation],
+  );
+
+  function exportJson() {
+    downloadText(
+      `${investigation.caseId}-brief.json`,
+      createInvestigationBriefJson(brief),
+      "application/json;charset=utf-8",
+    );
+  }
+
+  function exportHtml() {
+    downloadText(
+      `${investigation.caseId}-brief.html`,
+      createPrintableInvestigationHtml(brief, window.location.origin),
+      "text/html;charset=utf-8",
+    );
+  }
 
   function selectObservation(id: string) {
     setSelectedId(id);
@@ -188,13 +214,35 @@ function ReadyInvestigation({
               </div>
             ) : null}
             {step === "brief" ? (
-              <div className="step-intro">
-                <p className="eyebrow">Brief</p>
-                <h2>{events.length} assessment events ready</h2>
-                <p>
-                  {investigation.observations.length - latest.size} observations
-                  remain unresolved. Export controls follow in the brief step.
-                </p>
+              <div className="brief-panel">
+                <div>
+                  <p className="eyebrow">Brief</p>
+                  <h2>
+                    {events.length} assessment event
+                    {events.length === 1 ? "" : "s"} ready
+                  </h2>
+                  <p>
+                    {investigation.observations.length - latest.size}{" "}
+                    observations remain unresolved. Both formats contain the
+                    same source and assessment record.
+                  </p>
+                </div>
+                <div className="brief-actions">
+                  <button
+                    type="button"
+                    className="primary-button"
+                    onClick={exportHtml}
+                  >
+                    Download printable HTML
+                  </button>
+                  <button
+                    type="button"
+                    className="secondary-button"
+                    onClick={exportJson}
+                  >
+                    Download JSON
+                  </button>
+                </div>
               </div>
             ) : null}
             <ComparisonMap
