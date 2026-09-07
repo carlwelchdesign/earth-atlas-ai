@@ -63,4 +63,22 @@ describe("guided Nepal investigation", () => {
       screen.getByRole("button", { name: "Record correction" }),
     ).toBeInTheDocument();
   });
+
+  it("offers both deterministic brief formats", async () => {
+    render(
+      <ComparisonRoute
+        loadCase={() => Promise.resolve(investigationFixture)}
+        renderMap={false}
+        storage={window.localStorage}
+      />,
+    );
+
+    fireEvent.click(await screen.findByRole("button", { name: /Brief/ }));
+    expect(
+      screen.getByRole("button", { name: "Download printable HTML" }),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole("button", { name: "Download JSON" }),
+    ).toBeInTheDocument();
+  });
 });
