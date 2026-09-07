@@ -53,4 +53,19 @@ Artifacts:
 - `evidence/eat-034/local-desktop.png`
 - `evidence/eat-034/local-narrow.png`
 
-Production deployment and public-alias evidence are recorded after release.
+## Production evidence
+
+The first deployment attempted request-time Rasterio rendering. Vercel built
+the function but Python 3.13 could not import Rasterio because the runtime did
+not provide `libexpat.so.1`; every API invocation failed before route handling.
+The release was corrected by moving all raster work into the reproducible
+preparation step and restoring the lightweight serverless dependency set.
+
+Deployment `dpl_BEWvi5DktdnSofyLETTb7VozsGVb` is Ready and aliased to the public
+site. The deployed API health check returned 200, the acquisition manifest
+returned 21 records and `maximum_range_days: 60`, and the selected 3 September
+asset returned a 720 × 960 RGBA PNG. A 61-day Umbra catalogue request returned
+422 with the 60-day contract error. All four public Playwright workflows passed
+in 8.1 seconds.
+
+Release merge-back: [PR #73](https://github.com/carlwelchdesign/earth-atlas-ai/pull/73).

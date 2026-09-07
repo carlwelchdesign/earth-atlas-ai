@@ -456,4 +456,9 @@ Acceptance:
 - [x] Display acquisition date and full-tile cloud metadata without presenting it as AOI quality.
 - [x] Enforce a maximum 60-day range in the shared catalog request contract, API, and Explore controls.
 - [x] Preserve source attribution, deterministic export inputs, coverage geometry, and assessment behavior.
-- [ ] Verify the release branch and public alias, then record the exact deployment and merge-back evidence.
+- [x] Verify the release branch and public alias, then record the exact deployment and merge-back evidence.
+
+Completion: deployment `dpl_BEWvi5DktdnSofyLETTb7VozsGVb` serves 21 prepared
+acquisitions, rejects Umbra catalogue ranges over 60 days, and passed all four
+public browser workflows. [PR #73](https://github.com/carlwelchdesign/earth-atlas-ai/pull/73)
+tracks the exact release merge-back.
