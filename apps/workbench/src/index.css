@@ -35,6 +35,23 @@
   border-radius: 0.7rem;
   background: #0a151d;
 }
+.investigation-comparison-route {
+  display: grid;
+  gap: 1rem;
+  min-height: 100vh;
+  padding: clamp(1rem, 2vw, 1.6rem);
+  background:
+    radial-gradient(circle at 50% -20%, #173849 0, transparent 42rem), var(--bg);
+}
+.investigation-comparison-route > header h1 {
+  margin: 0.25rem 0;
+  font-size: clamp(1.5rem, 3vw, 2.5rem);
+}
+.investigation-comparison-route > header p:last-child {
+  max-width: 52rem;
+  margin: 0;
+  color: var(--muted);
+}
 .comparison-heading-row,
 .comparison-controls,
 .swipe-control {
