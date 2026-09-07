@@ -2,8 +2,11 @@
 # included without sending raw data, local environments, plans, or QA artifacts.
 /*
 !api
+!api/**
 !apps
+!apps/**
 !services
+!services/**
 !package.json
 !package-lock.json
 !pyproject.toml
