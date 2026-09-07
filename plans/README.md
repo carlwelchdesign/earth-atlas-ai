@@ -1,8 +1,8 @@
 # EchoAtlas planning package
 
-Status: EAT-001 through EAT-011, EAT-DES-001, and EAT-014 through EAT-020 are complete. EAT-012 remains in qualified-review and adjudication, so EAT-013 remains gated. EAT-020 removed the retired Palantir experiment and recorded that EchoAtlas needs no ontology dependency at its current scale. EAT-021 and EAT-022 cover the approved public Vercel deployment and portfolio case-study closeout.
+Status: EAT-001 through EAT-011, EAT-DES-001, and EAT-014 through EAT-025 are complete. EAT-012 remains in qualified-review and adjudication, so EAT-013 and M3 remain gated. EAT-026 through EAT-033 deliver the Nepal-first prepared investigation. EAT-020 removed the retired proprietary-platform experiment; EchoAtlas has no ontology dependency.
 
-EchoAtlas is a civilian disaster and infrastructure-change SAR intelligence workbench. The first release will prove one end-to-end analyst workflow with public Umbra data: select a comparable image pair, produce deterministic change candidates, inspect the evidence, and record a human assessment.
+EchoAtlas is a civilian disaster and infrastructure-change investigation workbench. The current release retains the public Umbra SAR workflow as a secondary regression reference and adds a Nepal-first, evidence-first investigation using prepared georeferenced Sentinel-2 imagery and cited observations. It does not compute Nepal change candidates or use AI.
 
 Post-MVP milestone M5 expands that proven workflow with a global **Explore** mode: a MapLibre globe and equivalent accessible results list let users define a civilian AOI, inspect truthful Umbra and Sentinel-1 catalog availability, select a candidate pair, and hand it to the existing **Analyze** workflow. Global navigation is not a promise of global Umbra coverage, paid tasking, or automatic scientific suitability.
 
