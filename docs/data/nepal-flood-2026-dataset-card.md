@@ -10,8 +10,8 @@ inspection of cited observations, and human-authored assessments. It does not
 support arbitrary-area processing, automated damage claims, or live imagery.
 
 The investigation also queries the public Earth Search Sentinel-2 catalogue for
-this fixed AOI and a 60-day case window. Choosing a date renders that exact
-georeferenced visual COG into a bounded Web Mercator image overlay. It does not
+this fixed AOI and a 60-day case window during release preparation. Choosing a
+date loads that exact prepared Web Mercator image overlay. It does not
 move the AOI, discover another event, or create a new analytical observation.
 
 ## Event and evidence sources

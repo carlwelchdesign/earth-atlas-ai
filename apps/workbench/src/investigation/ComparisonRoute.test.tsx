@@ -12,9 +12,8 @@ const alternateAfter = {
   productId: "S2B_MSIL2A_20260906_TEST.SAFE",
   acquiredAt: "2026-09-06T05:10:46.120000Z",
   tileTemplate: undefined,
-  imageUrl: "/api/v1/investigations/nepal/imagery/S2B_45RUM_20260906_0_L2A.png",
-  thumbnail:
-    "/api/v1/investigations/nepal/imagery/S2B_45RUM_20260906_0_L2A.png",
+  imageUrl: "/generated-nepal/acquisitions/S2B_45RUM_20260906_0_L2A.png",
+  thumbnail: "/generated-nepal/acquisitions/S2B_45RUM_20260906_0_L2A.png",
   checksumSha256: undefined,
   cloudCoverPercent: 77.9,
 };

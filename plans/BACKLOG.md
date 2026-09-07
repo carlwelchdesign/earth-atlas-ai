@@ -445,9 +445,9 @@ performs the exact release merge-back, and the branch is retained for rollback.
 ### EAT-034 — Add bounded Nepal imagery date selection
 
 Outcome: the Nepal investigation exposes editable Before and After acquisition
-selectors, preserves the shared MapLibre camera when imagery changes, and
-renders the selected georeferenced Sentinel-2 visual source for the prepared
-case AOI.
+selectors, preserves the shared MapLibre camera when imagery changes, and loads
+the selected preprocessed georeferenced Sentinel-2 view for the prepared case
+AOI.
 
 Acceptance:
 

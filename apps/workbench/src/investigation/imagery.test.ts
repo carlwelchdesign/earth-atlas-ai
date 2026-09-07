@@ -5,7 +5,7 @@ import { HttpNepalImageryClient } from "./imagery";
 afterEach(() => vi.unstubAllGlobals());
 
 describe("Nepal imagery client", () => {
-  it("accepts only the bounded API contract and approved image path", async () => {
+  it("accepts only the bounded prepared manifest and approved image path", async () => {
     const request = vi.fn(() =>
       Promise.resolve(
         new Response(
@@ -19,7 +19,7 @@ describe("Nepal imagery client", () => {
                 source_url:
                   "https://earth-search.aws.element84.com/v1/collections/sentinel-2-l2a/items/S2B_45RUM_20260906_0_L2A",
                 image_url:
-                  "/api/v1/investigations/nepal/imagery/S2B_45RUM_20260906_0_L2A.png",
+                  "/generated-nepal/acquisitions/S2B_45RUM_20260906_0_L2A.png",
                 cloud_cover_percent: 77.9,
                 cloud_shadow_percent: 4.5,
                 nodata_percent: 9.1,
@@ -40,11 +40,11 @@ describe("Nepal imagery client", () => {
     );
 
     expect(request).toHaveBeenCalledWith(
-      "/api/v1/investigations/nepal/acquisitions?start=2026-07-27&end=2026-09-24",
+      "/generated-nepal/acquisitions.json?start=2026-07-27&end=2026-09-24",
       expect.objectContaining({ cache: "no-store" }),
     );
     expect(acquisitions[0].imageUrl).toMatch(
-      /^\/api\/v1\/investigations\/nepal/,
+      /^\/generated-nepal\/acquisitions/,
     );
   });
 

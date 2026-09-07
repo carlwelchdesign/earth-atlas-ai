@@ -1,7 +1,6 @@
-from datetime import date
 from typing import Literal
 
-from fastapi import FastAPI, HTTPException, Response, status
+from fastapi import FastAPI, HTTPException, status
 from pydantic import BaseModel
 
 from echoatlas import __version__
@@ -16,11 +15,6 @@ from echoatlas.analysis_jobs import (
     AnalysisSelectionRequest,
     build_default_analysis_job_service,
     create_selection_manifest,
-)
-from echoatlas.nepal_imagery import (
-    NepalAcquisitionList,
-    NepalImageryError,
-    NepalImageryService,
 )
 from echoatlas.places import (
     PlaceSearchError,
@@ -44,12 +38,10 @@ def create_app(
     catalog_search: CatalogSearchService | None = None,
     place_search: PlaceSearchService | None = None,
     analysis_jobs: AnalysisJobService | None = None,
-    nepal_imagery: NepalImageryService | None = None,
 ) -> FastAPI:
     search_service = catalog_search or build_default_catalog_search_service()
     place_service = place_search or build_default_place_search_service()
     analysis_service = analysis_jobs or build_default_analysis_job_service()
-    nepal_imagery_service = nepal_imagery or NepalImageryService()
     application = FastAPI(
         title="EchoAtlas API",
         summary="Local API foundation for the planned EchoAtlas analyst workbench.",
@@ -71,34 +63,6 @@ def create_app(
             return search_service.search(request)
         except CatalogSearchError as error:
             raise HTTPException(status_code=400, detail=str(error)) from error
-
-    @application.get(
-        "/v1/investigations/nepal/acquisitions",
-        response_model=NepalAcquisitionList,
-        tags=["investigations"],
-        summary="List bounded Sentinel-2 acquisitions for the Nepal case",
-    )
-    def list_nepal_acquisitions(start: date, end: date) -> NepalAcquisitionList:
-        try:
-            return nepal_imagery_service.list_acquisitions(start, end)
-        except NepalImageryError as error:
-            raise HTTPException(status_code=422, detail=str(error)) from error
-
-    @application.get(
-        "/v1/investigations/nepal/imagery/{item_id}.png",
-        tags=["investigations"],
-        summary="Render one approved georeferenced Sentinel-2 view for the Nepal case",
-    )
-    def render_nepal_imagery(item_id: str) -> Response:
-        try:
-            content = nepal_imagery_service.render_png(item_id)
-        except NepalImageryError as error:
-            raise HTTPException(status_code=422, detail=str(error)) from error
-        return Response(
-            content=content,
-            media_type="image/png",
-            headers={"Cache-Control": "public, max-age=31536000, immutable"},
-        )
 
     @application.post(
         "/v1/places/resolve",

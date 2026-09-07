@@ -132,8 +132,6 @@ def test_openapi_describes_health_and_versioned_catalog_search() -> None:
     assert set(response.json()["paths"]) == {
         "/health",
         "/v1/catalog/search",
-        "/v1/investigations/nepal/acquisitions",
-        "/v1/investigations/nepal/imagery/{item_id}.png",
         "/v1/places/resolve",
         "/v1/analysis/selections",
         "/v1/analysis/jobs",
@@ -155,21 +153,6 @@ def test_catalog_search_endpoint_returns_normalized_provider_results() -> None:
     assert response.json()["contract_version"] == "1.0.0"
     assert response.json()["results"][0]["source"]["item_id"] == "api-item"
     assert "source_document" not in response.text
-
-
-def test_nepal_imagery_endpoints_enforce_range_and_item_boundaries() -> None:
-    client = TestClient(create_app())
-
-    date_response = client.get(
-        "/v1/investigations/nepal/acquisitions",
-        params={"start": "2026-07-27", "end": "2026-09-25"},
-    )
-    item_response = client.get("/v1/investigations/nepal/imagery/not-an-approved-item.png")
-
-    assert date_response.status_code == 422
-    assert "cannot exceed 60 days" in date_response.text
-    assert item_response.status_code == 422
-    assert "outside the bounded Nepal case" in item_response.text
 
 
 def test_place_search_endpoint_returns_a_bounded_normalized_aoi() -> None:
