@@ -20,10 +20,12 @@ import { MapSurface } from "./MapSurface";
 import { parseWorkbenchBundle, type WorkbenchBundle } from "../workbench/model";
 import {
   BINGHAM_CANYON_BBOX,
+  lastAllowedCatalogDate,
   formatProvider,
   itemKey,
   polygonFromBbox,
   validateBbox,
+  validateCatalogDateRange,
   type BBox,
   type CatalogItem,
   type CatalogSearchResponse,
@@ -67,7 +69,7 @@ export function Explore({
     "sentinel-1",
   ]);
   const [startAt, setStartAt] = useState("2025-06-01");
-  const [endAt, setEndAt] = useState("2025-08-01");
+  const [endAt, setEndAt] = useState("2025-07-30");
   const [productType, setProductType] = useState("");
   const [polarization, setPolarization] = useState("");
   const [maxResolution, setMaxResolution] = useState("");
@@ -186,6 +188,14 @@ export function Explore({
   const search = async () => {
     if (providers.length === 0) {
       setError("Select at least one imagery provider.");
+      return;
+    }
+    try {
+      validateCatalogDateRange(startAt, endAt);
+    } catch (error: unknown) {
+      setError(
+        error instanceof Error ? error.message : "Enter a valid date range.",
+      );
       return;
     }
     controller.current?.abort();
@@ -498,6 +508,7 @@ export function Explore({
               <input
                 type="date"
                 value={startAt}
+                max={endAt}
                 onChange={(event) => {
                   setStartAt(event.target.value);
                   if (response) setStatus("stale");
@@ -509,6 +520,8 @@ export function Explore({
               <input
                 type="date"
                 value={endAt}
+                min={startAt}
+                max={lastAllowedCatalogDate(startAt)}
                 onChange={(event) => {
                   setEndAt(event.target.value);
                   if (response) setStatus("stale");
@@ -570,8 +583,8 @@ export function Explore({
             Search reported acquisitions
           </button>
           <p className="explore-note">
-            Search is bounded to this AOI and date range. No raster imagery is
-            downloaded.
+            Search is bounded to this AOI and a maximum 60-day date range. No
+            raster imagery is downloaded.
           </p>
         </aside>
 

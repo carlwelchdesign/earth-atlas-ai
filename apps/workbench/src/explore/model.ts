@@ -65,6 +65,29 @@ export interface CatalogSearchResponse {
 }
 
 export const BINGHAM_CANYON_BBOX: BBox = [-112.2, 40.45, -112.05, 40.6];
+export const MAX_CATALOG_RANGE_DAYS = 60;
+
+export function validateCatalogDateRange(startDate: string, endDate: string) {
+  const start = Date.parse(`${startDate}T00:00:00Z`);
+  const end = Date.parse(`${endDate}T00:00:00Z`);
+  if (!Number.isFinite(start) || !Number.isFinite(end)) {
+    throw new Error("Enter valid acquisition dates.");
+  }
+  if (start >= end) {
+    throw new Error("The start date must precede the end date.");
+  }
+  const inclusiveDays = Math.floor((end - start) / 86_400_000) + 1;
+  if (inclusiveDays > MAX_CATALOG_RANGE_DAYS) {
+    throw new Error("The acquisition date range cannot exceed 60 days.");
+  }
+}
+
+export function lastAllowedCatalogDate(startDate: string) {
+  const start = new Date(`${startDate}T00:00:00Z`);
+  if (Number.isNaN(start.getTime())) return undefined;
+  start.setUTCDate(start.getUTCDate() + MAX_CATALOG_RANGE_DAYS - 1);
+  return start.toISOString().slice(0, 10);
+}
 
 export function polygonFromBbox([
   west,

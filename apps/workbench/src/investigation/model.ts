@@ -27,10 +27,11 @@ export interface CaseAcquisition {
   itemId: string;
   productId: string;
   acquiredAt: string;
-  tileTemplate: string;
+  tileTemplate?: string;
+  imageUrl?: string;
   thumbnail: string;
   sourceUrl: string;
-  checksumSha256: string;
+  checksumSha256?: string;
   crs: string;
   resolutionMetres: number;
   cloudCoverPercent: number;

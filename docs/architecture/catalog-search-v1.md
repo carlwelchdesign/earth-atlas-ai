@@ -25,7 +25,7 @@ Every provider also has an attributable report. A failed provider does not erase
 ## Safety and performance bounds
 
 - AOIs are limited to a five-degree by five-degree envelope, 25 square degrees, five polygon rings, and 100 coordinates. Antimeridian-crossing bboxes are not accepted in v1.
-- Search ranges must be timezone-aware, ordered, and no longer than 366 days.
+- Search ranges must be timezone-aware, ordered, and no longer than 60 days.
 - Provider samples are limited to 300 normalized records. Sentinel-1 follows at most three 100-item STAC pages. Umbra traversal defaults to at most 500 catalogs and 500 items and reports when either sample limit is reached.
 - HTTP metadata is restricted to the Umbra public-catalog and Copernicus Data Space STAC hosts. Initial URLs and final redirect hosts are checked. Each request has a 20-second timeout and a 5 MB response cap.
 - Aggregated responses are limited to 2 MB. At most 128 query results are cached in memory for five minutes using a canonical request fingerprint; expired entries are pruned and the oldest entry is evicted at capacity. Cursors contain only an offset and that fingerprint; a cursor cannot be reused with a different query.
@@ -63,7 +63,7 @@ Reproduce the Sentinel smoke:
 uv run echoatlas-search-catalog \
   --bbox=-112.2,40.45,-112.05,40.6 \
   --start 2025-06-01T00:00:00Z \
-  --end 2025-08-01T00:00:00Z \
+  --end 2025-07-30T00:00:00Z \
   --provider sentinel-1 \
   --page-size 5
 ```

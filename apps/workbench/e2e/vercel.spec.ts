@@ -130,7 +130,21 @@ test("Nepal-first investigation persists review state and exports a brief", asyn
     }),
   ).toBeVisible();
   await page.getByRole("link", { name: "Start investigation" }).click();
-  await expect(page.getByText("Fixed dates, shared camera")).toBeVisible();
+  await expect(page.getByText("Selected dates, shared camera")).toBeVisible();
+  await expect(page.getByLabel("Before imagery date")).toBeVisible();
+  const afterDate = page.getByLabel("After imagery date");
+  await expect(afterDate).toBeVisible();
+  await expect
+    .poll(() => afterDate.locator("option").count())
+    .toBeGreaterThan(1);
+  await afterDate.selectOption("S2B_45RUM_20260903_0_L2A");
+  await expect(
+    page.getByText("After imagery updated to Sep 3, 2026."),
+  ).toBeVisible();
+  await expect(page.getByText("After · Sep 3, 2026")).toBeVisible();
+  await expect(page.locator(".imagery-attribution")).toContainText(
+    "Contains modified Copernicus Sentinel data",
+  );
 
   await page.getByRole("radio", { name: "Needs context" }).check();
   await page

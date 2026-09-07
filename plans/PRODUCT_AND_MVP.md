@@ -19,7 +19,7 @@ The public portfolio viewer is a secondary audience, not a second workflow. They
 ## MVP workflow
 
 1. Open the prepared 26 August 2026 Nepal flood case without signing in.
-2. Inspect the case boundary, fixed Sentinel-2 acquisition dates, sources, attribution, and cloud limitations.
+2. Inspect the case boundary, choose Sentinel-2 acquisitions within the bounded case window, and review sources, attribution, and cloud limitations.
 3. Navigate synchronized before/after MapLibre imagery or use swipe and single-date controls.
 4. Select an immutable source-reported observation from the map or accessible list.
 5. Inspect its cited evidence and record `supported`, `rejected`, or `needs_context` with a note.
@@ -39,7 +39,7 @@ EAT-027 passed the source gate for the Bhote Koshi–Trishuli corridor using exa
 - an external event source can establish what happened without being treated as pixel-level ground truth;
 - no person-level surveillance, military target tracking, or sensitive-site targeting.
 
-The case remains limited by 78.47% scene-level cloud cover in the after image. That limit is visible in the product and brief. The source gate prohibits stretching a published comparison JPEG onto the map or silently substituting another disaster.
+The prepared default remains limited by 78.47% scene-level cloud cover in the after image. Reviewers can inspect other Sentinel-2 dates from the 60-day case window, while full-tile quality metadata remains distinct from visible AOI quality. The source gate prohibits stretching a published comparison JPEG onto the map or silently substituting another disaster.
 
 ## Product outcome and measures
 
