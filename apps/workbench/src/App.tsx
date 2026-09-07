@@ -18,6 +18,7 @@ import type { BasemapConfig } from "./explore/basemap";
 import type { AnalysisJobClient } from "./explore/analysis";
 import { ModeHeader } from "./ModeHeader";
 import { ComparisonRoute } from "./investigation/ComparisonRoute";
+import { CaseOverview } from "./investigation/CaseOverview";
 import {
   loadInvestigationCase,
   type InvestigationCase,
@@ -44,17 +45,31 @@ interface AppProps {
 }
 
 export function App({
-  initialRoute = window.location.pathname,
+  initialRoute,
   loadCase = loadInvestigationCase,
   renderInvestigationMap = true,
   ...legacyProps
 }: AppProps) {
+  if (initialRoute === "/") {
+    return <CaseOverview loadCase={loadCase} />;
+  }
   if (initialRoute === "/investigate/nepal-flood-2026") {
     return (
       <ComparisonRoute loadCase={loadCase} renderMap={renderInvestigationMap} />
     );
   }
-  return <LegacyApp {...legacyProps} />;
+  return (
+    <LegacyApp
+      {...legacyProps}
+      initialMode={
+        initialRoute === "/explore"
+          ? "explore"
+          : initialRoute === "/analyze"
+            ? "analyze"
+            : legacyProps.initialMode
+      }
+    />
+  );
 }
 
 function LegacyApp({

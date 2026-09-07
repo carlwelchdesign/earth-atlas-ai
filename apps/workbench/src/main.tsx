@@ -13,6 +13,6 @@ if (root === null) {
 
 createRoot(root).render(
   <StrictMode>
-    <App initialMode="explore" />
+    <App initialRoute={window.location.pathname} />
   </StrictMode>,
 );

@@ -205,6 +205,481 @@
     grid-template-columns: 1fr;
   }
 }
+
+/* Nepal-first guided investigation */
+.investigation-shell {
+  min-height: 100vh;
+  background:
+    radial-gradient(circle at 35% -10%, #173c4b 0, transparent 42rem), var(--bg);
+}
+.mission-brand {
+  color: var(--text);
+  text-decoration: none;
+}
+.investigation-header nav a {
+  display: grid;
+  min-height: 2.6rem;
+  padding: 0.55rem 0.9rem;
+  place-items: center;
+  color: var(--muted);
+  font-size: 0.82rem;
+  text-decoration: none;
+}
+.investigation-header nav a[aria-current="page"] {
+  color: var(--text);
+  background: var(--surface-raised);
+  box-shadow: inset 0 -2px var(--accent);
+}
+.case-overview {
+  padding: clamp(1.2rem, 3vw, 3rem);
+}
+.case-hero {
+  display: grid;
+  grid-template-columns: minmax(18rem, 0.8fr) minmax(32rem, 1.2fr);
+  gap: clamp(1.5rem, 4vw, 4rem);
+  align-items: center;
+  min-height: min(72vh, 48rem);
+}
+.case-hero h1 {
+  max-width: 12ch;
+  margin: 0.5rem 0 1rem;
+  font-size: clamp(2.6rem, 6vw, 5.8rem);
+  line-height: 0.94;
+  letter-spacing: -0.055em;
+}
+.case-question {
+  max-width: 42rem;
+  color: #c0ccd3;
+  font-size: clamp(1rem, 1.6vw, 1.28rem);
+  line-height: 1.55;
+}
+.case-actions {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+.case-actions a.primary-button {
+  display: inline-grid;
+  min-height: 3rem;
+  padding: 0.75rem 1rem;
+  place-items: center;
+  text-decoration: none;
+}
+.case-actions span {
+  color: var(--muted);
+  font-size: 0.72rem;
+}
+.case-hero-imagery {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.65rem;
+  min-width: 0;
+}
+.case-hero-imagery figure {
+  position: relative;
+  min-width: 0;
+  height: min(64vh, 42rem);
+  margin: 0;
+  overflow: hidden;
+  border: 1px solid var(--line-strong);
+  border-radius: 0.5rem;
+  background: var(--surface);
+}
+.case-hero-imagery img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.case-hero-imagery figcaption {
+  position: absolute;
+  right: 0.65rem;
+  bottom: 0.65rem;
+  left: 0.65rem;
+  padding: 0.6rem;
+  border: 1px solid rgb(255 255 255 / 18%);
+  border-radius: 0.25rem;
+  background: rgb(4 12 17 / 88%);
+  font-size: 0.75rem;
+  font-weight: 750;
+}
+.case-overview .eyebrow,
+.guided-investigation .eyebrow {
+  margin: 0;
+  color: var(--accent);
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+}
+.case-overview-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  margin: 2rem 0 1rem;
+}
+.case-overview-grid > div,
+.case-sources {
+  padding: clamp(1.1rem, 2vw, 2rem);
+  border: 1px solid var(--line);
+  border-radius: 0.55rem;
+  background: var(--surface);
+}
+.case-overview-grid h2,
+.case-sources h2 {
+  margin: 0.35rem 0 0.8rem;
+}
+.quality-card {
+  border-color: #69502d !important;
+  background: linear-gradient(140deg, #211b13, var(--surface)) !important;
+}
+.quality-card summary,
+.investigation-quality summary {
+  color: var(--warning);
+  cursor: pointer;
+}
+.case-sources ul {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.65rem;
+  padding: 0;
+  list-style: none;
+}
+.case-sources a {
+  color: #b7e9e1;
+}
+.guided-investigation {
+  padding: 1rem clamp(0.75rem, 1.5vw, 1.5rem) 2rem;
+}
+.investigation-titlebar {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  align-items: end;
+  margin-bottom: 0.8rem;
+}
+.investigation-titlebar h1 {
+  margin: 0.25rem 0;
+  font-size: clamp(1.35rem, 2.4vw, 2.15rem);
+}
+.investigation-titlebar p:last-child {
+  max-width: 55rem;
+  margin: 0;
+  color: var(--muted);
+}
+.fixed-dates {
+  display: flex;
+  gap: 0.45rem;
+}
+.fixed-dates span {
+  display: grid;
+  gap: 0.12rem;
+  min-width: 7rem;
+  padding: 0.5rem 0.65rem;
+  border: 1px solid var(--line);
+  border-radius: 0.3rem;
+  color: var(--muted);
+  font-size: 0.62rem;
+  text-transform: uppercase;
+}
+.fixed-dates strong {
+  color: var(--text);
+  font-size: 0.72rem;
+}
+.investigation-steps {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  margin-bottom: 0.8rem;
+  border: 1px solid var(--line);
+  border-radius: 0.4rem;
+  overflow: hidden;
+}
+.investigation-steps button {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  min-height: 2.7rem;
+  padding: 0.5rem 0.75rem;
+  border: 0;
+  border-right: 1px solid var(--line);
+  background: #0c1922;
+  color: var(--muted);
+  cursor: pointer;
+}
+.investigation-steps button:last-child {
+  border-right: 0;
+}
+.investigation-steps button[aria-current="step"] {
+  background: var(--accent-soft);
+  color: var(--text);
+}
+.investigation-steps span {
+  display: grid;
+  width: 1.45rem;
+  height: 1.45rem;
+  place-items: center;
+  border: 1px solid var(--line-strong);
+  border-radius: 50%;
+  font-size: 0.65rem;
+}
+.investigation-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(18rem, 23rem);
+  gap: 0.8rem;
+  align-items: start;
+}
+.investigation-main {
+  display: grid;
+  gap: 0.65rem;
+  min-width: 0;
+}
+.step-intro {
+  display: flex;
+  gap: 0.7rem 1rem;
+  align-items: center;
+  padding: 0.8rem 1rem;
+  border: 1px solid var(--line);
+  border-radius: 0.5rem;
+  background: var(--surface);
+}
+.step-intro h2,
+.step-intro p {
+  margin: 0;
+}
+.step-intro h2 {
+  flex: 0 0 10.5rem;
+  font-size: 1rem;
+}
+.step-intro p:not(.eyebrow) {
+  flex: 1 1 26rem;
+  min-width: 15rem;
+  color: var(--muted);
+  font-size: 0.78rem;
+}
+.step-intro .primary-button {
+  flex: 0 0 auto;
+  width: auto;
+}
+.investigation-main .comparison-frame {
+  min-height: clamp(28rem, 61vh, 45rem);
+}
+.investigation-quality {
+  padding: 0.75rem 1rem;
+  border: 1px solid #584428;
+  border-radius: 0.4rem;
+  background: #1c1812;
+  color: var(--muted);
+  font-size: 0.75rem;
+}
+.observation-rail {
+  position: sticky;
+  top: 0.7rem;
+  max-height: calc(100vh - 5.5rem);
+  overflow: auto;
+  border: 1px solid var(--line);
+  border-radius: 0.55rem;
+  background: #0a151d;
+}
+.observation-heading,
+.observation-evidence {
+  padding: 0.9rem;
+}
+.observation-heading h2 {
+  margin: 0.2rem 0;
+}
+.observation-heading > span {
+  color: var(--muted);
+  font-size: 0.68rem;
+}
+.observation-list {
+  display: grid;
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+}
+.observation-list button {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 0.1rem 0.55rem;
+  padding: 0.72rem 0.9rem;
+  border: 0;
+  border-bottom: 1px solid var(--line);
+  background: transparent;
+  text-align: left;
+  cursor: pointer;
+}
+.observation-list button:last-child {
+  border-bottom: 0;
+}
+.observation-list button[aria-current="true"] {
+  background: var(--accent-soft);
+  box-shadow: inset 3px 0 var(--accent);
+}
+.observation-list button > span {
+  grid-row: 1 / 3;
+  color: var(--accent);
+  font:
+    700 0.66rem ui-monospace,
+    monospace;
+}
+.observation-list strong {
+  font-size: 0.77rem;
+}
+.observation-list small {
+  color: var(--muted);
+  font-size: 0.66rem;
+}
+.observation-evidence h3 {
+  margin: 0.25rem 0 0.55rem;
+}
+.observation-evidence > p:not(.evidence-kicker) {
+  color: #c3cdd3;
+  font-size: 0.78rem;
+  line-height: 1.5;
+}
+.evidence-kicker {
+  margin: 0;
+  color: var(--warning);
+  font-size: 0.63rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+.observation-evidence dl {
+  display: grid;
+  gap: 0.35rem;
+  margin: 0.75rem 0;
+}
+.observation-evidence dl div {
+  display: grid;
+  grid-template-columns: 5rem 1fr;
+  font-size: 0.7rem;
+}
+.observation-evidence dt {
+  color: var(--muted);
+}
+.observation-evidence dd {
+  margin: 0;
+}
+.observation-evidence a {
+  color: #a7e6dd;
+  font-size: 0.74rem;
+}
+.evidence-limitations {
+  padding-left: 1rem;
+  color: var(--muted);
+  font-size: 0.69rem;
+}
+.observation-assessment {
+  display: grid;
+  gap: 0.65rem;
+  margin-top: 0.85rem;
+  padding-top: 0.85rem;
+  border-top: 1px solid var(--line);
+}
+.observation-assessment fieldset {
+  display: grid;
+  gap: 0.42rem;
+  padding: 0;
+  border: 0;
+}
+.observation-assessment legend {
+  margin-bottom: 0.45rem;
+  font-weight: 750;
+}
+.observation-assessment fieldset label {
+  display: flex;
+  gap: 0.45rem;
+  color: #c8d2d8;
+  font-size: 0.72rem;
+}
+.assessment-note {
+  display: grid;
+  gap: 0.3rem;
+  color: var(--muted);
+  font-size: 0.7rem;
+}
+.assessment-note textarea {
+  resize: vertical;
+  padding: 0.55rem;
+  border: 1px solid var(--line-strong);
+  border-radius: 0.3rem;
+  background: #071016;
+  color: var(--text);
+}
+.observation-assessment > small,
+.observation-assessment > p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.66rem;
+}
+.storage-note {
+  margin: 0.7rem 0 0;
+  color: var(--muted);
+  font-size: 0.68rem;
+}
+@media (max-width: 980px) {
+  .case-hero {
+    grid-template-columns: 1fr;
+  }
+  .case-hero h1 {
+    max-width: 16ch;
+  }
+  .case-hero-imagery figure {
+    height: 34rem;
+  }
+  .investigation-layout {
+    grid-template-columns: 1fr;
+  }
+  .observation-rail {
+    position: static;
+    max-height: none;
+  }
+}
+@media (max-width: 700px) {
+  .app-header.investigation-header {
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+  .investigation-header > .status-pill {
+    display: none;
+  }
+  .case-hero {
+    min-height: 0;
+  }
+  .case-hero h1 {
+    font-size: clamp(2.5rem, 13vw, 4rem);
+  }
+  .case-actions,
+  .investigation-titlebar,
+  .step-intro {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+  .case-hero-imagery {
+    grid-template-columns: 1fr;
+  }
+  .case-hero-imagery figure {
+    height: 30rem;
+  }
+  .case-overview-grid,
+  .case-sources ul {
+    grid-template-columns: 1fr;
+  }
+  .investigation-steps button {
+    justify-content: center;
+    padding: 0.45rem;
+    font-size: 0.68rem;
+  }
+  .investigation-steps button span {
+    display: none;
+  }
+  .fixed-dates {
+    width: 100%;
+  }
+  .fixed-dates span {
+    flex: 1;
+  }
+}
 * {
   box-sizing: border-box;
 }
