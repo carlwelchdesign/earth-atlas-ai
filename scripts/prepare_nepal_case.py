@@ -27,11 +27,11 @@ ZOOMS = range(8, 15)
 TILE_SIZE = 256
 WEB_MERCATOR_LIMIT = 20037508.342789244
 EXPECTED = {
-    "before-tci.tif": "d87a9f98b759ff52ca6781ed1403828eaf5743fb662604e6b65d343cdfbb0ab0",
-    "after-tci.tif": "7b98c0d9d0164be5f329073227dd2bd2966518b5c3bc9b1769e37dc903d21b8e",
-    "unosat-flood-extent.zip": "867b5bebb4881d1b8f88af31df7f784f5db612fa651c911d81d7304bf5be0dda",
+    "before-tci.tif": "d87a9f98b759ff52ca6781ed1403828eaf5743fb662604e6b65d343cdfbb0ab0",  # noqa: E501  # pragma: allowlist secret
+    "after-tci.tif": "7b98c0d9d0164be5f329073227dd2bd2966518b5c3bc9b1769e37dc903d21b8e",  # noqa: E501  # pragma: allowlist secret
+    "unosat-flood-extent.zip": "867b5bebb4881d1b8f88af31df7f784f5db612fa651c911d81d7304bf5be0dda",  # noqa: E501  # pragma: allowlist secret
     "unosat-analysis-extent.zip": (
-        "7487b21cd2239cdb8c4913e31d3e08d1ce61462db032859bbfb853721e4424cb"
+        "7487b21cd2239cdb8c4913e31d3e08d1ce61462db032859bbfb853721e4424cb"  # noqa: E501  # pragma: allowlist secret
     ),
 }
 
