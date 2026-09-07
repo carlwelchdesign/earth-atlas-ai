@@ -152,3 +152,16 @@ test("Nepal-first investigation persists review state and exports a brief", asyn
   const download = await downloadPromise;
   expect(download.suggestedFilename()).toBe("nepal-flood-2026-brief.json");
 });
+
+test("narrow Nepal context keeps the primary action in view", async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto("/investigate/nepal-flood-2026");
+  const context = page.locator(".step-intro");
+  await expect(context).toBeVisible();
+  await expect(
+    page.getByRole("button", { name: "Compare imagery" }),
+  ).toBeVisible();
+  expect((await context.boundingBox())?.height).toBeLessThan(260);
+});
