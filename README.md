@@ -1,14 +1,40 @@
 # EchoAtlas
 
-**A truthful, human-in-the-loop SAR change-candidate workbench.** EchoAtlas lets
-an analyst navigate the globe, inspect real provider catalog availability, review
-a comparable acquisition pair, and examine deterministic change candidates with
-their provenance and limitations intact.
+**A source-grounded, human-led satellite investigation workbench.** EchoAtlas
+opens on a prepared investigation of the 26 August 2026 Nepal flood corridor. A
+reviewer can navigate geographically aligned before/after imagery, inspect cited
+observations, record a separate assessment, and export a deterministic brief
+without an account or model call.
 
-> EchoAtlas produces machine-generated **candidates**, never confirmed change,
-> damage, cause, identity, intent, or operational truth.
+> EchoAtlas preserves the boundary between published source observations and a
+> reviewer's conclusions. It does not claim confirmed damage, cause, identity,
+> intent, or operational truth.
 
 **[Open the public, login-free EchoAtlas portfolio deployment](https://earth-atlas-ai.vercel.app)**
+
+## Investigate the Nepal flood corridor
+
+The primary case uses pinned Sentinel-2 L2A acquisitions from 12 and 27 August
+2026 over the Bhote Koshi–Trishuli corridor in Rasuwa. MapLibre requests the
+prepared Web Mercator tiles as the camera moves; panning changes location while
+the two acquisition dates remain fixed. Coverage, transparent nodata, source
+identity, attribution, and the heavy cloud limitation in the after scene remain
+visible.
+
+![EchoAtlas Nepal investigation overview](docs/qa/images/eat-030-nepal-overview.png)
+
+Desktop reviewers can use synchronized maps or swipe comparison. Narrow screens
+use one map with before/after controls. The accessible observation list centers
+the same geography and exposes the original cited evidence.
+
+![EchoAtlas synchronized Nepal comparison](docs/qa/images/eat-029-nepal-map-synced.png)
+
+Assessments are browser-local, append-only, and scoped to the exact case version.
+Printable HTML and JSON exports share one deterministic record with the imagery
+dates, citations, assessment history, unresolved items, limitations, and
+attribution.
+
+![EchoAtlas printable Nepal investigation brief](docs/qa/images/eat-031-nepal-brief.png)
 
 ## Explore anywhere; claim only what the data supports
 
@@ -44,23 +70,27 @@ history is owner-review convenience storage, not a multi-user audit service.
 
 ## What is actually shipped
 
-| Shipped | Unavailable roadmap |
-| --- | --- |
-| MapLibre globe and accessible results | Calibrated SAR benchmark/accuracy claims |
-| Umbra + Sentinel-1 metadata search | AI summaries or model calls |
-| Comparability review and immutable handoff | Multi-user auth and durable assessment service |
-| Deterministic local preparation pipeline | Operational monitoring or automatic alerts |
-| Synthetic fallback and real prepared demo | Paid tasking or guaranteed global coverage |
-| Browser-local append-only assessments | Live wildfire feeds and event matching |
-| Native and non-root Docker workflows |  |
+| Shipped                                          | Unavailable roadmap                            |
+| ------------------------------------------------ | ---------------------------------------------- |
+| Prepared Nepal MapLibre investigation            | Arbitrary-area raster processing               |
+| Synchronized, swipe, and single-date comparison  | Newly computed Nepal change candidates         |
+| Cited observations and separate user assessments | AI summaries or model calls                    |
+| Deterministic printable HTML and JSON brief      | Multi-user auth and durable assessment service |
+| MapLibre globe and accessible results            | Calibrated SAR benchmark/accuracy claims       |
+| Umbra + Sentinel-1 metadata search               | Operational monitoring or automatic alerts     |
+| Comparability review and immutable handoff       | Automatic pair-validity claims                 |
+| Deterministic local preparation pipeline         | Live imagery or continuous ingestion           |
+| Synthetic fallback and real prepared demo        | Paid tasking or guaranteed global coverage     |
+| Browser-local append-only assessments            | Live wildfire feeds and event matching         |
+| Native and non-root Docker workflows             |                                                |
 
-The standalone runtime is canonical and does not require an ontology platform,
-OpenAI, or a private map key. The public Vercel deployment is a bounded portfolio
-demonstration: it searches Sentinel-1 metadata and an explicit two-item Umbra
-index, then opens the reduced approved Bingham Canyon bundle. Arbitrary raster
-processing, operational monitoring, alerts, multi-user storage, scientific
+The standalone runtime is canonical and has no Palantir, ontology-platform,
+OpenAI, or private-map-key requirement. The public Vercel deployment serves one
+prepared Nepal case from static assets. Explore and the reduced Bingham Canyon
+SAR demonstration remain secondary regression and portfolio capabilities.
+Arbitrary raster processing, monitoring, alerts, multi-user storage, scientific
 validity claims, and AI remain unavailable. EAT-012 qualified SAR adjudication
-is incomplete, so EAT-013 remains gated.
+is incomplete, so EAT-013 and M3 remain gated.
 
 ## Run the owner-review app with Docker
 
@@ -71,8 +101,9 @@ docker compose build
 docker compose up --detach --wait
 ```
 
-Open <http://127.0.0.1:8080>. The default path loads the clearly labeled
-deterministic synthetic fallback and needs no account or credential.
+Open <http://127.0.0.1:8080/analyze> for the clearly labeled deterministic
+synthetic fallback. The Nepal root requires the prepared static case described
+below.
 
 To mount an already generated public-Umbra prepared bundle read-only:
 
@@ -106,7 +137,22 @@ The API health endpoint is <http://127.0.0.1:8000/health>; Vite prints the web
 URL. See [CONTRIBUTING.md](CONTRIBUTING.md) and the
 [Git/ticket workflow](plans/GIT_WORKFLOW.md) before changing code.
 
-## Reproduce the public Umbra demonstration
+## Reproduce the Nepal prepared case
+
+Follow the exact source downloads and checksums in the
+[Nepal dataset card](docs/data/nepal-flood-2026-dataset-card.md), then run:
+
+```sh
+uv run --group processing python scripts/prepare_nepal_case.py
+uv run --group processing python scripts/verify_nepal_case.py
+```
+
+The commands validate the pinned source hashes, common grid, five distributed
+alignment checks, tile bounds, transparent nodata, thumbnails, and attribution.
+Raw imagery and generated assets remain ignored by Git. Vite copies the prepared
+case into a local build; `compose.prepared.yaml` mounts it read-only for Docker.
+
+## Reproduce the secondary public Umbra demonstration
 
 The exact approved object identities, sizes, ETags, access evidence, and
 CRC64NVME checksums are pinned in
@@ -146,7 +192,7 @@ real-data artifacts, credentials, or assessments.
 
 - `services/backend` — FastAPI orchestration plus deterministic acquisition,
   raster, catalog, candidate, bundle, and evaluation domains.
-- `apps/workbench` — React/TypeScript Explore and Analyze experience.
+- `apps/workbench` — React/TypeScript Nepal investigation, Explore, and Analyze experience.
 - `schemas` — strict, versioned portable analysis-bundle contracts.
 - `fixtures` — source selections and synthetic contract fixtures, never raw SAR.
 - `deploy` and `compose*.yaml` — pinned, non-root, health-checked local packaging.
@@ -157,8 +203,8 @@ depend on the UI, deployment vendor, or AI. The portable bundle is the contract
 among the processor, workbench, and tests.
 
 Start with the [architecture overview](docs/architecture/README.md),
-[dataset card](docs/data/bingham-canyon-dataset-card.md),
-[release evidence](docs/qa/release-evidence-v1.md), and
+[Nepal dataset card](docs/data/nepal-flood-2026-dataset-card.md),
+[Nepal release-candidate evidence](docs/qa/nepal-release-candidate.md), and
 [planning package](plans/README.md).
 
 ## License and attribution

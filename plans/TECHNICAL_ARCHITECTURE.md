@@ -4,6 +4,10 @@
 
 Keep geospatial processing portable, deterministic, and independent of any operational platform. Keep framework and provider I/O at the edges. Use one versioned analysis-bundle contract between processing, the standalone workbench, and tests.
 
+The Nepal-first release adds a separate `InvestigationCase 1.0.0` contract. It
+does not reinterpret the SAR analysis bundle and does not add Palantir, an
+ontology runtime, an imagery-processing API, or a model provider.
+
 ## Proposed repository shape
 
 ```text
@@ -58,6 +62,27 @@ MapLibre globe or accessible search/list
 
 MapLibre owns navigation and rendering only. It may display basemap/vector tiles, acquisition-footprint GeoJSON, and explicitly configured raster tile sources, but it does not decide provider availability, pair suitability, processing policy, candidate meaning, or permissions.
 
+## Prepared Nepal investigation flow
+
+```text
+pinned Sentinel-2 TCI products + pinned UNOSAT archives
+  -> checksum and source-grid validation
+  -> bounded natural-colour derivatives
+  -> transparent Web Mercator XYZ tiles + thumbnails
+  -> InvestigationCase 1.0.0 manifest
+  -> static deployment assets
+  -> MapLibre synchronized geographic comparison
+  -> cited source observation review
+  -> case-versioned browser-local assessment events
+  -> deterministic printable HTML + JSON brief
+```
+
+Acquisition dates are fixed in the manifest. Map movement requests different
+tiles from those same two products; it does not search for scenes or imply live
+imagery. Raw imagery and generated outputs stay outside Git. The Python
+preparation command is an offline release process and is not bundled into the
+Vercel function.
+
 ## Boundaries and responsibilities
 
 ### Catalog adapter
@@ -92,6 +117,15 @@ The first bundle version contains:
 
 All untrusted JSON is validated at runtime against versioned schemas.
 
+### Investigation case contract
+
+The separate prepared-case contract contains case identity/version, event and
+citations, AOI and coverage geometry, two acquisition/source records, local tile
+and thumbnail paths, attribution, quality limits, and immutable georeferenced
+observations. Its parser permits only `/generated-nepal/` assets and explicit
+HTTPS evidence hosts. User assessments remain outside the source manifest and
+are joined only when a brief is generated.
+
 ### API boundary
 
 - Thin endpoints for listing/loading bundles, saving assessments, and reading processing status.
@@ -103,6 +137,7 @@ All untrusted JSON is validated at runtime against versioned schemas.
 
 - Keeps server data, local comparison controls, and presentation state separate.
 - Loads only the provider-neutral bundle contract.
+- Loads the independently versioned prepared-case contract for Nepal routes.
 - Treats candidates as machine-generated review items, not findings.
 - Makes stale, degraded, missing, and incompatible data visible.
 - Separates post-MVP `Explore` navigation/catalog state from `Analyze` bundle/review state.
@@ -123,15 +158,18 @@ The versioned bundle is the current knowledge model: stable identities, typed re
 
 ## MVP object model
 
-| Object | Required identity | Lifecycle | Important links |
-| --- | --- | --- | --- |
-| `AreaOfInterest` | stable AOI ID + geometry hash | proposed, selected, retired | covered by acquisitions |
-| `Acquisition` | provider + STAC/item ID | discovered, validated, rejected | covers AOI; source for run |
-| `AnalysisRun` | run ID + manifest hash | queued, running, succeeded, failed, cancelled | uses acquisitions; produces artifacts/candidates |
-| `EvidenceArtifact` | artifact ID + checksum | produced, invalidated | derived from run/input |
-| `ChangeCandidate` | run-scoped candidate ID | pending, reviewed | derived from run; affects AOI geometry |
-| `AnalystAssessment` | append-only event ID | recorded, superseded | assesses candidate; references evidence |
-| `DraftSummary` | run + generator version | generated, accepted, rejected, superseded | cites candidates/evidence |
+| Object               | Required identity             | Lifecycle                                     | Important links                                          |
+| -------------------- | ----------------------------- | --------------------------------------------- | -------------------------------------------------------- |
+| `AreaOfInterest`     | stable AOI ID + geometry hash | proposed, selected, retired                   | covered by acquisitions                                  |
+| `Acquisition`        | provider + STAC/item ID       | discovered, validated, rejected               | covers AOI; source for run                               |
+| `AnalysisRun`        | run ID + manifest hash        | queued, running, succeeded, failed, cancelled | uses acquisitions; produces artifacts/candidates         |
+| `EvidenceArtifact`   | artifact ID + checksum        | produced, invalidated                         | derived from run/input                                   |
+| `ChangeCandidate`    | run-scoped candidate ID       | pending, reviewed                             | derived from run; affects AOI geometry                   |
+| `AnalystAssessment`  | append-only event ID          | recorded, superseded                          | assesses candidate; references evidence                  |
+| `InvestigationCase`  | case ID + version             | prepared, validated, superseded               | contains acquisitions, coverage, citations, observations |
+| `SourceObservation`  | case-scoped observation ID    | published, superseded with case               | cites external evidence; never stores user conclusions   |
+| `InvestigationBrief` | case + brief contract version | generated locally                             | joins immutable case evidence with assessment history    |
+| `DraftSummary`       | run + generator version       | generated, accepted, rejected, superseded     | cites candidates/evidence                                |
 
 `Vessel`, `Facility`, `InfrastructureAsset`, `Alert`, and `Investigation` remain future types until the single change-review workflow proves a need.
 

@@ -1,4 +1,5 @@
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
+import axe from "axe-core";
 import { describe, expect, it } from "vitest";
 
 import { ComparisonRoute } from "./ComparisonRoute";
@@ -80,5 +81,23 @@ describe("guided Nepal investigation", () => {
     expect(
       screen.getByRole("button", { name: "Download JSON" }),
     ).toBeInTheDocument();
+  });
+
+  it("has one quality summary and no automated accessibility violations", async () => {
+    render(
+      <ComparisonRoute
+        loadCase={() => Promise.resolve(investigationFixture)}
+        renderMap={false}
+        storage={window.localStorage}
+      />,
+    );
+    await screen.findByRole("heading", { name: "Observations" });
+    expect(
+      screen.getAllByText("Quality and interpretation limits"),
+    ).toHaveLength(1);
+    const results = await axe.run(document.body, {
+      rules: { "color-contrast": { enabled: false } },
+    });
+    expect(results.violations).toEqual([]);
   });
 });

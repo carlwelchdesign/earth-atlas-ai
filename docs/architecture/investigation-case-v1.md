@@ -33,6 +33,7 @@ Run after downloading and hashing the four pinned files documented in the
 
 ```bash
 ~/.local/bin/uv run --group processing python scripts/prepare_nepal_case.py
+~/.local/bin/uv run --group processing python scripts/verify_nepal_case.py
 ```
 
 The command fails closed on a missing or changed source. It confirms the common

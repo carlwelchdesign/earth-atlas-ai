@@ -54,6 +54,20 @@ Tickets: `EAT-DES-002` and `EAT-017` through `EAT-019`.
 
 Gate: Carl approves the Explore design before MapLibre implementation. Provider coverage, provenance, license, comparability, empty/error states, and a non-map accessible path must be visible. Global navigation must not imply global Umbra coverage, automatic pair validity, paid tasking, or operational monitoring.
 
+### Nepal release — Evidence-first prepared investigation
+
+Outcome: the public root opens one login-free Nepal flood investigation with
+geographically aligned prepared imagery, cited observations, browser-local
+assessments, and deterministic brief export. Explore and Analyze remain
+secondary, addressable capabilities.
+
+Tickets: `EAT-026` through `EAT-033`, including `EAT-DES-003`.
+
+Gate: original source identities, checksums, licensing, coverage, cloud limits,
+transparent nodata, and five-point alignment evidence must pass before release.
+No AI summary, arbitrary-area raster processing, or newly computed Nepal change
+candidate enters this release.
+
 ## Dependency chain
 
 ```text
@@ -70,6 +84,7 @@ EAT-DES-002 -> EAT-018
 EAT-017 -> EAT-018 -> EAT-019
 EAT-007 -----------------> EAT-019
 M5 is post-MVP and does not delay the M4 release-evidence gate.
+EAT-027 -> EAT-DES-003 + EAT-028 -> EAT-029 -> EAT-030 -> EAT-031 -> EAT-032 -> EAT-033
 ```
 
 ## Delivery cadence
@@ -77,7 +92,7 @@ M5 is post-MVP and does not delay the M4 release-evidence gate.
 Work one unblocked ticket at a time unless a ticket explicitly documents safe parallel work. Each ticket follows:
 
 1. Re-read canonical plan, dependencies, and current Asana state.
-2. Add a start comment with branch, scope, and intended evidence.
+2. Record the active branch, scope, and intended evidence in the task description.
 3. Implement only ticket scope with tests.
 4. Run focused checks, appropriate broader checks, runtime verification, and diff hygiene.
 5. Add completion evidence to Asana, including commit/PR when available, test commands/results, artifacts, and remaining risk.
@@ -86,17 +101,21 @@ Work one unblocked ticket at a time unless a ticket explicitly documents safe pa
 
 Before a remote exists, commit evidence may be local. After a remote and protected workflow exist, completion requires a dedicated branch and meaningful PR unless the ticket explicitly changes that rule.
 
+Release work is assembled on `release/<version-or-date>` cut from current
+`main`. Deploy only that verified release branch, verify the public alias, merge
+that exact branch back to `main`, and retain it through the rollback window.
+
 ## RACI
 
-| Decision/work | Carl | Codex delivery agent | SAR domain reviewer | Security/privacy reviewer |
-| --- | --- | --- | --- | --- |
-| MVP scope and public story | Accountable | Responsible for proposal | Consulted | Consulted |
-| Dataset pair selection | Approves | Responsible | Consulted/required before calibrated claims | Informed |
-| Architecture and implementation | Approves material changes | Responsible | Consulted for science boundaries | Consulted for release controls |
-| Candidate interpretation | Accountable as analyst | Supplies tooling, not conclusions | Consulted | Informed |
-| Provider account actions | Approves explicitly | Responsible only after approval | Informed | Consulted |
-| Public deployment/release | Approves explicitly | Prepares evidence | Consulted | Review required |
-| Global Explore design and provider expansion | Approves design and scope | Responsible | Consulted on pair-comparability language | Consulted on sensitivity, location, and provider controls |
+| Decision/work                                | Carl                      | Codex delivery agent              | SAR domain reviewer                         | Security/privacy reviewer                                 |
+| -------------------------------------------- | ------------------------- | --------------------------------- | ------------------------------------------- | --------------------------------------------------------- |
+| MVP scope and public story                   | Accountable               | Responsible for proposal          | Consulted                                   | Consulted                                                 |
+| Dataset pair selection                       | Approves                  | Responsible                       | Consulted/required before calibrated claims | Informed                                                  |
+| Architecture and implementation              | Approves material changes | Responsible                       | Consulted for science boundaries            | Consulted for release controls                            |
+| Candidate interpretation                     | Accountable as analyst    | Supplies tooling, not conclusions | Consulted                                   | Informed                                                  |
+| Provider account actions                     | Approves explicitly       | Responsible only after approval   | Informed                                    | Consulted                                                 |
+| Public deployment/release                    | Approves explicitly       | Prepares evidence                 | Consulted                                   | Review required                                           |
+| Global Explore design and provider expansion | Approves design and scope | Responsible                       | Consulted on pair-comparability language    | Consulted on sensitivity, location, and provider controls |
 
 ## Validation plan
 
@@ -107,6 +126,7 @@ Before a remote exists, commit evidence may be local. After a remote and protect
 - AI: evidence-citation, unsupported-question, permission, and overclaiming evaluation set;
 - demo: a fresh-machine runbook test and attribution/security review.
 - exploration: contract fixtures plus bounded live catalog smoke tests, map/list parity, no-coverage and partial-provider states, accessibility checks, and desktop/mobile visual evidence.
+- Nepal case: pinned-source checksum rebuild, XYZ bounds and transparency checks, five distributed grid residuals, MapLibre synchronization and fallback, assessment/export regressions, accessibility, and desktop/narrow browser evidence.
 
 ## Specialist review synthesis
 

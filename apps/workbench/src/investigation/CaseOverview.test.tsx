@@ -1,4 +1,5 @@
 import { render, screen } from "@testing-library/react";
+import axe from "axe-core";
 import { describe, expect, it } from "vitest";
 
 import { CaseOverview } from "./CaseOverview";
@@ -24,5 +25,19 @@ describe("Nepal case overview", () => {
       "href",
       investigationFixture.citations[0].url,
     );
+    expect(
+      screen.getAllByText("Cloud obscures part of the after view."),
+    ).toHaveLength(1);
+  });
+
+  it("has no automated accessibility violations", async () => {
+    render(
+      <CaseOverview loadCase={() => Promise.resolve(investigationFixture)} />,
+    );
+    await screen.findByRole("link", { name: "Start investigation" });
+    const results = await axe.run(document.body, {
+      rules: { "color-contrast": { enabled: false } },
+    });
+    expect(results.violations).toEqual([]);
   });
 });

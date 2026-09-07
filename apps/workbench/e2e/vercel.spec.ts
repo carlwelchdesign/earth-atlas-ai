@@ -6,8 +6,7 @@ const AFTER_ID = "f784904e-b115-4a2c-b5d5-9a94ed075e94";
 test("Analyze keeps page height bounded and scrolls candidate rows", async ({
   page,
 }) => {
-  await page.goto("/");
-  await page.getByRole("button", { name: /^Analyze/ }).click();
+  await page.goto("/analyze");
   await expect(
     page.getByRole("heading", {
       name: "Bingham Canyon mine surface-change review",
@@ -54,8 +53,8 @@ test("Analyze keeps page height bounded and scrolls candidate rows", async ({
 
 test("public Explore search opens the approved real-derived review bundle", async ({
   page,
-}) => {
-  await page.goto("/");
+}, testInfo) => {
+  await page.goto("/explore");
 
   await expect(
     page.getByRole("heading", {
@@ -85,7 +84,7 @@ test("public Explore search opens the approved real-derived review bundle", asyn
     page.getByRole("dialog", { name: "Review candidate pair" }),
   ).toBeVisible();
   await page.screenshot({
-    path: "../../docs/qa/evidence/eat-021/vercel-pair-review.png",
+    path: testInfo.outputPath("pair-review.png"),
   });
 
   await page.getByRole("button", { name: "Check comparability" }).click();
@@ -117,6 +116,39 @@ test("public Explore search opens the approved real-derived review bundle", asyn
     .toBe(true);
   await page.evaluate("window.scrollTo(0, 0)");
   await page.screenshot({
-    path: "../../docs/qa/evidence/eat-021/vercel-analyze.png",
+    path: testInfo.outputPath("analyze.png"),
   });
+});
+
+test("Nepal-first investigation persists review state and exports a brief", async ({
+  page,
+}) => {
+  await page.goto("/");
+  await expect(
+    page.getByRole("heading", {
+      name: "Investigate the 2026 Nepal flood corridor",
+    }),
+  ).toBeVisible();
+  await page.getByRole("link", { name: "Start investigation" }).click();
+  await expect(page.getByText("Fixed dates, shared camera")).toBeVisible();
+
+  await page.getByRole("radio", { name: "Needs context" }).check();
+  await page
+    .getByLabel("Notes")
+    .fill("Cloud limits the visible eastern portion of this observation.");
+  await page.getByRole("button", { name: "Record assessment" }).click();
+  await expect(page.getByText("Assessment recorded.")).toBeVisible();
+  await page.reload();
+  await expect(
+    page.getByRole("radio", { name: "Needs context" }),
+  ).toBeChecked();
+  await expect(page.getByLabel("Notes")).toHaveValue(
+    "Cloud limits the visible eastern portion of this observation.",
+  );
+
+  await page.getByRole("button", { name: /Brief/ }).click();
+  const downloadPromise = page.waitForEvent("download");
+  await page.getByRole("button", { name: "Download JSON" }).click();
+  const download = await downloadPromise;
+  expect(download.suggestedFilename()).toBe("nepal-flood-2026-brief.json");
 });

@@ -8,7 +8,7 @@ EchoAtlas begins as a modular monolith rather than separate deployable services:
 - [Catalog search contract v1](catalog-search-v1.md) defines EAT-017's bounded Umbra and Sentinel-1 metadata search, normalized API boundary, partial-provider behavior, caching, pagination, and live smoke evidence.
 - [Explore-to-Analyze selection and jobs](explore-analysis-jobs.md) defines EAT-019's immutable manifest, comparability boundary, bounded asynchronous jobs, prepared-bundle identity checks, and UI handoff.
 - [Investigation case contract 1.0.0](investigation-case-v1.md) defines the prepared-case validation, evidence boundary, static asset policy, and deterministic Nepal preparation command.
-- the React workbench will consume versioned API and analysis-bundle contracts rather than provider payloads.
+- the React workbench consumes the separate prepared-case contract for Nepal and versioned API/analysis-bundle contracts for Explore and Analyze rather than provider payloads.
 
 This structure keeps Python raster dependencies in one reproducible environment while preserving boundaries that can be split later if measured deployment or scaling needs justify it.
 
@@ -23,6 +23,13 @@ See [Baseline change candidates](change-candidate-baseline.md) for the explicit 
 See [Analysis bundle v1](analysis-bundle-v1.md) for the provider-neutral schema, runtime trust boundary, compatibility policy, migration rules, and synthetic fixture evidence.
 
 ## Owner-review deployment
+
+The Nepal release serves `case.json`, a checksum manifest, thumbnails, and
+bounded XYZ tiles as static web assets. They are prepared outside Git and outside
+the Python function bundle. MapLibre renders those fixed acquisitions while
+browser-local assessment events feed a deterministic HTML/JSON brief. No raster
+processing endpoint, account, provider credential, model call, or multi-user
+database is introduced.
 
 EAT-015 packages this modular monolith as two non-root containers: the FastAPI
 backend and a static nginx workbench that proxies `/v1` and `/health` to the
