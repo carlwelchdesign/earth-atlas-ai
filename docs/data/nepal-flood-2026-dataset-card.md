@@ -9,6 +9,11 @@ This dataset supports one login-free, evidence-first investigation of the
 inspection of cited observations, and human-authored assessments. It does not
 support arbitrary-area processing, automated damage claims, or live imagery.
 
+The investigation also queries the public Earth Search Sentinel-2 catalogue for
+this fixed AOI and a 60-day case window during release preparation. Choosing a
+date loads that exact prepared Web Mercator image overlay. It does not
+move the AOI, discover another event, or create a new analytical observation.
+
 ## Event and evidence sources
 
 - [WHO Nepal emergency overview](https://www.who.int/nepal/emergencies/2026-rasuwa-flash-floods)
@@ -55,6 +60,14 @@ The common grid supports map alignment. Cloud cover in the after image is the
 main limitation and remains visible in the product. Source imagery, extracted
 archives, and generated map tiles are ignored by Git. The generated case
 manifest records the source hashes and preparation parameters.
+
+The date selector reports provider metadata for each complete Sentinel-2 tile.
+Those percentages are useful screening evidence, but do not measure cloud only
+inside the narrower case corridor. As of 7 September 2026, no available
+post-event Sentinel-2 scene provided a clearly better visible AOI than the
+prepared default. The selector lets a reviewer inspect later acquisitions as
+they become available without claiming that a lower full-tile percentage is a
+clearer case image.
 
 After preparation, run the release verifier:
 

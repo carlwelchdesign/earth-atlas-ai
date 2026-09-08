@@ -112,8 +112,8 @@ class CatalogSearchRequest(BaseModel):
     def validate_time_range(self) -> CatalogSearchRequest:
         if self.start_at >= self.end_at:
             raise ValueError("catalog search start_at must precede end_at")
-        if self.end_at - self.start_at > timedelta(days=366):
-            raise ValueError("catalog search time range cannot exceed 366 days")
+        if self.end_at - self.start_at > timedelta(days=60):
+            raise ValueError("catalog search time range cannot exceed 60 days")
         return self
 
 

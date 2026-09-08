@@ -368,12 +368,15 @@
   color: var(--muted);
 }
 .fixed-dates {
-  display: flex;
-  gap: 0.45rem;
-}
-.fixed-dates span {
   display: grid;
-  gap: 0.12rem;
+  grid-template-columns: repeat(2, minmax(9.5rem, 1fr)) auto;
+  gap: 0.45rem;
+  align-items: end;
+  max-width: 38rem;
+}
+.fixed-dates label {
+  display: grid;
+  gap: 0.3rem;
   min-width: 7rem;
   padding: 0.5rem 0.65rem;
   border: 1px solid var(--line);
@@ -382,9 +385,30 @@
   font-size: 0.62rem;
   text-transform: uppercase;
 }
-.fixed-dates strong {
+.fixed-dates select {
+  width: 100%;
+  min-height: 2rem;
+  padding: 0.25rem 1.7rem 0.25rem 0.35rem;
+  border: 1px solid var(--line-strong);
+  background: #07131a;
   color: var(--text);
-  font-size: 0.72rem;
+  font-size: 0.68rem;
+  color-scheme: dark;
+}
+.fixed-dates .date-refresh {
+  min-height: 3.9rem;
+  padding: 0.55rem 0.75rem;
+  border: 1px solid var(--line-strong);
+  border-radius: 0.3rem;
+  background: #10242d;
+  color: var(--text);
+  cursor: pointer;
+}
+.fixed-dates small {
+  grid-column: 1 / -1;
+  color: var(--muted);
+  font-size: 0.62rem;
+  line-height: 1.4;
 }
 .investigation-steps {
   display: grid;
@@ -706,10 +730,12 @@
     display: none;
   }
   .fixed-dates {
+    grid-template-columns: 1fr 1fr;
     width: 100%;
   }
-  .fixed-dates span {
-    flex: 1;
+  .fixed-dates .date-refresh {
+    grid-column: 1 / -1;
+    min-height: 2.8rem;
   }
 }
 * {

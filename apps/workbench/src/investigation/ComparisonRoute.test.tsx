@@ -3,7 +3,24 @@ import axe from "axe-core";
 import { describe, expect, it } from "vitest";
 
 import { ComparisonRoute } from "./ComparisonRoute";
+import type { NepalImageryClient } from "./imagery";
 import { investigationFixture } from "./test-fixture";
+
+const alternateAfter = {
+  ...investigationFixture.acquisitions[1],
+  itemId: "S2B_45RUM_20260906_0_L2A",
+  productId: "S2B_MSIL2A_20260906_TEST.SAFE",
+  acquiredAt: "2026-09-06T05:10:46.120000Z",
+  tileTemplate: undefined,
+  imageUrl: "/generated-nepal/acquisitions/S2B_45RUM_20260906_0_L2A.png",
+  thumbnail: "/generated-nepal/acquisitions/S2B_45RUM_20260906_0_L2A.png",
+  checksumSha256: undefined,
+  cloudCoverPercent: 77.9,
+};
+
+const imagery: NepalImageryClient = {
+  listAcquisitions: () => Promise.resolve([alternateAfter]),
+};
 
 describe("guided Nepal investigation", () => {
   it("keeps source observations separate from user assessments", async () => {
@@ -12,6 +29,7 @@ describe("guided Nepal investigation", () => {
         loadCase={() => Promise.resolve(investigationFixture)}
         renderMap={false}
         storage={window.localStorage}
+        imagery={imagery}
       />,
     );
     expect(
@@ -44,6 +62,7 @@ describe("guided Nepal investigation", () => {
         loadCase={() => Promise.resolve(investigationFixture)}
         renderMap={false}
         storage={window.localStorage}
+        imagery={imagery}
       />,
     );
     await screen.findByRole("heading", { name: "Observations" });
@@ -55,6 +74,7 @@ describe("guided Nepal investigation", () => {
         loadCase={() => Promise.resolve(investigationFixture)}
         renderMap={false}
         storage={window.localStorage}
+        imagery={imagery}
       />,
     );
     await waitFor(() =>
@@ -71,6 +91,7 @@ describe("guided Nepal investigation", () => {
         loadCase={() => Promise.resolve(investigationFixture)}
         renderMap={false}
         storage={window.localStorage}
+        imagery={imagery}
       />,
     );
 
@@ -89,6 +110,7 @@ describe("guided Nepal investigation", () => {
         loadCase={() => Promise.resolve(investigationFixture)}
         renderMap={false}
         storage={window.localStorage}
+        imagery={imagery}
       />,
     );
     await screen.findByRole("heading", { name: "Observations" });
@@ -99,5 +121,34 @@ describe("guided Nepal investigation", () => {
       rules: { "color-contrast": { enabled: false } },
     });
     expect(results.violations).toEqual([]);
+  });
+
+  it("updates the georeferenced imagery from an editable acquisition date", async () => {
+    render(
+      <ComparisonRoute
+        loadCase={() => Promise.resolve(investigationFixture)}
+        renderMap={false}
+        storage={window.localStorage}
+        imagery={imagery}
+      />,
+    );
+
+    const afterDate = await screen.findByLabelText("After imagery date");
+    await waitFor(() =>
+      expect(
+        screen.getByRole("option", { name: /Sep 6, 2026/ }),
+      ).toBeInTheDocument(),
+    );
+    fireEvent.change(afterDate, { target: { value: alternateAfter.itemId } });
+
+    expect(
+      await screen.findByText("After imagery updated to Sep 6, 2026."),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByAltText(
+        "After Sentinel-2 view of the prepared Nepal corridor",
+      ),
+    ).toHaveAttribute("src", alternateAfter.imageUrl);
+    expect(screen.getByText(/77.9% cloud after/)).toBeInTheDocument();
   });
 });

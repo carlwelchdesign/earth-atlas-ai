@@ -26,12 +26,33 @@ function mapStyle(
     (entry) => entry.role === role,
   );
   if (!acquisition) throw new Error(`Missing ${role} acquisition.`);
-  const bounds = caseBounds(investigation).flat() as [
-    number,
-    number,
-    number,
-    number,
-  ];
+  const caseBoundary = caseBounds(investigation);
+  const bounds = caseBoundary.flat() as [number, number, number, number];
+  const imagery = acquisition.imageUrl
+    ? {
+        type: "image" as const,
+        url: acquisition.imageUrl,
+        coordinates: [
+          [bounds[0], bounds[3]],
+          [bounds[2], bounds[3]],
+          [bounds[2], bounds[1]],
+          [bounds[0], bounds[1]],
+        ] as [
+          [number, number],
+          [number, number],
+          [number, number],
+          [number, number],
+        ],
+      }
+    : {
+        type: "raster" as const,
+        tiles: [acquisition.tileTemplate ?? ""],
+        tileSize: 256,
+        minzoom: 8,
+        maxzoom: 14,
+        bounds,
+        attribution: "Contains modified Copernicus Sentinel data (2026)",
+      };
   return {
     version: 8,
     sources: {
@@ -41,15 +62,7 @@ function mapStyle(
         tileSize: 256,
         attribution: "© OpenStreetMap contributors",
       },
-      imagery: {
-        type: "raster",
-        tiles: [acquisition.tileTemplate],
-        tileSize: 256,
-        minzoom: 8,
-        maxzoom: 14,
-        bounds,
-        attribution: "Contains modified Copernicus Sentinel data (2026)",
-      },
+      imagery,
       coverage: {
         type: "geojson",
         data: {
@@ -142,6 +155,10 @@ export function ComparisonMap({
   const beforeContainer = useRef<HTMLDivElement>(null);
   const afterContainer = useRef<HTMLDivElement>(null);
   const maps = useRef<{ before: MapLibreMap; after: MapLibreMap } | null>(null);
+  const retainedCamera = useRef<{
+    center: [number, number];
+    zoom: number;
+  } | null>(null);
   const synchronizing = useRef(false);
   const [mode, setMode] = useState<ComparisonMode>("side-by-side");
   const [swipe, setSwipe] = useState(50);
@@ -159,19 +176,23 @@ export function ComparisonMap({
         const options = (
           role: "before" | "after",
           container: HTMLDivElement,
-        ) => ({
-          container,
-          style: mapStyle(investigation, role),
-          bounds,
-          fitBoundsOptions: { padding: 44, animate: false },
-          dragRotate: false,
-          pitchWithRotate: false,
-          keyboard: true,
-          maxPitch: 0,
-          bearing: 0,
-          cooperativeGestures: true,
-          attributionControl: {},
-        });
+        ) => {
+          const camera = retainedCamera.current;
+          return {
+            container,
+            style: mapStyle(investigation, role),
+            ...(camera
+              ? { center: camera.center, zoom: camera.zoom }
+              : { bounds, fitBoundsOptions: { padding: 44, animate: false } }),
+            dragRotate: false,
+            pitchWithRotate: false,
+            keyboard: true,
+            maxPitch: 0,
+            bearing: 0,
+            cooperativeGestures: true,
+            attributionControl: {},
+          };
+        };
         const before = new Map(options("before", beforeContainer.current));
         const after = new Map(options("after", afterContainer.current));
         before.addControl(
@@ -192,7 +213,7 @@ export function ComparisonMap({
           const center = source.getCenter();
           setStatus(
             isInsideCoverage(center.lng, center.lat, investigation)
-              ? "Viewing prepared coverage. Acquisition dates remain fixed."
+              ? "Viewing prepared coverage. Selected acquisitions remain fixed until you choose another date."
               : "Map center is outside prepared coverage.",
           );
         };
@@ -227,6 +248,13 @@ export function ComparisonMap({
       .catch(() => setMapFailed(true));
     return () => {
       active = false;
+      if (maps.current) {
+        const center = maps.current.before.getCenter();
+        retainedCamera.current = {
+          center: [center.lng, center.lat],
+          zoom: maps.current.before.getZoom(),
+        };
+      }
       maps.current?.before.remove();
       maps.current?.after.remove();
       maps.current = null;
@@ -282,7 +310,7 @@ export function ComparisonMap({
       <div className="comparison-heading-row">
         <div>
           <p className="eyebrow">Geographic comparison</p>
-          <h2 id="comparison-heading">Fixed dates, shared camera</h2>
+          <h2 id="comparison-heading">Selected dates, shared camera</h2>
         </div>
         <button
           type="button"
@@ -338,7 +366,10 @@ export function ComparisonMap({
           className="map-panel before-panel"
           aria-label="Before satellite map"
         >
-          <span className="map-date">Before · 12 Aug 2026</span>
+          <span className="map-date">
+            Before ·{" "}
+            {formatAcquisitionDate(investigation.acquisitions[0].acquiredAt)}
+          </span>
           <div className="investigation-map-canvas" ref={beforeContainer} />
         </div>
         <div
@@ -350,7 +381,10 @@ export function ComparisonMap({
               : undefined
           }
         >
-          <span className="map-date">After · 27 Aug 2026</span>
+          <span className="map-date">
+            After ·{" "}
+            {formatAcquisitionDate(investigation.acquisitions[1].acquiredAt)}
+          </span>
           <div className="investigation-map-canvas" ref={afterContainer} />
         </div>
       </div>
@@ -361,4 +395,13 @@ export function ComparisonMap({
       </p>
     </section>
   );
+}
+
+function formatAcquisitionDate(timestamp: string) {
+  return new Date(timestamp).toLocaleDateString("en-US", {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+    timeZone: "UTC",
+  });
 }

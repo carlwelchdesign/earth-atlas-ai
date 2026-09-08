@@ -4,6 +4,15 @@ import { StateNotice } from "../workbench/Workbench";
 import { InvalidInvestigationCaseError, type InvestigationCase } from "./model";
 import { SiteHeader } from "./SiteHeader";
 
+function formatDate(value: string) {
+  return new Date(value).toLocaleDateString("en-US", {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+    timeZone: "UTC",
+  });
+}
+
 type OverviewState =
   | { status: "loading" }
   | { status: "ready"; investigation: InvestigationCase }
@@ -44,7 +53,7 @@ export function CaseOverview({
           <StateNotice
             kind="loading"
             title="Loading Nepal case"
-            message="Validating fixed imagery, coverage, sources, and observations."
+            message="Validating prepared imagery, coverage, sources, and observations."
           />
         </main>
       </div>
@@ -97,14 +106,14 @@ export function CaseOverview({
                 src={before.thumbnail}
                 alt="Before Sentinel-2 view of the Nepal corridor"
               />
-              <figcaption>Before · 12 Aug 2026</figcaption>
+              <figcaption>Before · {formatDate(before.acquiredAt)}</figcaption>
             </figure>
             <figure>
               <img
                 src={after.thumbnail}
                 alt="After Sentinel-2 view of the Nepal corridor"
               />
-              <figcaption>After · 27 Aug 2026</figcaption>
+              <figcaption>After · {formatDate(after.acquiredAt)}</figcaption>
             </figure>
           </div>
         </section>
@@ -115,7 +124,7 @@ export function CaseOverview({
             <p>{state.investigation.event.summary}</p>
             <ol>
               <li>
-                Navigate two geographically aligned, fixed-date satellite views.
+                Choose and navigate two geographically aligned satellite views.
               </li>
               <li>
                 Inspect preliminary observations with their original source and

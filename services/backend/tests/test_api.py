@@ -74,7 +74,7 @@ def _api_request() -> CatalogSearchRequest:
             ),
         ),
         start_at=datetime(2025, 6, 1, tzinfo=UTC),
-        end_at=datetime(2025, 8, 1, tzinfo=UTC),
+        end_at=datetime(2025, 7, 30, tzinfo=UTC),
         providers=("sentinel-1",),
         page_size=10,
     )

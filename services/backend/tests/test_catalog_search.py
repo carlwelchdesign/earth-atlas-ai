@@ -133,7 +133,7 @@ def request(**changes: Any) -> CatalogSearchRequest:
             ),
         ),
         "start_at": datetime(2025, 6, 1, tzinfo=UTC),
-        "end_at": datetime(2025, 8, 1, tzinfo=UTC),
+        "end_at": datetime(2025, 7, 30, tzinfo=UTC),
         "providers": ("sentinel-1",),
         "page_size": 1,
     }
@@ -188,8 +188,8 @@ def test_contract_rejects_unbounded_aoi_time_and_naive_timestamps() -> None:
                 coordinates=(((-20.0, 0.0), (20.0, 0.0), (20.0, 10.0), (-20.0, 0.0)),)
             ),
         )
-    with pytest.raises(ValidationError, match="366 days"):
-        request(end_at=datetime(2027, 8, 2, tzinfo=UTC))
+    with pytest.raises(ValidationError, match="60 days"):
+        request(end_at=datetime(2025, 8, 1, tzinfo=UTC))
     with pytest.raises(ValidationError, match="timezone"):
         request(start_at=datetime(2025, 6, 1))
 
